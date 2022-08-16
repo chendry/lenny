@@ -39,6 +39,24 @@ defmodule Lenny.Twilio do
     end
   end
 
+  def cancel_verification(sid) do
+    url = "https://verify.twilio.com/v2/Services/#{verification_service_sid()}/Verifications/#{sid}"
+
+    query = [
+      ServiceSid: verification_service_sid(),
+      Sid: sid,
+      Status: "canceled"
+    ]
+
+    {:ok, %{status_code: status_code, body: body}} =
+      HTTPoison.post(url, URI.encode_query(query), headers())
+
+    case {status_code, Jason.decode!(body)} do
+      {404, %{"code" => 20404}} -> :not_found
+      {200, %{"status" => "canceled"}} -> :ok
+    end
+  end
+
   defp headers do
     credentials = Base.encode64("#{account_sid()}:#{auth_token()}")
 
