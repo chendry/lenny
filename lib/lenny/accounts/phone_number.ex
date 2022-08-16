@@ -16,7 +16,7 @@ defmodule Lenny.Accounts.PhoneNumber do
   @doc false
   def changeset(phone_number, attrs) do
     phone_number
-    |> cast(attrs, [:phone, :sid, :channel, :status, :deleted_at])
-    |> validate_required([:phone, :sid, :channel, :status, :deleted_at])
+    |> cast(attrs, [:phone])
+    |> validate_required([:phone])
   end
 end
