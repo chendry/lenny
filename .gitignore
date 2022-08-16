@@ -32,3 +32,4 @@ lenny-*.tar
 npm-debug.log
 /assets/node_modules/
 
+/export_env_vars.sh
