@@ -6,7 +6,7 @@ defmodule Lenny.Accounts do
   import Ecto.Query, warn: false
   alias Lenny.Repo
 
-  alias Lenny.Accounts.{User, UserToken, UserNotifier}
+  alias Lenny.Accounts.{User, UserToken, UserNotifier, PhoneNumber}
 
   ## Database getters
 
@@ -349,5 +349,11 @@ defmodule Lenny.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  def register_phone_number(%User{} = user, phone_number) do
+    %PhoneNumber{user_id: user.id}
+    |> PhoneNumber.changeset(%{phone: phone_number})
+    |> Repo.insert()
   end
 end

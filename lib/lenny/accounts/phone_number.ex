@@ -18,5 +18,6 @@ defmodule Lenny.Accounts.PhoneNumber do
     phone_number
     |> cast(attrs, [:phone])
     |> validate_required([:phone])
+    |> validate_format(:phone, ~r/^\+[1-9]\d{1,14}$/)
   end
 end
