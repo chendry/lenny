@@ -23,6 +23,12 @@ defmodule LennyWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/", LennyWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/lenny", LennyLive
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", LennyWeb do
   #   pipe_through :api
