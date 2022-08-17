@@ -14,6 +14,7 @@ defmodule Lenny.Twilio do
     case {status_code, Jason.decode!(body)} do
       {201, %{"status" => "pending", "sid" => sid}} -> {:ok, sid}
       {400, %{"code" => 60200}} -> :invalid_phone_number
+      {429, %{"code" => 60203}} -> :max_send_attempts_reached
     end
   end
 

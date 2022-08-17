@@ -64,6 +64,15 @@ defmodule Lenny.PhoneNumbers do
           |> Ecto.Changeset.add_error(:phone, "is invalid according to twilio")
 
         {:error, changeset}
+
+      :max_send_attempts_reached ->
+        changeset =
+          phone_number
+          |> PhoneNumber.changeset(%{})
+          |> Map.put(:action, :insert)
+          |> add_error(:phone, "max attempts reached")
+
+        {:error, changeset}
     end
   end
 
