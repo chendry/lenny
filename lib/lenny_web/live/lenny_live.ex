@@ -32,6 +32,10 @@ defmodule LennyWeb.LennyLive do
     <% end %>
 
     <%= if @pending_phone_number do %>
+      <.form for={:verification} let={f} phx-submit="verify_phone_number">
+        <%= number_input f, :code %>
+        <%= submit "Submit" %>
+      </.form>
     <% end %>
 
     <p><%= inspect @pending_phone_number %></p>
@@ -48,6 +52,20 @@ defmodule LennyWeb.LennyLive do
 
       {:ok, phone_number} ->
         {:noreply, assign(socket, :pending_phone_number, phone_number)}
+    end
+  end
+
+  @impl true
+  def handle_event("verify_phone_number", %{"verification" => %{"code" => code}}, socket) do
+    case PhoneNumbers.verify_phone_number(socket.assigns.pending_phone_number, code) do
+      :error ->
+        {:noreply, socket}
+
+      {:ok, phone_number} ->
+        {:noreply,
+         socket
+         |> assign(:pending_phone_number, nil)
+         |> assign(:approved_phone_number, phone_number)}
     end
   end
 end
