@@ -13,7 +13,7 @@ defmodule LennyWeb.LennyLive do
     {:ok,
      socket
      |> assign(:user, user)
-     |> assign(:changeset, PhoneNumber.changeset(%PhoneNumber{}, %{}))
+     |> assign(:phone_number_changeset, PhoneNumber.changeset(%PhoneNumber{}, %{}))
      |> assign(:verification_changeset, VerificationForm.changeset(%VerificationForm{}, %{}))
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))}
@@ -26,7 +26,7 @@ defmodule LennyWeb.LennyLive do
     <p><%= @user.email %></p>
 
     <%= if @pending_phone_number == nil and @approved_phone_number == nil do %>
-      <.form for={@changeset} let={f} phx-submit="register_phone_number">
+      <.form for={@phone_number_changeset} let={f} phx-submit="register_phone_number">
         <%= telephone_input f, :phone %>
         <%= error_tag f, :phone %>
         <%= submit "Submit" %>
@@ -43,7 +43,6 @@ defmodule LennyWeb.LennyLive do
 
     <p><%= inspect @pending_phone_number %></p>
     <p><%= inspect @approved_phone_number %></p>
-    <p><%= inspect @changeset %></p>
     """
   end
 
@@ -51,7 +50,7 @@ defmodule LennyWeb.LennyLive do
   def handle_event("register_phone_number", %{"phone_number" => %{"phone" => phone}}, socket) do
     case PhoneNumbers.register_phone_number_and_start_verification(socket.assigns.user, phone) do
       {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :phone_number_changeset, changeset)}
 
       {:ok, phone_number} ->
         {:noreply, assign(socket, :pending_phone_number, phone_number)}
