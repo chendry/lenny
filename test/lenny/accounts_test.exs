@@ -2,7 +2,6 @@ defmodule Lenny.AccountsTest do
   use Lenny.DataCase
 
   alias Lenny.Accounts
-  alias Lenny.Accounts.PhoneNumber
 
   import Lenny.AccountsFixtures
   alias Lenny.Accounts.{User, UserToken}
@@ -504,23 +503,6 @@ defmodule Lenny.AccountsTest do
   describe "inspect/2" do
     test "does not include password" do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""
-    end
-  end
-
-  describe "register_phone_number/2" do
-    setup do
-      %{user: user_fixture()}
-    end
-
-    test "validates phone_number", %{user: user} do
-      {:error, changeset} = Accounts.register_phone_number(user, "(312) 618-0256")
-      assert %{phone: ["has invalid format"]} = errors_on(changeset)
-    end
-
-    test "inserts a phone_number record", %{user: user} do
-      {:ok, phone_number} = Accounts.register_phone_number(user, "+13126180256")
-      assert %PhoneNumber{} = phone_number
-      assert phone_number.id != nil
     end
   end
 end

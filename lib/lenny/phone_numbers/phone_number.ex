@@ -1,4 +1,4 @@
-defmodule Lenny.Accounts.PhoneNumber do
+defmodule Lenny.PhoneNumbers.PhoneNumber do
   use Ecto.Schema
   import Ecto.Changeset
 
