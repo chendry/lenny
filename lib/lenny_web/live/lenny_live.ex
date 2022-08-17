@@ -4,7 +4,6 @@ defmodule LennyWeb.LennyLive do
   alias Lenny.Accounts
   alias Lenny.PhoneNumbers
   alias Lenny.PhoneNumbers.PhoneNumber
-  alias Lenny.Twilio
 
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
