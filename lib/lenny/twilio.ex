@@ -22,7 +22,7 @@ defmodule Lenny.Twilio do
 
     query = [
       ServiceSid: verification_service_sid(),
-      Sid: sid,
+      VerificationSid: sid,
       Code: code
     ]
 
