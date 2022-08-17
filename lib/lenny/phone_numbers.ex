@@ -30,9 +30,9 @@ defmodule Lenny.PhoneNumbers do
     |> order_by([p], desc: p.id)
   end
 
-  def register_phone_number(%User{} = user, phone_number) do
+  def register_phone_number(%User{} = user, phone) do
     %PhoneNumber{user_id: user.id}
-    |> PhoneNumber.changeset(%{phone: phone_number})
+    |> PhoneNumber.changeset(%{phone: phone})
     |> Repo.insert()
   end
 
