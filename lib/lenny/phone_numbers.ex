@@ -5,7 +5,6 @@ defmodule Lenny.PhoneNumbers do
   alias Lenny.Repo
   alias Lenny.Accounts.User
   alias Lenny.PhoneNumbers.PhoneNumber
-  alias Lenny.PhoneNumbers.VerificationForm
   alias Lenny.Twilio
 
   def get_approved_phone_number(%User{} = user) do
@@ -61,7 +60,7 @@ defmodule Lenny.PhoneNumbers do
           phone_number
           |> PhoneNumber.changeset(%{})
           |> Map.put(:action, :insert)
-          |> Ecto.Changeset.add_error(:phone, "is invalid according to twilio")
+          |> add_error(:phone, "is invalid according to twilio")
 
         {:error, changeset}
 
@@ -88,8 +87,8 @@ defmodule Lenny.PhoneNumbers do
 
         {:ok, phone_number}
 
-      _error ->
-        {:error, add_error(changeset, :code, "is incorrect")}
+      error ->
+        {:error, add_error(changeset, :code, inspect(error))}
     end
   end
 end

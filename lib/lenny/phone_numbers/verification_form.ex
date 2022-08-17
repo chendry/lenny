@@ -3,13 +3,13 @@ defmodule Lenny.PhoneNumbers.VerificationForm do
   import Ecto.Changeset
 
   embedded_schema do
-    field :code, :integer
+    field :code, :string
   end
 
   def changeset(%__MODULE__{} = verification_form, attrs \\ %{}) do
     verification_form
     |> cast(attrs, [:code])
     |> validate_required(:code)
-    |> validate_number(:code, greater_than_or_equal_to: 0, less_than_or_equal_to: 999_999_999)
+    |> validate_format(:code, ~r/^\s*\d{4,10}\s*$/)
   end
 end

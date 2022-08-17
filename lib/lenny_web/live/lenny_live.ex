@@ -26,6 +26,7 @@ defmodule LennyWeb.LennyLive do
     <p><%= @user.email %></p>
 
     <%= if @pending_phone_number == nil and @approved_phone_number == nil do %>
+      Register Phone Number:
       <.form for={@phone_number_changeset} let={f} phx-submit="register_phone_number">
         <%= telephone_input f, :phone %>
         <%= error_tag f, :phone %>
@@ -34,8 +35,9 @@ defmodule LennyWeb.LennyLive do
     <% end %>
 
     <%= if @pending_phone_number do %>
+      Verify Phone Number:
       <.form for={@verification_changeset} let={f} phx-submit="verify_phone_number">
-        <%= number_input f, :code %>
+        <%= text_input f, :code %>
         <%= error_tag f, :code %>
         <%= submit "Submit" %>
       </.form>
