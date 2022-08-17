@@ -4,6 +4,7 @@ defmodule LennyWeb.LennyLive do
   alias Lenny.Accounts
   alias Lenny.PhoneNumbers
   alias Lenny.PhoneNumbers.PhoneNumber
+  alias Lenny.PhoneNumbers.VerificationForm
 
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
@@ -13,6 +14,7 @@ defmodule LennyWeb.LennyLive do
      socket
      |> assign(:user, user)
      |> assign(:changeset, PhoneNumber.changeset(%PhoneNumber{}, %{}))
+     |> assign(:verification_changeset, VerificationForm.changeset(%VerificationForm{}, %{}))
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))}
   end
@@ -32,8 +34,9 @@ defmodule LennyWeb.LennyLive do
     <% end %>
 
     <%= if @pending_phone_number do %>
-      <.form for={:verification} let={f} phx-submit="verify_phone_number">
+      <.form for={@verification_changeset} let={f} phx-submit="verify_phone_number">
         <%= number_input f, :code %>
+        <%= error_tag f, :code %>
         <%= submit "Submit" %>
       </.form>
     <% end %>
@@ -56,16 +59,25 @@ defmodule LennyWeb.LennyLive do
   end
 
   @impl true
-  def handle_event("verify_phone_number", %{"verification" => %{"code" => code}}, socket) do
-    case PhoneNumbers.verify_phone_number(socket.assigns.pending_phone_number, code) do
-      :error ->
-        {:noreply, socket}
+  def handle_event("verify_phone_number", %{"verification_form" => attrs}, socket) do
+    changeset =
+      %VerificationForm{}
+      |> VerificationForm.changeset(attrs)
+      |> Map.put(:action, :insert)
 
-      {:ok, phone_number} ->
-        {:noreply,
-         socket
-         |> assign(:pending_phone_number, nil)
-         |> assign(:approved_phone_number, phone_number)}
+    if changeset.valid? do
+      case PhoneNumbers.verify_phone_number(socket.assigns.pending_phone_number, changeset) do
+        {:error, changeset} ->
+          {:noreply, assign(socket, :verification_changeset, changeset)}
+
+        {:ok, phone_number} ->
+          {:noreply,
+          socket
+          |> assign(:pending_phone_number, nil)
+          |> assign(:approved_phone_number, phone_number)}
+      end
+    else
+      {:noreply, assign(socket, :verification_changeset, changeset)}
     end
   end
 end

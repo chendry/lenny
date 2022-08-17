@@ -5,6 +5,7 @@ defmodule Lenny.PhoneNumbers do
   alias Lenny.Repo
   alias Lenny.Accounts.User
   alias Lenny.PhoneNumbers.PhoneNumber
+  alias Lenny.PhoneNumbers.VerificationForm
   alias Lenny.Twilio
 
   def get_approved_phone_number(%User{} = user) do
@@ -66,7 +67,9 @@ defmodule Lenny.PhoneNumbers do
     end
   end
 
-  def verify_phone_number(%PhoneNumber{} = pending_phone_number, code) do
+  def verify_phone_number(%PhoneNumber{} = pending_phone_number, changeset) do
+    code = get_field(changeset, :code)
+
     case Twilio.check_verification(pending_phone_number.sid, code) do
       :approved ->
         phone_number =
@@ -77,7 +80,7 @@ defmodule Lenny.PhoneNumbers do
         {:ok, phone_number}
 
       _error ->
-        :error
+        {:error, add_error(changeset, :code, "is incorrect")}
     end
   end
 end
