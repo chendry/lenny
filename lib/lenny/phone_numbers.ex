@@ -36,7 +36,22 @@ defmodule Lenny.PhoneNumbers do
     |> Repo.insert()
   end
 
-  def start_new_verification(%PhoneNumber{} = phone_number) do
+  def register_phone_number_and_start_verification(%User{} = user, phone) do
+    changeset =
+      %PhoneNumber{user_id: user.id}
+      |> PhoneNumber.changeset(%{phone: phone})
+      |> Map.put(:action, :insert)
+
+    if changeset.valid? do
+      changeset
+      |> Repo.insert!()
+      |> start_new_verification()
+    else
+      {:error, changeset}
+    end
+  end
+
+  defp start_new_verification(%PhoneNumber{} = phone_number) do
     case Twilio.start_new_verification(phone_number.phone, "sms") do
       {:ok, sid} ->
         phone_number =

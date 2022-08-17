@@ -43,18 +43,12 @@ defmodule LennyWeb.LennyLive do
 
   @impl true
   def handle_event("register_phone_number", %{"phone_number" => %{"phone" => phone}}, socket) do
-    case PhoneNumbers.register_phone_number(socket.assigns.user, phone) do
+    case PhoneNumbers.register_phone_number_and_start_verification(socket.assigns.user, phone) do
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
 
       {:ok, phone_number} ->
-        case PhoneNumbers.start_new_verification(phone_number) do
-          {:ok, phone_number} ->
-            {:noreply, assign(socket, :pending_phone_number, phone_number)}
-
-          {:error, changeset} ->
-            {:noreply, assign(socket, :changeset, changeset)}
-        end
+        {:noreply, assign(socket, :pending_phone_number, phone_number)}
     end
   end
 end
