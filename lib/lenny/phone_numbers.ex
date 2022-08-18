@@ -77,4 +77,10 @@ defmodule Lenny.PhoneNumbers do
          |> add_error(:code, inspect(error))}
     end
   end
+
+  def soft_delete_phone_number(%PhoneNumber{} = phone_number) do
+    phone_number
+    |> change(deleted_at: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second))
+    |> Repo.update!()
+  end
 end

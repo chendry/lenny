@@ -54,6 +54,9 @@ defmodule LennyWeb.LennyLive do
         <div><%= error_tag f, :code %></div>
         <div><%= submit "Submit" %></div>
       </.form>
+      <p>
+        <button phx-click="delete_pending_phone_number">Cancel</button>
+      </p>
     <% end %>
     """
   end
@@ -93,5 +96,11 @@ defmodule LennyWeb.LennyLive do
       {:error, changeset} ->
         {:noreply, assign(socket, :verification_changeset, changeset)}
     end
+  end
+
+  @impl true
+  def handle_event("delete_pending_phone_number", _params, socket) do
+    PhoneNumbers.soft_delete_phone_number(socket.assigns.pending_phone_number)
+    {:noreply, assign(socket, :pending_phone_number, nil)}
   end
 end
