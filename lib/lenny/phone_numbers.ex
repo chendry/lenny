@@ -48,12 +48,9 @@ defmodule Lenny.PhoneNumbers do
   defp start_new_verification(%PhoneNumber{} = phone_number) do
     case Twilio.start_new_verification(phone_number.phone, "sms") do
       {:ok, sid} ->
-        phone_number =
-          phone_number
-          |> change(sid: sid)
-          |> Repo.update!()
-
-        {:ok, phone_number}
+        phone_number
+        |> change(sid: sid)
+        |> Repo.update()
 
       :invalid_phone_number ->
         changeset =
