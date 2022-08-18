@@ -55,11 +55,11 @@ defmodule LennyWeb.LennyLive do
       phone_number_params
     )
     |> case do
-      {:error, changeset} ->
-        {:noreply, assign(socket, :phone_number_changeset, changeset)}
-
       {:ok, phone_number} ->
         {:noreply, assign(socket, :pending_phone_number, phone_number)}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :phone_number_changeset, changeset)}
     end
   end
 
@@ -74,14 +74,14 @@ defmodule LennyWeb.LennyLive do
       verification_form_params
     )
     |> case do
-      {:error, changeset} ->
-        {:noreply, assign(socket, :verification_changeset, changeset)}
-
       {:ok, phone_number} ->
         {:noreply,
          socket
          |> assign(:pending_phone_number, nil)
          |> assign(:approved_phone_number, phone_number)}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :verification_changeset, changeset)}
     end
   end
 end
