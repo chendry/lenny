@@ -77,9 +77,9 @@ defmodule LennyWeb.LennyLive do
 
         {:ok, phone_number} ->
           {:noreply,
-          socket
-          |> assign(:pending_phone_number, nil)
-          |> assign(:approved_phone_number, phone_number)}
+           socket
+           |> assign(:pending_phone_number, nil)
+           |> assign(:approved_phone_number, phone_number)}
       end
     else
       {:noreply, assign(socket, :verification_changeset, changeset)}

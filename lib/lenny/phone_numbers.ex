@@ -30,10 +30,10 @@ defmodule Lenny.PhoneNumbers do
     |> order_by([p], desc: p.id)
   end
 
-  def register_phone_number_and_start_verification(%User{} = user, phone_number_attrs) do
+  def register_phone_number_and_start_verification(%User{} = user, attrs) do
     changeset =
       %PhoneNumber{user_id: user.id}
-      |> PhoneNumber.changeset(phone_number_attrs)
+      |> PhoneNumber.changeset(attrs)
       |> Map.put(:action, :insert)
 
     if changeset.valid? do
