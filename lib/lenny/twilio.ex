@@ -41,7 +41,8 @@ defmodule Lenny.Twilio do
   end
 
   def cancel_verification(sid) do
-    url = "https://verify.twilio.com/v2/Services/#{verification_service_sid()}/Verifications/#{sid}"
+    url =
+      "https://verify.twilio.com/v2/Services/#{verification_service_sid()}/Verifications/#{sid}"
 
     query = [
       ServiceSid: verification_service_sid(),
