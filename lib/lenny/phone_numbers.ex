@@ -75,20 +75,18 @@ defmodule Lenny.PhoneNumbers do
     end
   end
 
-  def verify_phone_number(%PhoneNumber{} = pending_phone_number, changeset) do
-    code = get_field(changeset, :code)
-
-    case Twilio.check_verification(pending_phone_number.sid, code) do
+  def verify_phone_number(%PhoneNumber{} = phone_number, %{"code" => code} = _attrs) do
+    case Twilio.check_verification(phone_number.sid, code) do
       :approved ->
-        phone_number =
-          pending_phone_number
-          |> change(status: "approved")
-          |> Repo.update!()
-
-        {:ok, phone_number}
+        phone_number
+        |> change(status: "approved")
+        |> Repo.update()
 
       error ->
-        {:error, add_error(changeset, :code, inspect(error))}
+        {:error,
+         phone_number
+         |> change()
+         |> add_error(:code, inspect(error))}
     end
   end
 end

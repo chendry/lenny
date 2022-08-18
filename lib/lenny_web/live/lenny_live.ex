@@ -64,25 +64,24 @@ defmodule LennyWeb.LennyLive do
   end
 
   @impl true
-  def handle_event("verify_phone_number", %{"verification_form" => attrs}, socket) do
-    changeset =
-      %VerificationForm{}
-      |> VerificationForm.changeset(attrs)
-      |> Map.put(:action, :insert)
+  def handle_event(
+        "verify_phone_number",
+        %{"verification_form" => verification_form_params},
+        socket
+      ) do
+    PhoneNumbers.verify_phone_number(
+      socket.assigns.pending_phone_number,
+      verification_form_params
+    )
+    |> case do
+      {:error, changeset} ->
+        {:noreply, assign(socket, :verification_changeset, changeset)}
 
-    if changeset.valid? do
-      case PhoneNumbers.verify_phone_number(socket.assigns.pending_phone_number, changeset) do
-        {:error, changeset} ->
-          {:noreply, assign(socket, :verification_changeset, changeset)}
-
-        {:ok, phone_number} ->
-          {:noreply,
-           socket
-           |> assign(:pending_phone_number, nil)
-           |> assign(:approved_phone_number, phone_number)}
-      end
-    else
-      {:noreply, assign(socket, :verification_changeset, changeset)}
+      {:ok, phone_number} ->
+        {:noreply,
+         socket
+         |> assign(:pending_phone_number, nil)
+         |> assign(:approved_phone_number, phone_number)}
     end
   end
 end
