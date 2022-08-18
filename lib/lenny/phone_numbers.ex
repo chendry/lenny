@@ -31,17 +31,12 @@ defmodule Lenny.PhoneNumbers do
   end
 
   def register_phone_number_and_start_verification(%User{} = user, attrs) do
-    changeset =
-      %PhoneNumber{user_id: user.id}
-      |> PhoneNumber.changeset(attrs)
-      |> Map.put(:action, :insert)
-
-    if changeset.valid? do
-      changeset
-      |> Repo.insert!()
-      |> start_new_verification()
-    else
-      {:error, changeset}
+    %PhoneNumber{user_id: user.id}
+    |> PhoneNumber.changeset(attrs)
+    |> Repo.insert()
+    |> case do
+      {:ok, phone_number} -> start_new_verification(phone_number)
+      error -> error
     end
   end
 
