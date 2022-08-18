@@ -47,19 +47,12 @@ defmodule Lenny.PhoneNumbers do
         |> change(sid: sid)
         |> Repo.update()
 
-      error ->
-        changeset =
-          phone_number
-          |> PhoneNumber.changeset(%{})
-          |> Map.put(:action, :insert)
-
-        case error do
-          :invalid_phone_number ->
-            {:error, add_error(changeset, :phone, "is invalid according to twilio")}
-
-          :max_send_attempts_reached ->
-            {:error, add_error(changeset, :phone, "max attempts reached")}
-        end
+      {:error, message} ->
+        {:error,
+         phone_number
+         |> PhoneNumber.changeset(%{})
+         |> add_error(:phone, message)
+         |> Map.put(:action, :insert)}
     end
   end
 
