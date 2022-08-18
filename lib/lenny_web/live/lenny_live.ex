@@ -25,26 +25,36 @@ defmodule LennyWeb.LennyLive do
     <h1>Lenny</h1>
     <p><%= @user.email %></p>
 
-    <%= if @pending_phone_number == nil and @approved_phone_number == nil do %>
-      Register Phone Number:
+    <%= if @approved_phone_number do %>
+      <p>This phone number is approved: <%= @approved_phone_number.phone %></p>
+    <% end %>
+
+    <%= if @pending_phone_number do %>
+      <p>This phone number is pending verification: <%= @pending_phone_number.phone %></p>
+    <% end %>
+
+    <%= if @pending_phone_number == nil do %>
+      <%= if @approved_phone_number == nil do %>
+        <p>Register a phone number:</p>
+      <% else %>
+        <p>Change your phone number:</p>
+      <% end %>
+
       <.form for={@phone_number_changeset} let={f} phx-submit="register_phone_number">
-        <%= telephone_input f, :phone %>
-        <%= error_tag f, :phone %>
-        <%= submit "Submit" %>
+        <div><%= telephone_input f, :phone %></div>
+        <div><%= error_tag f, :phone %></div>
+        <div><%= submit "Submit" %></div>
       </.form>
     <% end %>
 
     <%= if @pending_phone_number do %>
-      Verify Phone Number:
+      <p>Verify your phone number:</p>
       <.form for={@verification_changeset} let={f} phx-submit="verify_phone_number">
-        <%= text_input f, :code %>
-        <%= error_tag f, :code %>
-        <%= submit "Submit" %>
+        <div><%= text_input f, :code %></div>
+        <div><%= error_tag f, :code %></div>
+        <div><%= submit "Submit" %></div>
       </.form>
     <% end %>
-
-    <p><%= inspect @pending_phone_number %></p>
-    <p><%= inspect @approved_phone_number %></p>
     """
   end
 
