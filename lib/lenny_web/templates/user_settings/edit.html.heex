@@ -40,7 +40,7 @@
 
     <%= hidden_input f, :action, name: "action", value: "update_password" %>
 
-    <div class="mt-4 flex flex-col space-y-1">
+    <div class="mt-2 flex flex-col space-y-1">
       <%= label f, :password, "New password" %>
       <%= password_input f, :password, required: true %>
       <%= error_tag f, :password %>
@@ -52,7 +52,7 @@
       <%= error_tag f, :password_confirmation %>
     </div>
 
-    <div class="mt-, flex flex-col space-y-1">
+    <div class="mt-2 flex flex-col space-y-1">
       <%= label f, :current_password, for: "current_password_for_password" %>
       <%= password_input f, :current_password, required: true, name: "current_password", id: "current_password_for_password" %>
       <%= error_tag f, :current_password %>
