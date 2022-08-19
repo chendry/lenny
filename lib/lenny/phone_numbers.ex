@@ -42,7 +42,7 @@ defmodule Lenny.PhoneNumbers do
   end
 
   defp start_new_verification(%PhoneNumber{} = phone_number) do
-    case Twilio.start_new_verification(phone_number.phone, "sms") do
+    case Twilio.verify_start(phone_number.phone, "sms") do
       {:ok, sid} ->
         phone_number
         |> change(verification_sid: sid)
@@ -66,7 +66,7 @@ defmodule Lenny.PhoneNumbers do
     if not changeset.valid? do
       {:error, changeset}
     else
-      case Twilio.check_verification(phone_number.verification_sid, code) do
+      case Twilio.verify_check(phone_number.verification_sid, code) do
         :ok ->
           phone_number
           |> change(status: "approved")

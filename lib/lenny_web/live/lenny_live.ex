@@ -2,6 +2,7 @@ defmodule LennyWeb.LennyLive do
   use LennyWeb, :live_view
 
   alias Lenny.Accounts
+  alias Lenny.Twilio
   alias Lenny.PhoneNumbers
   alias Lenny.PhoneNumbers.PhoneNumber
   alias Lenny.PhoneNumbers.VerificationForm
@@ -90,7 +91,7 @@ defmodule LennyWeb.LennyLive do
 
   @impl true
   def handle_event("cancel_verification", _params, socket) do
-    Lenny.Twilio.cancel_verification(socket.assigns.pending_phone_number.verification_sid)
+    Twilio.verify_cancel(socket.assigns.pending_phone_number.verification_sid)
     PhoneNumbers.soft_delete_phone_number(socket.assigns.pending_phone_number)
 
     {:noreply,
