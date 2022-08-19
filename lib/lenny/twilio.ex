@@ -21,12 +21,12 @@ defmodule Lenny.Twilio do
     end
   end
 
-  def check_verification(sid, code) do
+  def check_verification(verification_sid, code) do
     url = "https://verify.twilio.com/v2/Services/#{verification_service_sid()}/VerificationCheck"
 
     query = [
       ServiceSid: verification_service_sid(),
-      VerificationSid: sid,
+      VerificationSid: verification_sid,
       Code: code
     ]
 
