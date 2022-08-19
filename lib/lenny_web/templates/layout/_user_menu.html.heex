@@ -1,7 +1,7 @@
 <div class="flex flex-row px-4 py-2 justify-between items-center bg-green-100 border border-bottom border-green-600">
-  <span class="text-xl text-green-800 text-bold font-bold">
+  <a href="/" class="text-xl text-green-800 text-bold font-bold">
     Lenny
-  </span>
+  </a>
   <ul class="flex flex-row justify-end space-x-4 font-bold text-blue-600">
     <%= if @current_user do %>
       <li class="text-black font-normal"><%= @current_user.email %></li>
