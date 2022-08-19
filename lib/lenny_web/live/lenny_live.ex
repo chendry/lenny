@@ -69,7 +69,10 @@ defmodule LennyWeb.LennyLive do
     )
     |> case do
       {:ok, phone_number} ->
-        {:noreply, assign(socket, :pending_phone_number, phone_number)}
+        {:noreply,
+         socket
+         |> assign(:pending_phone_number, phone_number)
+         |> assign(:verification_changeset, VerificationForm.changeset(%VerificationForm{}, %{}))}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :phone_number_changeset, changeset)}
