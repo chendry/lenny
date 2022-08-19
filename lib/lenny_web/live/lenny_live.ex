@@ -95,6 +95,14 @@ defmodule LennyWeb.LennyLive do
 
       {:error, changeset} ->
         {:noreply, assign(socket, :verification_changeset, changeset)}
+
+      {:stop, message} ->
+        PhoneNumbers.soft_delete_phone_number(socket.assigns.pending_phone_number)
+
+        {:noreply,
+         socket
+         |> assign(:pending_phone_number, nil)
+         |> put_flash(:error, message)}
     end
   end
 

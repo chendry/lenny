@@ -34,12 +34,14 @@ defmodule Lenny.Twilio do
       HTTPoison.post(url, URI.encode_query(query), headers())
 
     case {status_code, Jason.decode!(body)} do
-      {200, %{"status" => "pending"}} -> :pending
-      {200, %{"status" => "approved"}} -> :approved
-      {200, %{"status" => "canceled"}} -> :canceled
-      {404, _} -> :not_found
-      {429, %{"code" => 60202}} -> :max_check_attempts_reached
-      {429, %{"code" => 60203}} -> :max_send_attempts_reached
+      {200, %{"status" => "approved"}} -> :ok
+      {200, %{"status" => "pending"}} -> {:error, "incorrect code"}
+      {200, %{"status" => "canceled"}} -> {:stop, "verification canceled"}
+      {400, %{"code" => 60200}} -> {:error, "code is invalid"}
+      {429, %{"code" => 60202}} -> {:stop, "max attempts reached"}
+      {404, _} -> {:stop, "code has expired"}
+      {status_code, %{"code" => code}} -> {:error, "unknown error: #{status_code}-#{code}"}
+      {status_code, _} -> {:error, "unknown error: #{status_code}"}
     end
   end
 
