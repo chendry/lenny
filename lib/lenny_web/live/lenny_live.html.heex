@@ -1,5 +1,11 @@
 <div class="container mx-auto pt-4">
-  <%= if @pending_phone_number == nil do %>
+  <%= if @phone_number_changeset == nil and @verification_changeset == nil and @approved_phone_number != nil do %>
+    <h1 class="text-3xl font-bold mb-4">
+      Waiting for a forwarded call...
+    </h1>
+  <% end %>
+
+  <%= if @phone_number_changeset do %>
     <h1 class="text-3xl font-bold mb-4">
       <%= if @approved_phone_number == nil do %>
         Register a phone number
@@ -19,11 +25,16 @@
 
       <div class="mt-4">
         <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
+        <%= if @approved_phone_number do %>
+          <a href="#" phx-click="cancel_registration" class="ml-4 text-blue-600">
+            Cancel
+          </a>
+        <% end %>
       </div>
     </.form>
   <% end %>
 
-  <%= if @pending_phone_number do %>
+  <%= if @verification_changeset do %>
     <h1 class="text-3xl font-bold mb-4">
       Verify your phone number:
     </h1>
@@ -37,23 +48,31 @@
 
       <div class="mt-4">
         <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
+        <%= if @approved_phone_number != nil do %>
+          <a href="#" phx-click="cancel_verification" class="ml-4 text-blue-600">
+            Cancel
+          </a>
+        <% end %>
       </div>
     </.form>
-
-    <p class="mt-4">
-      <button phx-click="delete_pending_phone_number" class="text-blue-600 font-bold">
-        Cancel
-      </button>
-    </p>
   <% end %>
 
-  <div class="mt-8">
-    <%= if @approved_phone_number do %>
-      <p>Approved: <%= @approved_phone_number.phone %></p>
-    <% end %>
+  <%= if @phone_number_changeset == nil do %>
+    <div class="mt-8">
+      <%= if @approved_phone_number do %>
+        <p>
+          Approved: <%= @approved_phone_number.phone %>
+          <%= if @verification_changeset == nil do %>
+            <button phx-click="change_phone_number" class="ml-2 text-blue-600">
+              Change
+            </button>
+          <% end %>
+        </p>
+      <% end %>
 
-    <%= if @pending_phone_number do %>
-      <p>Pending: <%= @pending_phone_number.phone %></p>
-    <% end %>
-  </div>
+      <%= if @pending_phone_number do %>
+        <p>Pending: <%= @pending_phone_number.phone %></p>
+      <% end %>
+    </div>
+  <% end %>
 </div>
