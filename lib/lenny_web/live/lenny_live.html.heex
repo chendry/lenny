@@ -1,36 +1,59 @@
-<h1>Lenny</h1>
-<p><%= @user.email %></p>
+<div class="container mx-auto pt-4">
+  <%= if @pending_phone_number == nil do %>
+    <h1 class="text-3xl font-bold mb-4">
+      <%= if @approved_phone_number == nil do %>
+        Register a phone number
+      <% else %>
+        Change your phone number
+      <% end %>
+    </h1>
 
-<%= if @approved_phone_number do %>
-  <p>This phone number is approved: <%= @approved_phone_number.phone %></p>
-<% end %>
+    <.form for={@phone_number_changeset} let={f} phx-submit="register_phone_number">
+      <div class="flex flex-col space-y-2">
+        <%= label f, :phone do %>
+          Phone Number (format: "+15554443333")
+        <% end %>
+        <%= telephone_input f, :phone %>
+        <%= error_tag f, :phone %>
+      </div>
 
-<%= if @pending_phone_number do %>
-  <p>This phone number is pending verification: <%= @pending_phone_number.phone %></p>
-<% end %>
-
-<%= if @pending_phone_number == nil do %>
-  <%= if @approved_phone_number == nil do %>
-    <p>Register a phone number:</p>
-  <% else %>
-    <p>Change your phone number:</p>
+      <div class="mt-4">
+        <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
+      </div>
+    </.form>
   <% end %>
 
-  <.form for={@phone_number_changeset} let={f} phx-submit="register_phone_number">
-    <div><%= telephone_input f, :phone %></div>
-    <div><%= error_tag f, :phone %></div>
-    <div><%= submit "Submit" %></div>
-  </.form>
-<% end %>
+  <%= if @pending_phone_number do %>
+    <h1 class="text-3xl font-bold mb-4">
+      Verify your phone number:
+    </h1>
 
-<%= if @pending_phone_number do %>
-  <p>Verify your phone number:</p>
-  <.form for={@verification_changeset} let={f} phx-submit="verify_phone_number">
-    <div><%= text_input f, :code %></div>
-    <div><%= error_tag f, :code %></div>
-    <div><%= submit "Submit" %></div>
-  </.form>
-  <p>
-    <button phx-click="delete_pending_phone_number">Cancel</button>
-  </p>
-<% end %>
+    <.form for={@verification_changeset} let={f} phx-submit="verify_phone_number">
+      <div class="flex flex-col space-y-2">
+        <%= label f, :code %>
+        <%= text_input f, :code %>
+        <%= error_tag f, :code %>
+      </div>
+
+      <div class="mt-4">
+        <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
+      </div>
+    </.form>
+
+    <p class="mt-4">
+      <button phx-click="delete_pending_phone_number" class="text-blue-600 font-bold">
+        Cancel
+      </button>
+    </p>
+  <% end %>
+
+  <div class="mt-8">
+    <%= if @approved_phone_number do %>
+      <p>Approved: <%= @approved_phone_number.phone %></p>
+    <% end %>
+
+    <%= if @pending_phone_number do %>
+      <p>Pending: <%= @pending_phone_number.phone %></p>
+    <% end %>
+  </div>
+</div>
