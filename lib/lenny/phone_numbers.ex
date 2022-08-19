@@ -51,7 +51,7 @@ defmodule Lenny.PhoneNumbers do
       {:error, message} ->
         {:error,
          phone_number
-         |> PhoneNumber.changeset(%{})
+         |> PhoneNumber.changeset()
          |> add_error(:phone, message)
          |> Map.put(:action, :insert)}
     end

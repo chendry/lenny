@@ -14,7 +14,7 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
   end
 
   @doc false
-  def changeset(phone_number, attrs) do
+  def changeset(%__MODULE__{} = phone_number \\ %__MODULE__{}, attrs \\ %{}) do
     phone_number
     |> cast(attrs, [:phone])
     |> validate_required([:phone])

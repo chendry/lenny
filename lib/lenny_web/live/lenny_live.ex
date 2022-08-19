@@ -13,8 +13,8 @@ defmodule LennyWeb.LennyLive do
     {:ok,
      socket
      |> assign(:user, user)
-     |> assign(:phone_number_changeset, PhoneNumber.changeset(%PhoneNumber{}, %{}))
-     |> assign(:verification_changeset, VerificationForm.changeset(%VerificationForm{}, %{}))
+     |> assign(:phone_number_changeset, PhoneNumber.changeset())
+     |> assign(:verification_changeset, VerificationForm.changeset())
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))}
   end
@@ -30,7 +30,7 @@ defmodule LennyWeb.LennyLive do
         {:noreply,
          socket
          |> assign(:pending_phone_number, phone_number)
-         |> assign(:verification_changeset, VerificationForm.changeset(%VerificationForm{}, %{}))}
+         |> assign(:verification_changeset, VerificationForm.changeset())}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :phone_number_changeset, changeset)}

@@ -6,7 +6,7 @@ defmodule Lenny.PhoneNumbers.VerificationForm do
     field :code, :string
   end
 
-  def changeset(%__MODULE__{} = verification_form, attrs \\ %{}) do
+  def changeset(%__MODULE__{} = verification_form \\ %__MODULE__{}, attrs \\ %{}) do
     verification_form
     |> cast(attrs, [:code])
     |> validate_required(:code)
