@@ -1,10 +1,15 @@
-<ul class="flex flex-row justify-end space-x-4 px-4 py-2 font-bold text-blue-600">
-  <%= if @current_user do %>
-    <li class="text-black font-normal"><%= @current_user.email %></li>
-    <li><%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %></li>
-    <li><%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %></li>
-  <% else %>
-    <li><%= link "Register", to: Routes.user_registration_path(@conn, :new) %></li>
-    <li><%= link "Log in", to: Routes.user_session_path(@conn, :new) %></li>
-  <% end %>
-</ul>
+<div class="flex flex-row px-4 py-2 justify-between items-center bg-green-100 border border-bottom border-green-600">
+  <span class="text-xl text-green-800 text-bold font-bold">
+    Lenny
+  </span>
+  <ul class="flex flex-row justify-end space-x-4 font-bold text-blue-600">
+    <%= if @current_user do %>
+      <li class="text-black font-normal"><%= @current_user.email %></li>
+      <li><%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %></li>
+      <li><%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %></li>
+    <% else %>
+      <li><%= link "Register", to: Routes.user_registration_path(@conn, :new) %></li>
+      <li><%= link "Log in", to: Routes.user_session_path(@conn, :new) %></li>
+    <% end %>
+  </ul>
+</div>
