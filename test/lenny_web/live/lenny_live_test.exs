@@ -70,4 +70,41 @@ defmodule LennyWeb.LennyLiveTest do
     refute html =~ "Pending: +13125551234"
     assert html =~ "Approved: +13125551234"
   end
+
+  test "cancel changing a number", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+15551112222",
+      status: "approved"
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, html} = live(conn, "/lenny")
+
+    assert html =~ "Approved: +15551112222"
+
+    assert lenny_live
+           |> element("button", "Change")
+           |> render_click() =~ "Change your phone number"
+
+    Lenny.TwilioMock
+    |> expect(:verify_start, fn "+15551113333", "sms" -> {:ok, "VE-XXXX"} end)
+    |> expect(:verify_cancel, fn "VE-XXXX" -> :ok end)
+
+    html =
+      lenny_live
+      |> form("form", %{"phone_number[phone]" => "+15551113333"})
+      |> render_submit()
+
+    assert html =~ "Approved: +15551112222"
+    assert html =~ "Pending: +15551113333"
+
+    html =
+      lenny_live
+      |> element("a", "Cancel")
+      |> render_click()
+
+    assert html =~ "Approved: +15551112222"
+    refute html =~ "Pending: +15551113333"
+  end
 end
