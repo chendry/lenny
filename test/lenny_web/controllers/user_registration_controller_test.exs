@@ -7,9 +7,9 @@ defmodule LennyWeb.UserRegistrationControllerTest do
     test "renders registration page", %{conn: conn} do
       conn = get(conn, Routes.user_registration_path(conn, :new))
       response = html_response(conn, 200)
-      assert response =~ "<h1>Register</h1>"
-      assert response =~ "Log in</a>"
-      assert response =~ "Register</a>"
+      assert response =~ ~r{<h1.*>\s*Register}
+      assert response =~ ~r{<a.*>\s*Log in}
+      assert response =~ ~r{<a.*>\s*Register}
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -32,11 +32,11 @@ defmodule LennyWeb.UserRegistrationControllerTest do
       assert redirected_to(conn) == "/lenny"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/")
+      conn = get(conn, "/lenny")
       response = html_response(conn, 200)
       assert response =~ email
-      assert response =~ "Settings</a>"
-      assert response =~ "Log out</a>"
+      assert response =~ ~r{<a.*>\s*Settings}
+      assert response =~ ~r{<a.*>\s*Log out}
     end
 
     test "render errors for invalid data", %{conn: conn} do
@@ -46,7 +46,7 @@ defmodule LennyWeb.UserRegistrationControllerTest do
         })
 
       response = html_response(conn, 200)
-      assert response =~ "<h1>Register</h1>"
+      assert response =~ ~r{<h1.*>\s*Register}
       assert response =~ "must have the @ sign and no spaces"
       assert response =~ "should be at least 12 character"
     end

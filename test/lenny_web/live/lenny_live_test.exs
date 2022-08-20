@@ -10,7 +10,9 @@ defmodule LennyWeb.LennyLiveTest do
   setup [:register_and_log_in_user]
 
   test "register a number", %{conn: conn} do
-    {:ok, lenny_live, _html} = live(conn, "/lenny")
+    {:ok, lenny_live, html} = live(conn, "/lenny")
+
+    assert html =~ ~r{<h1.*>\s*Register a phone number}
 
     assert lenny_live
            |> form("form", %{"phone_number[phone]" => "555-555-5555"})
@@ -23,7 +25,7 @@ defmodule LennyWeb.LennyLiveTest do
 
     assert lenny_live
            |> form("form", %{"phone_number[phone]" => "+13126180256"})
-           |> render_submit() =~ "Verify your phone number:"
+           |> render_submit() =~ ~r{<h1.*>\s*Verify your phone number}
 
     assert lenny_live
            |> form("form", %{"verification_form[code]" => "1234"})
@@ -48,7 +50,7 @@ defmodule LennyWeb.LennyLiveTest do
 
     assert lenny_live
            |> element("button", "Change")
-           |> render_click() =~ "Change your phone number"
+           |> render_click() =~ ~r{<h1.*>\s*Change your phone number}
 
     Lenny.TwilioMock
     |> expect(:verify_start, fn "+13125551234", "sms" -> {:ok, "VE-XXXX"} end)
@@ -85,7 +87,7 @@ defmodule LennyWeb.LennyLiveTest do
 
     assert lenny_live
            |> element("button", "Change")
-           |> render_click() =~ "Change your phone number"
+           |> render_click() =~ ~r{<h1.*>\s*Change your phone number}
 
     Lenny.TwilioMock
     |> expect(:verify_start, fn "+15551113333", "sms" -> {:ok, "VE-XXXX"} end)

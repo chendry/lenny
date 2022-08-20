@@ -11,9 +11,9 @@ defmodule LennyWeb.UserSessionControllerTest do
     test "renders log in page", %{conn: conn} do
       conn = get(conn, Routes.user_session_path(conn, :new))
       response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
-      assert response =~ "Register</a>"
-      assert response =~ "Forgot your password?</a>"
+      assert response =~ ~r{<h1.*>\s*Log in}
+      assert response =~ ~r{<a.*>\s*Register}
+      assert response =~ ~r{<a.*>\s*Forgot your password?}
     end
 
     test "redirects if already logged in", %{conn: conn, user: user} do
@@ -33,11 +33,11 @@ defmodule LennyWeb.UserSessionControllerTest do
       assert redirected_to(conn) == "/lenny"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/")
+      conn = get(conn, "/lenny")
       response = html_response(conn, 200)
       assert response =~ user.email
-      assert response =~ "Settings</a>"
-      assert response =~ "Log out</a>"
+      assert response =~ ~r{<a.*>\s*Settings}
+      assert response =~ ~r{<a.*>\s*Log out}
     end
 
     test "logs the user in with remember me", %{conn: conn, user: user} do
@@ -75,7 +75,7 @@ defmodule LennyWeb.UserSessionControllerTest do
         })
 
       response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
+      assert response =~ ~r{<h1.*>\s*Log in}
       assert response =~ "Invalid email or password"
     end
   end
