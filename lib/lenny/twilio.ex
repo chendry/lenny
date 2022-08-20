@@ -8,9 +8,9 @@ defmodule Lenny.Twilio do
   @callback verify_cancel(verification_sid :: String.t()) ::
               :ok | :not_found
 
-  @default_impl Application.get_env(:lenny, :twilio, Lenny.TwilioImpl)
+  def verify_start(phone, channel), do: impl().verify_start(phone, channel)
+  def verify_check(verification_sid, code), do: impl().verify_check(verification_sid, code)
+  def verify_cancel(verification_sid), do: impl().verify_cancel(verification_sid)
 
-  defdelegate verify_start(phone, channel), to: @default_impl
-  defdelegate verify_check(verification_sid, code), to: @default_impl
-  defdelegate verify_cancel(verification_sid), to: @default_impl
+  defp impl, do: Application.get_env(:lenny, :twilio, Lenny.TwilioImpl)
 end
