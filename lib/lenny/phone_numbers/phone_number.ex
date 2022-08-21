@@ -5,8 +5,8 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
   schema "phone_numbers" do
     field :user_id, :id
     field :phone, :string
-    field :sid, :string
     field :channel, :string
+    field :sid, :string
     field :status, :string
     field :deleted_at, :naive_datetime
 

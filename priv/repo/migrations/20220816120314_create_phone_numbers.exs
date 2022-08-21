@@ -5,8 +5,8 @@ defmodule Lenny.Repo.Migrations.CreatePhoneNumbers do
     create table(:phone_numbers) do
       add :user_id, references(:users, on_delete: :nothing), null: false
       add :phone, :string, null: false
-      add :sid, :string
       add :channel, :string
+      add :sid, :string
       add :status, :string
       add :deleted_at, :naive_datetime
 
