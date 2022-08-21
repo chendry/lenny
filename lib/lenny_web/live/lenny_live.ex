@@ -171,7 +171,7 @@ defmodule LennyWeb.LennyLive do
     phone_number = socket.assigns.pending_phone_number
 
     if phone_number do
-      Twilio.verify_cancel(phone_number.verification_sid)
+      Twilio.verify_cancel(phone_number.sid)
       PhoneNumbers.soft_delete_phone_number(phone_number)
     end
     

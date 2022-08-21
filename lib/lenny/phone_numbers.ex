@@ -45,7 +45,7 @@ defmodule Lenny.PhoneNumbers do
     case Twilio.verify_start(phone_number.phone, "sms") do
       {:ok, sid} ->
         phone_number
-        |> change(verification_sid: sid)
+        |> change(sid: sid)
         |> Repo.update()
 
       {:error, message} ->
@@ -66,7 +66,7 @@ defmodule Lenny.PhoneNumbers do
     if not changeset.valid? do
       {:error, changeset}
     else
-      case Twilio.verify_check(phone_number.verification_sid, code) do
+      case Twilio.verify_check(phone_number.sid, code) do
         :ok ->
           phone_number
           |> change(status: "approved")
