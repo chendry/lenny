@@ -33,4 +33,19 @@ defmodule Lenny.PhoneNumbersTest do
     assert Repo.get(PhoneNumber, p3.id).deleted_at != nil
     assert Repo.get(PhoneNumber, p4.id).deleted_at == nil
   end
+
+  test "register_phone_number_and_start_verification for invalid phone number" do
+    user = user_fixture()
+
+    Lenny.TwilioMock
+    |> Mox.expect(:verify_start, fn _, _ -> {:error, "invalid phone number"} end)
+
+    {:error, changeset} =
+      PhoneNumbers.register_phone_number_and_start_verification(
+        user,
+        %{"phone" => "+15555555555"}
+      )
+
+    assert errors_on(changeset) == %{phone: ["invalid phone number"]}
+  end
 end

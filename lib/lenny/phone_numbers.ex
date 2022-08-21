@@ -2,6 +2,7 @@ defmodule Lenny.PhoneNumbers do
   import Ecto.Query
   import Ecto.Changeset
 
+  alias Ecto.Multi
   alias Lenny.Repo
   alias Lenny.Accounts.User
   alias Lenny.PhoneNumbers.PhoneNumber
@@ -32,36 +33,50 @@ defmodule Lenny.PhoneNumbers do
   end
 
   def register_phone_number_and_start_verification(%User{} = user, attrs) do
-    %PhoneNumber{user_id: user.id}
-    |> PhoneNumber.changeset(attrs)
-    |> Repo.insert()
-    |> case do
-      {:ok, phone_number} ->
+    Multi.new()
+    |> Multi.insert(
+      :insert,
+      %PhoneNumber{user_id: user.id}
+      |> PhoneNumber.changeset(attrs)
+    )
+    |> Multi.update_all(
+      :delete_pending,
+      fn %{insert: phone_number} ->
         now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+        from(p in PhoneNumber,
+          where:
+            p.user_id == ^phone_number.user_id and
+              p.id != ^phone_number.id and
+              is_nil(p.deleted_at) and
+              is_nil(p.verified_at),
+          update: [set: [deleted_at: ^now]]
+        )
+      end,
+      []
+    )
+    |> Multi.run(
+      :verify_start,
+      fn _repo, %{insert: phone_number} ->
+        Twilio.verify_start(phone_number.phone, "sms")
+      end
+    )
+    |> Multi.update(
+      :set_sid,
+      fn %{insert: phone_number, verify_start: sid} ->
+        change(phone_number, sid: sid)
+      end
+    )
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{set_sid: phone_number}} ->
+        {:ok, phone_number}
 
-        PhoneNumber
-        |> where(user_id: ^user.id)
-        |> where([p], p.id != ^phone_number.id)
-        |> where([p], is_nil(p.deleted_at) and is_nil(p.verified_at))
-        |> Repo.update_all(set: [deleted_at: now])
+      {:error, :insert, changeset, _} ->
+        {:error, changeset}
 
-        start_new_verification(phone_number)
-
-      error -> error
-    end
-  end
-
-  defp start_new_verification(%PhoneNumber{} = phone_number) do
-    case Twilio.verify_start(phone_number.phone, "sms") do
-      {:ok, sid} ->
-        phone_number
-        |> change(sid: sid)
-        |> Repo.update()
-
-      {:error, message} ->
+      {:error, :verify_start, message, _} ->
         {:error,
-         phone_number
-         |> PhoneNumber.changeset()
+         PhoneNumber.changeset(%PhoneNumber{}, attrs)
          |> add_error(:phone, message)
          |> Map.put(:action, :insert)}
     end
