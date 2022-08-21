@@ -42,14 +42,13 @@ defmodule Lenny.PhoneNumbers do
     |> Multi.update_all(
       :delete_pending,
       fn %{insert: phone_number} ->
-        now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
         from(p in PhoneNumber,
           where:
             p.user_id == ^phone_number.user_id and
               p.id != ^phone_number.id and
               is_nil(p.deleted_at) and
               is_nil(p.verified_at),
-          update: [set: [deleted_at: ^now]]
+          update: [set: [deleted_at: ^now()]]
         )
       end,
       []
@@ -94,7 +93,7 @@ defmodule Lenny.PhoneNumbers do
       case Twilio.verify_check(phone_number.sid, code) do
         :ok ->
           phone_number
-          |> change(verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+          |> change(verified_at: now())
           |> Repo.update()
 
         {:error, message} ->
@@ -108,7 +107,9 @@ defmodule Lenny.PhoneNumbers do
 
   def soft_delete_phone_number(%PhoneNumber{} = phone_number) do
     phone_number
-    |> change(deleted_at: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second))
+    |> change(deleted_at: now())
     |> Repo.update!()
   end
+
+  defp now, do: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
 end
