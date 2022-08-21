@@ -54,7 +54,7 @@ defmodule LennyWeb.LennyLiveTest do
     %PhoneNumber{
       user_id: user.id,
       phone: "+13126180256",
-      status: "approved"
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     }
     |> Repo.insert!()
 
@@ -95,7 +95,7 @@ defmodule LennyWeb.LennyLiveTest do
     %PhoneNumber{
       user_id: user.id,
       phone: "+15551112222",
-      status: "approved"
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     }
     |> Repo.insert!()
 

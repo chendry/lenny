@@ -11,7 +11,7 @@ defmodule Lenny.PhoneNumbers do
   def get_approved_phone_number(%User{} = user) do
     PhoneNumber
     |> for_user(user)
-    |> where([p], p.status == "approved")
+    |> where([p], not is_nil(p.verified_at))
     |> limit(1)
     |> Repo.one()
   end
@@ -19,7 +19,7 @@ defmodule Lenny.PhoneNumbers do
   def get_pending_phone_number(%User{} = user) do
     PhoneNumber
     |> for_user(user)
-    |> where([p], is_nil(p.status) or p.status == "pending")
+    |> where([p], is_nil(p.verified_at))
     |> limit(1)
     |> Repo.one()
   end
@@ -69,7 +69,7 @@ defmodule Lenny.PhoneNumbers do
       case Twilio.verify_check(phone_number.sid, code) do
         :ok ->
           phone_number
-          |> change(status: "approved")
+          |> change(verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
           |> Repo.update()
 
         {:error, message} ->

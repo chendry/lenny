@@ -7,7 +7,7 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
     field :phone, :string
     field :channel, :string
     field :sid, :string
-    field :status, :string
+    field :verified_at, :naive_datetime
     field :deleted_at, :naive_datetime
 
     timestamps()
