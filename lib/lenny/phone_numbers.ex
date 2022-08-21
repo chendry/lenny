@@ -36,7 +36,17 @@ defmodule Lenny.PhoneNumbers do
     |> PhoneNumber.changeset(attrs)
     |> Repo.insert()
     |> case do
-      {:ok, phone_number} -> start_new_verification(phone_number)
+      {:ok, phone_number} ->
+        now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+
+        PhoneNumber
+        |> where(user_id: ^user.id)
+        |> where([p], p.id != ^phone_number.id)
+        |> where([p], is_nil(p.deleted_at) and is_nil(p.verified_at))
+        |> Repo.update_all(set: [deleted_at: now])
+
+        start_new_verification(phone_number)
+
       error -> error
     end
   end

@@ -1,0 +1,36 @@
+defmodule Lenny.PhoneNumbersTest do
+  use Lenny.DataCase
+
+  alias Lenny.PhoneNumbers
+  alias Lenny.PhoneNumbers.PhoneNumber
+
+  import Lenny.AccountsFixtures
+  import Lenny.PhoneNumbersFixtures
+
+  test "register_phone_number_and_start_verification deletes pending phone numbers" do
+    user = user_fixture()
+
+    p1 = phone_number_fixture(user, verified_at: ~N[2022-08-21 15:37:22], deleted_at: nil)
+    p2 = phone_number_fixture(user, verified_at: nil, deleted_at: ~N[2022-08-21 15:39:41])
+    p3 = phone_number_fixture(user, verified_at: nil, deleted_at: nil)
+    p4 = phone_number_fixture(user_fixture(), verified_at: nil, deleted_at: nil)
+
+    Lenny.TwilioMock
+    |> Mox.expect(:verify_start, fn _, _ -> {:ok, "VE-XXXX"} end)
+
+    {:ok, phone_number} =
+      PhoneNumbers.register_phone_number_and_start_verification(
+        user,
+        %{"phone" => "+15551112222"}
+      )
+
+    assert phone_number.sid == "VE-XXXX"
+    assert phone_number.verified_at == nil
+    assert phone_number.deleted_at == nil
+
+    assert Repo.get(PhoneNumber, p1.id).deleted_at == nil
+    assert Repo.get(PhoneNumber, p2.id).deleted_at == ~N[2022-08-21 15:39:41]
+    assert Repo.get(PhoneNumber, p3.id).deleted_at != nil
+    assert Repo.get(PhoneNumber, p4.id).deleted_at == nil
+  end
+end
