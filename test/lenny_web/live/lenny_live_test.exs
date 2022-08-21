@@ -10,7 +10,7 @@ defmodule LennyWeb.LennyLiveTest do
   setup [:register_and_log_in_user]
 
   test "register a number", %{conn: conn} do
-    {:ok, lenny_live, html} = live(conn, "/lenny")
+    {:ok, lenny_live, html} = live(conn, "/lenny/new")
 
     assert html =~ ~r{<h1.*>\s*Register a phone number}
 
@@ -65,7 +65,7 @@ defmodule LennyWeb.LennyLiveTest do
 
     html =
       lenny_live
-      |> element("button", "Change")
+      |> element("a", "Change")
       |> render_click()
 
     assert html =~ ~r{<h1.*>\s*Change your phone number}
@@ -106,7 +106,7 @@ defmodule LennyWeb.LennyLiveTest do
 
     html =
       lenny_live
-      |> element("button", "Change")
+      |> element("a", "Change")
       |> render_click()
 
     assert html =~ ~r{<h1.*>\s*Change your phone number}

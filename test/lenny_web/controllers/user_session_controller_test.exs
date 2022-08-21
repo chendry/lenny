@@ -34,7 +34,11 @@ defmodule LennyWeb.UserSessionControllerTest do
 
       # Now do a logged in request and assert on the menu
       conn = get(conn, "/lenny")
+      assert "/lenny/new" = redir_path = redirected_to(conn, 302)
+
+      conn = get(recycle(conn), redir_path)
       response = html_response(conn, 200)
+
       assert response =~ user.email
       assert response =~ ~r{<a.*>\s*Settings}
       assert response =~ ~r{<a.*>\s*Log out}

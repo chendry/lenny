@@ -1,11 +1,14 @@
 <div class="container mx-auto pt-4">
-  <%= if @phone_number_changeset == nil and @verification_changeset == nil and @approved_phone_number != nil do %>
-    <h1 class="text-3xl font-bold mb-4">
-      Waiting for a forwarded call...
-    </h1>
+  <%= if @live_action == :index do %>
+    <%= if @approved_phone_number do %>
+      <h1 class="text-3xl font-bold mb-4">
+        Waiting for a forwarded call...
+      </h1>
+    <% end %>
+    <%= live_patch "Change", to: "/lenny/new", class: "text-blue-600" %>
   <% end %>
 
-  <%= if @phone_number_changeset do %>
+  <%= if @live_action == :new do %>
     <h1 class="text-3xl font-bold mb-4">
       <%= if @approved_phone_number == nil do %>
         Register a phone number
@@ -14,7 +17,7 @@
       <% end %>
     </h1>
 
-    <.form for={@phone_number_changeset} let={f} phx-submit="register_phone_number">
+    <.form for={@changeset} let={f} phx-submit="register_phone_number">
       <div class="flex flex-col space-y-2">
         <%= label f, :phone do %>
           Phone Number (format: "+15554443333")
@@ -26,20 +29,22 @@
       <div class="mt-4">
         <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
         <%= if @approved_phone_number do %>
-          <a href="#" phx-click="cancel_registration" class="ml-4 text-blue-600">
-            Cancel
-          </a>
+          <%= live_patch "Cancel", to: "/lenny", class: "ml-4 text-blue-600" %>
         <% end %>
       </div>
     </.form>
   <% end %>
 
-  <%= if @verification_changeset do %>
+  <%= if @live_action == :verify do %>
     <h1 class="text-3xl font-bold mb-4">
       Verify your phone number:
     </h1>
 
-    <.form for={@verification_changeset} let={f} phx-submit="verify_phone_number">
+    <p class="my-2">
+      <%= @pending_phone_number.phone %>
+    </p>
+
+    <.form for={@changeset} let={f} phx-submit="verify_phone_number">
       <div class="flex flex-col space-y-2">
         <%= label f, :code %>
         <%= text_input f, :code %>
@@ -48,31 +53,19 @@
 
       <div class="mt-4">
         <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
-        <%= if @approved_phone_number != nil do %>
-          <a href="#" phx-click="cancel_verification" class="ml-4 text-blue-600">
-            Cancel
-          </a>
-        <% end %>
+        <a href="#" phx-click="cancel_verification" class="ml-4 text-blue-600">
+          Cancel
+        </a>
       </div>
     </.form>
   <% end %>
 
-  <%= if @phone_number_changeset == nil do %>
-    <div class="mt-8">
-      <%= if @approved_phone_number do %>
-        <p>
-          Approved: <%= @approved_phone_number.phone %>
-          <%= if @verification_changeset == nil do %>
-            <button phx-click="change_phone_number" class="ml-2 text-blue-600">
-              Change
-            </button>
-          <% end %>
-        </p>
-      <% end %>
-
-      <%= if @pending_phone_number do %>
-        <p>Pending: <%= @pending_phone_number.phone %></p>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="mt-4">
+    <%= if @approved_phone_number do %>
+      <div>Approved: <%= @approved_phone_number.phone %></div>
+    <% end %>
+    <%= if @pending_phone_number do %>
+      <div>Pending: <%= @pending_phone_number.phone %></div>
+    <% end %>
+  </div>
 </div>

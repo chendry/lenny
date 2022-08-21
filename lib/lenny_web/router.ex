@@ -26,7 +26,9 @@ defmodule LennyWeb.Router do
   scope "/", LennyWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    live "/lenny", LennyLive
+    live "/lenny", LennyLive, :index
+    live "/lenny/new", LennyLive, :new
+    live "/lenny/verify", LennyLive, :verify
   end
 
   # Other scopes may use custom stacks.
