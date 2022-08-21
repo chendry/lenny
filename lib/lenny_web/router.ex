@@ -32,9 +32,11 @@ defmodule LennyWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", LennyWeb do
-  #   pipe_through :api
-  # end
+  scope "/", LennyWeb do
+    pipe_through :api
+
+    post "/twilio", TwilioController, :incoming
+  end
 
   # Enables LiveDashboard only for development
   #
