@@ -37,7 +37,39 @@ defmodule LennyWeb.TwilioControllerTest do
   end
 
   test "POST /twilio/status/call", %{conn: conn} do
-    params = %{}
+    params = %{
+      "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "ApiVersion" => "2010-04-01",
+      "CallDuration" => "28",
+      "CallSid" => "CA1ec1bf246aa203e56716b602d6f6c8c9",
+      "CallStatus" => "completed",
+      "CallbackSource" => "call-progress-events",
+      "Called" => "+19384653669",
+      "CalledCity" => "",
+      "CalledCountry" => "US",
+      "CalledState" => "AL",
+      "CalledZip" => "",
+      "Caller" => "+13126180256",
+      "CallerCity" => "CHICAGO",
+      "CallerCountry" => "US",
+      "CallerState" => "IL",
+      "CallerZip" => "60605",
+      "Direction" => "inbound",
+      "Duration" => "1",
+      "From" => "+13126180256",
+      "FromCity" => "CHICAGO",
+      "FromCountry" => "US",
+      "FromState" => "IL",
+      "FromZip" => "60605",
+      "SequenceNumber" => "0",
+      "Timestamp" => "Mon, 22 Aug 2022 11:56:46 +0000",
+      "To" => "+19384653669",
+      "ToCity" => "",
+      "ToCountry" => "US",
+      "ToState" => "AL",
+      "ToZip" => ""
+    }
+
     conn = post(conn, "/twilio/status/call", params)
     assert response(conn, 200) == "OK"
   end
