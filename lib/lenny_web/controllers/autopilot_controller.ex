@@ -1,9 +1,13 @@
 defmodule LennyWeb.AutopilotController do
   use LennyWeb, :controller
 
+  require Logger
+
   alias LennyWeb.TwiML
 
-  def iteration(conn, %{"i" => i}) do
+  def iteration(conn, %{"i" => i} = params) do
+    Logger.info("#{__MODULE__}: iteration: #{inspect(params)}")
+
     i = String.to_integer(i)
 
     conn
