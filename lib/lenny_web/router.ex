@@ -36,6 +36,7 @@ defmodule LennyWeb.Router do
     pipe_through :api
 
     post "/twilio", TwilioController, :incoming
+    post "/autopilot/:i", AutopilotController, :iteration
   end
 
   # Enables LiveDashboard only for development

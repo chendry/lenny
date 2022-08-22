@@ -33,5 +33,6 @@ defmodule LennyWeb.TwilioControllerTest do
 
     conn = post(conn, "/twilio", params)
     assert response(conn, 200) =~ "lenny_01.mp3"
+    assert response(conn, 200) =~ "/autopilot/1"
   end
 end
