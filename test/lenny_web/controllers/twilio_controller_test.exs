@@ -1,7 +1,7 @@
 defmodule LennyWeb.TwilioControllerTest do
   use LennyWeb.ConnCase
 
-  test "POST /twilio", %{conn: conn} do
+  test "POST /twilio/incoming", %{conn: conn} do
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "ApiVersion" => "2010-04-01",
@@ -31,8 +31,14 @@ defmodule LennyWeb.TwilioControllerTest do
       "ToZip" => ""
     }
 
-    conn = post(conn, "/twilio", params)
+    conn = post(conn, "/twilio/incoming", params)
     assert response(conn, 200) =~ "lenny_01.mp3"
     assert response(conn, 200) =~ "/autopilot/1"
+  end
+
+  test "POST /twilio/status/call", %{conn: conn} do
+    params = %{}
+    conn = post(conn, "/twilio/status/call", params)
+    assert response(conn, 200) == "OK"
   end
 end

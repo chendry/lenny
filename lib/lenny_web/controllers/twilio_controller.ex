@@ -20,4 +20,9 @@ defmodule LennyWeb.TwilioController do
       """
     )
   end
+
+  def call_status(conn, params) do
+    Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
+    send_resp(conn, 200, "OK")
+  end
 end

@@ -35,7 +35,8 @@ defmodule LennyWeb.Router do
   scope "/", LennyWeb do
     pipe_through :api
 
-    post "/twilio", TwilioController, :incoming
+    post "/twilio/incoming", TwilioController, :incoming
+    post "/twilio/status/call", TwilioController, :call_status
     post "/autopilot/:i", AutopilotController, :iteration
   end
 
