@@ -26,4 +26,7 @@ defmodule LennyWeb.AudioFileUrls do
       18 -> Routes.static_url(Endpoint, "/audio/lenny/lenny_19.mp3")
     end
   end
+
+  def hello, do: Routes.static_url(Endpoint, "/audio/lenny/lenny_17.mp3")
+  def hello_are_you_there, do: Routes.static_url(Endpoint, "/audio/lenny/lenny_18.mp3")
 end
