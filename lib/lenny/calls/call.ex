@@ -3,12 +3,12 @@ defmodule Lenny.Calls.Call do
   import Ecto.Changeset
 
   schema "calls" do
-    field :ended_at, :naive_datetime
-    field :forwarded_from, :string
-    field :from, :string
-    field :params, :map
     field :sid, :string
+    field :from, :string
     field :to, :string
+    field :forwarded_from, :string
+    field :ended_at, :naive_datetime
+    field :params, :map
 
     timestamps()
   end
