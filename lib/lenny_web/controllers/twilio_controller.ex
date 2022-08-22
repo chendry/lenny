@@ -3,6 +3,8 @@ defmodule LennyWeb.TwilioController do
 
   require Logger
 
+  alias LennyWeb.AudioFileUrls
+
   def incoming(conn, %{"CallSid" => _sid} = params) do
     Logger.info("#{__MODULE__}: incoming: #{inspect(params)}")
 
@@ -14,7 +16,7 @@ defmodule LennyWeb.TwilioController do
       <?xml version="1.0" encoding="UTF-8"?>
       <Response>
         <Play>
-          #{Routes.static_url(conn, "/audio/lenny/lenny_01.mp3")}
+          #{AudioFileUrls.lenny(0)}
         </Play>
       </Response>
       """
