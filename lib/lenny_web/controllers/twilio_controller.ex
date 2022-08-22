@@ -13,7 +13,9 @@ defmodule LennyWeb.TwilioController do
       """
       <?xml version="1.0" encoding="UTF-8"?>
       <Response>
-        <Say>Hello</Say>
+        <Play>
+          #{Routes.static_url(conn, "/audio/lenny/lenny_01.mp3")}
+        </Play>
       </Response>
       """
     )
