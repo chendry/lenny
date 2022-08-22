@@ -3,10 +3,13 @@ defmodule LennyWeb.TwilioController do
 
   require Logger
 
+  alias Lenny.Calls
   alias LennyWeb.TwiML
 
   def incoming(conn, %{"CallSid" => _sid} = params) do
     Logger.info("#{__MODULE__}: incoming: #{inspect(params)}")
+
+    Calls.create_from_twilio_params!(params)
 
     conn
     |> put_resp_content_type("text/xml")
