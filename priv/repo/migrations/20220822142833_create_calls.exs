@@ -3,14 +3,16 @@ defmodule Lenny.Repo.Migrations.CreateCalls do
 
   def change do
     create table(:calls) do
-      add :sid, :string
-      add :from, :string
-      add :to, :string
+      add :sid, :string, null: false
+      add :from, :string, null: false
+      add :to, :string, null: false
       add :forwarded_from, :string
       add :ended_at, :naive_datetime
-      add :params, :map
+      add :params, :map, null: false
 
       timestamps()
     end
+
+    create unique_index(:calls, :sid)
   end
 end
