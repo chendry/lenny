@@ -174,7 +174,7 @@ defmodule LennyWeb.LennyLive do
       Twilio.verify_cancel(phone_number.sid)
       PhoneNumbers.soft_delete_phone_number(phone_number)
     end
-    
+
     {:noreply, push_patch(socket, to: "/lenny")}
   end
 end
