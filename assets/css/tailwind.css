@@ -768,6 +768,10 @@ select {
   margin-top: 1rem;
 }
 
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }

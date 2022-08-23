@@ -58,7 +58,7 @@ defmodule LennyWeb.CallLiveTest do
     assert html =~ "Active call: CAXXXX1234"
   end
 
-  test "push the say buttotns during a call", %{conn: conn, user: user} do
+  test "push the say buttons during a call", %{conn: conn, user: user} do
     %PhoneNumber{
       user_id: user.id,
       phone: "+13126180256",
@@ -78,20 +78,59 @@ defmodule LennyWeb.CallLiveTest do
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
-      assert twiml =~ "lenny_02.mp3"
+      assert twiml =~ "lenny_01.mp3"
+      assert twiml =~ "autopilot"
     end)
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
-      assert twiml =~ "lenny_04.mp3"
+      assert twiml =~ "lenny_03.mp3"
+      assert twiml =~ "autopilot"
     end)
 
     _html =
       lenny_live
-      |> element("button", "01")
+      |> element("button#say_01")
       |> render_click()
 
     _html =
       lenny_live
-      |> element("button", "03")
+      |> element("button#say_03", "")
+      |> render_click()
+  end
+
+  test "push the say buttons with autopilot off during a call", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    %Call{
+      sid: "CAXXXX1234",
+      from: "+13126180256",
+      to: "+18384653669",
+      ended_at: nil,
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, _html} = live(conn, "/calls")
+
+    Lenny.TwilioMock
+    |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+      assert twiml =~ "lenny_07.mp3"
+      refute twiml =~ "autopilot"
+    end)
+
+    _html =
+      lenny_live
+      |> element("#autopilot")
+      |> render_click()
+
+    refute render(element(lenny_live, "#autopilot")) =~ "checked"
+
+    _html =
+      lenny_live
+      |> element("button#say_07", "")
       |> render_click()
   end
 end
