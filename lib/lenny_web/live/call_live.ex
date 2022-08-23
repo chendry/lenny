@@ -1,62 +1,44 @@
 defmodule LennyWeb.CallLive do
   use LennyWeb, :live_view
 
-  alias Lenny.Twilio
-  alias Lenny.Accounts
   alias Lenny.Calls
-  alias Lenny.PhoneNumbers
+  alias Lenny.Twilio
   alias LennyWeb.AudioFileUrls
   alias LennyWeb.TwiML
 
   @impl true
-  def mount(_params, %{"user_token" => user_token}, socket) do
-    user = Accounts.get_user_by_session_token(user_token)
-    phone_number = PhoneNumbers.get_approved_phone_number(user)
-
-    if phone_number == nil do
-      {:ok, push_redirect(socket, to: "/phone_numbers/new")}
-    else
-      if connected?(socket) do
-        Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{phone_number.phone}")
-      end
-
-      call = Calls.get_active_call(phone_number.phone)
-
-      {:ok,
-       socket
-       |> assign(:phone_number, phone_number)
-       |> assign(:sid, call && call.sid)
-       |> assign(:autopilot, true)}
+  def mount(%{"sid" => sid}, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
     end
+
+    call = Calls.get_by_sid!(sid)
+    
+    {:ok,
+      socket
+      |> assign(:sid, sid)
+      |> assign(:ended, call.ended_at != nil)
+      |> assign(:autopilot, true)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div class="container mx-auto pt-4 pb-12 px-2">
-      <h1 class="text-3xl font-bold">
-        <%= if @sid == nil do %>
-          Waiting for a forwarded call...
-        <% else %>
-          Active call: <%= @sid %>
-        <% end %>
-      </h1>
       <p class="mt-4">
-        Approved: <%= @phone_number.phone %>
-      </p>
-      <p class="mt-4">
-        <%= live_redirect "Change number", to: "/phone_numbers/new", class: "text-blue-600" %>
+        Active call: <%= @sid %>
       </p>
 
-      <%= if @sid do %>
-        <div class="mt-8">
-          <label>
-            <input id="autopilot" type="checkbox" checked={@autopilot} phx-click="toggle_autopilot">
-            <span class="ml-2">
-              Automatically proceed to next sound
-            </span>
-          </label>
-        </div>
+      <%= if @ended do %>
+        <p class="mt-4">Call ended.</p>
+      <% else %>
+
+        <label class="mt-4">
+          <input id="autopilot" type="checkbox" checked={@autopilot} phx-click="toggle_autopilot">
+          <span class="ml-2">
+            Automatically proceed to next sound
+          </span>
+        </label>
 
         <div class="mt-4 flex flex-col space-y-4">
           <button id="say_00" class={say_button_class()} phx-click="say" value={00}>Hello, this is Lenny.</button>
@@ -120,13 +102,8 @@ defmodule LennyWeb.CallLive do
   defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
 
   @impl true
-  def handle_info({:call, :started, sid}, socket) do
-    {:noreply, assign(socket, :sid, sid)}
-  end
-
-  @impl true
-  def handle_info({:call, :ended}, socket) do
-    {:noreply, assign(socket, :sid, nil)}
+  def handle_info(:call_ended, socket) do
+    {:noreply, assign(socket, :ended, true)}
   end
 
   @impl true

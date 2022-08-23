@@ -12,7 +12,7 @@ defmodule LennyWeb.TwilioController do
     call = Calls.create_from_twilio_params!(params)
     from = Calls.get_effective_number(call)
 
-    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{from}", {:call, :started, sid})
+    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{from}", {:call_started, sid})
 
     conn
     |> put_resp_content_type("text/xml")
@@ -30,11 +30,8 @@ defmodule LennyWeb.TwilioController do
   def call_status(conn, %{"CallSid" => sid} = params) do
     Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
 
-    call = Calls.get_by_sid!(sid)
-    from = Calls.get_effective_number(call)
-
     if params["CallStatus"] == "completed" do
-      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{from}", {:call, :ended})
+      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", :call_ended)
       Calls.mark_as_finished!(sid)
     end
 

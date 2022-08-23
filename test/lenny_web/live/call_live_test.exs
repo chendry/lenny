@@ -24,7 +24,9 @@ defmodule LennyWeb.CallLiveTest do
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/incoming", %{"CallSid" => "CAXXX", "From" => "+13126180256"})
 
-    html = render(lenny_live)
+    {path, _flash} = assert_redirect(lenny_live)
+    {:ok, lenny_live, html} = live(conn, path)
+
     refute html =~ "Waiting for a forwarded call..."
     assert html =~ "Active call: CAXXX"
 
@@ -32,8 +34,7 @@ defmodule LennyWeb.CallLiveTest do
     |> post("/twilio/status/call", %{"CallSid" => "CAXXX", "CallStatus" => "completed"})
 
     html = render(lenny_live)
-    assert html =~ "Waiting for a forwarded call..."
-    refute html =~ "Active call: CAXXX"
+    assert html =~ "Call ended."
   end
 
   test "load page with an active call in progress", %{conn: conn, user: user} do
@@ -52,7 +53,9 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, _lenny_live, html} = live(conn, "/calls")
+    {:ok, _lenny_live, html} =
+      live(conn, "/calls")
+      |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     refute html =~ "Waiting for a forwarded call..."
     assert html =~ "Active call: CAXXXX1234"
@@ -74,7 +77,9 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} = live(conn, "/calls")
+    {:ok, lenny_live, _html} =
+      live(conn, "/calls")
+      |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
@@ -113,7 +118,9 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} = live(conn, "/calls")
+    {:ok, lenny_live, _html} =
+      live(conn, "/calls")
+      |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
@@ -150,7 +157,9 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} = live(conn, "/calls")
+    {:ok, lenny_live, _html} =
+      live(conn, "/calls")
+      |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
@@ -187,7 +196,9 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} = live(conn, "/calls")
+    {:ok, lenny_live, _html} =
+      live(conn, "/calls")
+      |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->

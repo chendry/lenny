@@ -180,8 +180,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> form("form", %{"verification_form[code]" => "1234"})
       |> render_submit()
       |> follow_redirect(conn, "/calls")
+      |> follow_redirect(conn, "/calls/CAXXXX5678")
 
-    assert html =~ "Approved: +15551231234"
     assert html =~ "Active call: CAXXXX5678"
   end
 end
