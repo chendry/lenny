@@ -4,7 +4,7 @@ defmodule LennyWeb.TwiML do
   alias LennyWeb.AudioFileUrls
 
   def autopilot_iteration(i) do
-    next_action_path = Routes.autopilot_path(Endpoint, :iteration, i + 1)
+    next_action_url = Routes.autopilot_url(Endpoint, :iteration, i + 1)
 
     """
     <Play>
@@ -17,7 +17,7 @@ defmodule LennyWeb.TwiML do
       enhanced="true"
       timeout="7"
       speechTimeout="auto"
-      action="#{next_action_path}"
+      action="#{next_action_url}"
     />
 
     <Play>
@@ -30,7 +30,7 @@ defmodule LennyWeb.TwiML do
       enhanced="true"
       timeout="5"
       speechTimeout="auto"
-      action="#{next_action_path}"
+      action="#{next_action_url}"
     />
 
     <Play>
@@ -43,7 +43,7 @@ defmodule LennyWeb.TwiML do
       enhanced="true"
       timeout="5"
       speechTimeout="auto"
-      action="#{next_action_path}"
+      action="#{next_action_url}"
     />
     """
   end
