@@ -10,12 +10,12 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   setup [:register_and_log_in_user]
 
   test "register a number", %{conn: conn} do
-    {:ok, lenny_live, html} = live(conn, "/phone_numbers/new")
+    {:ok, live_view, html} = live(conn, "/phone_numbers/new")
 
     assert html =~ ~r{<h1.*>\s*Register a phone number}
 
     html =
-      lenny_live
+      live_view
       |> form("form", %{"phone_number[phone]" => "555-555-5555"})
       |> render_submit()
 
@@ -30,22 +30,22 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     |> Mox.expect(:verify_check, fn "VE-XXXX", "5678" -> :ok end)
 
     html =
-      lenny_live
+      live_view
       |> form("form", %{"phone_number[phone]" => "+13126180256"})
       |> render_submit()
 
     assert html =~ ~r{<h1.*>\s*Verify your phone number}
 
     html =
-      lenny_live
+      live_view
       |> form("form", %{"verification_form[code]" => "1234"})
       |> render_submit()
 
     assert html =~ ~r{<h1.*>\s*Verify your phone number}
     assert html =~ "invalid according to twilio"
 
-    {:ok, _lenny_live, html} =
-      lenny_live
+    {:ok, _live_view, html} =
+      live_view
       |> form("form", %{"verification_form[code]" => "5678"})
       |> render_submit()
       |> follow_redirect(conn, "/calls")
@@ -61,13 +61,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/calls")
 
     assert html =~ ~r{<h1.*>\s*Waiting for a forwarded call}
     assert html =~ "Approved: +13126180256"
 
-    {:ok, lenny_live, html} =
-      lenny_live
+    {:ok, live_view, html} =
+      live_view
       |> element("a", "Change")
       |> render_click()
       |> follow_redirect(conn, "/phone_numbers/new")
@@ -79,15 +79,15 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     |> Mox.expect(:verify_check, fn "VE-XXXX", "9999" -> :ok end)
 
     html =
-      lenny_live
+      live_view
       |> form("form", %{"phone_number[phone]" => "+13125551234"})
       |> render_submit()
 
     assert html =~ "Approved: +13126180256"
     assert html =~ "Pending: +13125551234"
 
-    {:ok, _lenny_live, html} =
-      lenny_live
+    {:ok, _live_view, html} =
+      live_view
       |> form("form", %{"verification_form[code]" => "9999"})
       |> render_submit()
       |> follow_redirect(conn, "/calls")
@@ -104,13 +104,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/calls")
 
     assert html =~ ~r{<h1.*>\s*Waiting for a forwarded call}
     assert html =~ "Approved: +15551112222"
 
-    {:ok, lenny_live, html} =
-      lenny_live
+    {:ok, live_view, html} =
+      live_view
       |> element("a", "Change")
       |> render_click()
       |> follow_redirect(conn, "/phone_numbers/new")
@@ -122,15 +122,15 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     |> Mox.expect(:verify_cancel, fn "VE-XXXX" -> :ok end)
 
     html =
-      lenny_live
+      live_view
       |> form("form", %{"phone_number[phone]" => "+15551113333"})
       |> render_submit()
 
     assert html =~ "Approved: +15551112222"
     assert html =~ "Pending: +15551113333"
 
-    {:ok, _lenny_live, html} =
-      lenny_live
+    {:ok, _live_view, html} =
+      live_view
       |> element("a", "Cancel")
       |> render_click()
       |> follow_redirect(conn, "/calls")
@@ -155,11 +155,11 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/calls")
     assert html =~ "Waiting for a forwarded call..."
 
-    {:ok, lenny_live, html} =
-      lenny_live
+    {:ok, live_view, html} =
+      live_view
       |> element("a", "Change number")
       |> render_click()
       |> follow_redirect(conn, "/phone_numbers/new")
@@ -171,12 +171,12 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" -> :ok end)
 
     _html =
-      lenny_live
+      live_view
       |> form("form", %{"phone_number[phone]" => "+15551231234"})
       |> render_submit()
 
-    {:ok, _lenny_live, html} =
-      lenny_live
+    {:ok, _live_view, html} =
+      live_view
       |> form("form", %{"verification_form[code]" => "1234"})
       |> render_submit()
       |> follow_redirect(conn, "/calls")

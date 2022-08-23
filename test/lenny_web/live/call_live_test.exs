@@ -17,15 +17,15 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/calls")
     assert html =~ "Waiting for a forwarded call..."
     refute html =~ "Active call:"
 
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/incoming", %{"CallSid" => "CAXXX", "From" => "+13126180256"})
 
-    {path, _flash} = assert_redirect(lenny_live)
-    {:ok, lenny_live, html} = live(conn, path)
+    {path, _flash} = assert_redirect(live_view)
+    {:ok, live_view, html} = live(conn, path)
 
     refute html =~ "Waiting for a forwarded call..."
     assert html =~ "Active call: CAXXX"
@@ -33,7 +33,7 @@ defmodule LennyWeb.CallLiveTest do
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/status/call", %{"CallSid" => "CAXXX", "CallStatus" => "completed"})
 
-    html = render(lenny_live)
+    html = render(live_view)
     assert html =~ "Call ended."
   end
 
@@ -53,7 +53,7 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, _lenny_live, html} =
+    {:ok, _live_view, html} =
       live(conn, "/calls")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
@@ -77,7 +77,7 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} =
+    {:ok, live_view, _html} =
       live(conn, "/calls")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
@@ -92,12 +92,12 @@ defmodule LennyWeb.CallLiveTest do
     end)
 
     _html =
-      lenny_live
+      live_view
       |> element("button#say_01")
       |> render_click()
 
     _html =
-      lenny_live
+      live_view
       |> element("button#say_03", "")
       |> render_click()
   end
@@ -118,7 +118,7 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} =
+    {:ok, live_view, _html} =
       live(conn, "/calls")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
@@ -129,14 +129,14 @@ defmodule LennyWeb.CallLiveTest do
     end)
 
     _html =
-      lenny_live
+      live_view
       |> element("#autopilot")
       |> render_click()
 
-    refute render(element(lenny_live, "#autopilot")) =~ "checked"
+    refute render(element(live_view, "#autopilot")) =~ "checked"
 
     _html =
-      lenny_live
+      live_view
       |> element("button#say_07", "")
       |> render_click()
   end
@@ -157,7 +157,7 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    {:ok, lenny_live, _html} =
+    {:ok, live_view, _html} =
       live(conn, "/calls")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
@@ -170,12 +170,12 @@ defmodule LennyWeb.CallLiveTest do
     end)
 
     _html =
-      lenny_live
+      live_view
       |> element("#dtmf-1")
       |> render_click()
 
     _html =
-      lenny_live
+      live_view
       |> element("#dtmf-pound")
       |> render_click()
   end
@@ -197,7 +197,7 @@ defmodule LennyWeb.CallLiveTest do
       }
       |> Repo.insert!()
 
-    {:ok, lenny_live, _html} =
+    {:ok, live_view, _html} =
       live(conn, "/calls")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
@@ -209,7 +209,7 @@ defmodule LennyWeb.CallLiveTest do
     assert Repo.get(Call, call.id).ended_at == nil
 
     _html =
-      lenny_live
+      live_view
       |> element("#hangup")
       |> render_click()
 
