@@ -90,6 +90,7 @@ defmodule LennyWeb.CallLive do
         <Play>
           #{AudioFileUrls.lenny(String.to_integer(i))}
         </Play>
+        <Pause length="120" />
       </Response>
       """
     )
