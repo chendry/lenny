@@ -188,13 +188,14 @@ defmodule LennyWeb.CallLiveTest do
     }
     |> Repo.insert!()
 
-    %Call{
-      sid: "CAXXXX1234",
-      from: "+13126180256",
-      to: "+18384653669",
-      ended_at: nil
-    }
-    |> Repo.insert!()
+    call =
+      %Call{
+        sid: "CAXXXX1234",
+        from: "+13126180256",
+        to: "+18384653669",
+        ended_at: nil
+      }
+      |> Repo.insert!()
 
     {:ok, lenny_live, _html} =
       live(conn, "/calls")
@@ -205,9 +206,13 @@ defmodule LennyWeb.CallLiveTest do
       assert twiml =~ "<Hangup />"
     end)
 
+    assert Repo.get(Call, call.id).ended_at == nil
+
     _html =
       lenny_live
       |> element("#hangup")
       |> render_click()
+
+    assert Repo.get(Call, call.id).ended_at != nil
   end
 end

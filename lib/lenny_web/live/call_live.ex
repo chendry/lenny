@@ -152,6 +152,8 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("hangup", _params, socket) do
+    Calls.mark_as_finished!(socket.assigns.sid)
+
     Twilio.modify_call(
       socket.assigns.sid,
       """
