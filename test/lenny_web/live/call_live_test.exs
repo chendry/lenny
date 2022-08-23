@@ -57,4 +57,41 @@ defmodule LennyWeb.CallLiveTest do
     refute html =~ "Waiting for a forwarded call..."
     assert html =~ "Active call: CAXXXX1234"
   end
+
+  test "push the say buttotns during a call", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    %Call{
+      sid: "CAXXXX1234",
+      from: "+13126180256",
+      to: "+18384653669",
+      ended_at: nil,
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, _html} = live(conn, "/calls")
+
+    Lenny.TwilioMock
+    |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+      assert twiml =~ "lenny_02.mp3"
+    end)
+    |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+      assert twiml =~ "lenny_04.mp3"
+    end)
+
+    _html =
+      lenny_live
+      |> element("button", "01")
+      |> render_click()
+
+    _html =
+      lenny_live
+      |> element("button", "03")
+      |> render_click()
+  end
 end
