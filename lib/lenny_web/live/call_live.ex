@@ -11,7 +11,7 @@ defmodule LennyWeb.CallLive do
     phone_number = PhoneNumbers.get_approved_phone_number(user)
 
     if phone_number == nil do
-      {:ok, push_redirect(socket, to: "/phone/new")}
+      {:ok, push_redirect(socket, to: "/phone_numbers/new")}
     else
       if connected?(socket) do
         Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{phone_number.phone}")
@@ -41,7 +41,7 @@ defmodule LennyWeb.CallLive do
         Approved: <%= @phone_number.phone %>
       </p>
       <p class="mt-4">
-        <%= live_redirect "Change number", to: "/phone/new", class: "text-blue-600" %>
+        <%= live_redirect "Change number", to: "/phone_numbers/new", class: "text-blue-600" %>
       </p>
     </div>
     """

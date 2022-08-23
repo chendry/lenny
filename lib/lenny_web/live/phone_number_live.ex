@@ -1,4 +1,4 @@
-defmodule LennyWeb.PhoneLive do
+defmodule LennyWeb.PhoneNumberLive do
   use LennyWeb, :live_view
 
   alias Lenny.Accounts
@@ -59,7 +59,7 @@ defmodule LennyWeb.PhoneLive do
           <div class="mt-4">
             <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
             <%= if @approved_phone_number do %>
-              <%= live_patch "Cancel", to: "/call", class: "ml-4 text-blue-600" %>
+              <%= live_patch "Cancel", to: "/calls", class: "ml-4 text-blue-600" %>
             <% end %>
           </div>
         </.form>
@@ -110,7 +110,7 @@ defmodule LennyWeb.PhoneLive do
     )
     |> case do
       {:ok, _phone_number} ->
-        {:noreply, push_patch(socket, to: "/phone/verify")}
+        {:noreply, push_patch(socket, to: "/phone_numbers/verify")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -129,7 +129,7 @@ defmodule LennyWeb.PhoneLive do
     )
     |> case do
       {:ok, _phone_number} ->
-        {:noreply, push_redirect(socket, to: "/call")}
+        {:noreply, push_redirect(socket, to: "/calls")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -140,7 +140,7 @@ defmodule LennyWeb.PhoneLive do
         {:noreply,
          socket
          |> put_flash(:error, message)
-         |> push_patch(to: "/phone/new")}
+         |> push_patch(to: "/phone_numbers/new")}
     end
   end
 
@@ -153,6 +153,6 @@ defmodule LennyWeb.PhoneLive do
       PhoneNumbers.soft_delete_phone_number(phone_number)
     end
 
-    {:noreply, push_redirect(socket, to: "/call")}
+    {:noreply, push_redirect(socket, to: "/calls")}
   end
 end
