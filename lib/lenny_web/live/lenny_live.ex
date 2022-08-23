@@ -3,6 +3,7 @@ defmodule LennyWeb.LennyLive do
 
   alias Lenny.Accounts
   alias Lenny.Twilio
+  alias Lenny.Calls
   alias Lenny.PhoneNumbers
   alias Lenny.PhoneNumbers.PhoneNumber
   alias Lenny.PhoneNumbers.VerificationForm
@@ -10,9 +11,10 @@ defmodule LennyWeb.LennyLive do
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
     user = Accounts.get_user_by_session_token(user_token)
+    phone_number = PhoneNumbers.get_approved_phone_number(user)
+    call = phone_number && Calls.get_active_call(phone_number.phone)
 
     if connected?(socket) do
-      phone_number = PhoneNumbers.get_approved_phone_number(user)
       if phone_number != nil do
         Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{phone_number.phone}")
       end
@@ -21,7 +23,7 @@ defmodule LennyWeb.LennyLive do
     {:ok,
      socket
      |> assign(:user, user)
-     |> assign(:sid, nil)}
+     |> assign(:sid, call && call.sid)}
   end
 
   @impl true

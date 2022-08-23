@@ -5,6 +5,7 @@ defmodule LennyWeb.LennyLiveTest do
   import Phoenix.LiveViewTest
 
   alias Lenny.Repo
+  alias Lenny.Calls.Call
   alias Lenny.PhoneNumbers.PhoneNumber
 
   setup [:register_and_log_in_user]
@@ -157,5 +158,27 @@ defmodule LennyWeb.LennyLiveTest do
     html = render(lenny_live)
     assert html =~ "Waiting for a forwarded call..."
     refute html =~ "Active call: CAXXX"
+  end
+
+  test "load page with an active call in progress", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    %Call{
+      sid: "CAXXXX1234",
+      from: "+13126180256",
+      to: "+18384653669",
+      ended_at: nil,
+    }
+    |> Repo.insert!()
+
+    {:ok, _lenny_live, html} = live(conn, "/lenny")
+
+    refute html =~ "Waiting for a forwarded call..."
+    assert html =~ "Active call: CAXXXX1234"
   end
 end

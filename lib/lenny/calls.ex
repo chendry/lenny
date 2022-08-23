@@ -28,4 +28,12 @@ defmodule Lenny.Calls do
     |> where(sid: ^sid)
     |> Repo.update_all(set: [ended_at: now])
   end
+
+  def get_active_call(phone) do
+    Call
+    |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
+    |> order_by([c], desc: c.id)
+    |> limit(1)
+    |> Repo.one()
+  end
 end
