@@ -2,10 +2,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   use LennyWeb.ConnCase
 
   import Phoenix.LiveViewTest
-
-  alias Lenny.Repo
-  alias Lenny.Calls.Call
-  alias Lenny.PhoneNumbers.PhoneNumber
+  import Lenny.PhoneNumbersFixtures
+  import Lenny.CallsFixtures
 
   setup [:register_and_log_in_user]
 
@@ -54,12 +52,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   end
 
   test "change a number", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     {:ok, live_view, html} = live(conn, "/calls")
 
@@ -97,12 +90,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   end
 
   test "cancel changing a number", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+15551112222",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+15551112222")
 
     {:ok, live_view, html} = live(conn, "/calls")
 
@@ -140,20 +128,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   end
 
   test "change number to a number with an active call", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
-
-    %Call{
-      sid: "CAXXXX5678",
-      from: "+15551231234",
-      to: "+18384653669",
-      ended_at: nil
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
+    call_fixture(sid: "CAXXXX5678", from: "+15551231234")
 
     {:ok, live_view, html} = live(conn, "/calls")
     assert html =~ "Waiting for a forwarded call..."
