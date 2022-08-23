@@ -33,7 +33,7 @@ defmodule LennyWeb.CallLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto py-4 px-2">
+    <div class="container mx-auto pt-4 pb-12 px-2">
       <h1 class="text-3xl font-bold">
         <%= if @sid == nil do %>
           Waiting for a forwarded call...
