@@ -754,6 +754,10 @@ select {
   position: relative;
 }
 
+.m-1 {
+  margin: 0.25rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -766,6 +770,10 @@ select {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .ml-2 {
@@ -782,10 +790,6 @@ select {
 
 .mt-2 {
   margin-top: 0.5rem;
-}
-
-.mt-8 {
-  margin-top: 2rem;
 }
 
 .mb-2 {
@@ -806,6 +810,10 @@ select {
 
 .contents {
   display: contents;
+}
+
+.w-10 {
+  width: 2.5rem;
 }
 
 .resize {

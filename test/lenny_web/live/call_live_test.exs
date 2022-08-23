@@ -133,4 +133,41 @@ defmodule LennyWeb.CallLiveTest do
       |> element("button#say_07", "")
       |> render_click()
   end
+
+  test "push the DTMF buttons", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    %Call{
+      sid: "CAXXXX1234",
+      from: "+13126180256",
+      to: "+18384653669",
+      ended_at: nil,
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, _html} = live(conn, "/calls")
+
+    Lenny.TwilioMock
+    |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+      assert twiml =~ ~r{<Response>\s*<Play digits="1"}
+    end)
+    |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+      assert twiml =~ ~r{<Response>\s*<Play digits="#"}
+    end)
+
+    _html =
+      lenny_live
+      |> element("#dtmf-1")
+      |> render_click()
+
+    _html =
+      lenny_live
+      |> element("#dtmf-pound")
+      |> render_click()
+  end
 end
