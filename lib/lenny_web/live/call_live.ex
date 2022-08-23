@@ -110,7 +110,9 @@ defmodule LennyWeb.CallLive do
     """
   end
 
-  defp say_button_class(), do: common_button_class() ++ ~w{border-gray-600 bg-gray-100 text-blue-600}
+  defp say_button_class(),
+    do: common_button_class() ++ ~w{border-gray-600 bg-gray-100 text-blue-600}
+
   defp dtmf_button_class, do: say_button_class() ++ ~w{w-10 m-1}
   defp hangup_button_class, do: common_button_class() ++ ~w{border-red-800 bg-red-600 text-white}
   defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold}

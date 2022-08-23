@@ -24,7 +24,9 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     Lenny.TwilioMock
     |> Mox.expect(:verify_start, fn "+13126180256", "sms" -> {:ok, "VE-XXXX"} end)
-    |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" -> {:error, "invalid according to twilio"} end)
+    |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" ->
+      {:error, "invalid according to twilio"}
+    end)
     |> Mox.expect(:verify_check, fn "VE-XXXX", "5678" -> :ok end)
 
     html =
@@ -149,7 +151,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       sid: "CAXXXX5678",
       from: "+15551231234",
       to: "+18384653669",
-      ended_at: nil,
+      ended_at: nil
     }
     |> Repo.insert!()
 

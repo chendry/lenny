@@ -21,7 +21,7 @@ defmodule LennyWeb.TwiML do
     />
 
     <Play>
-      #{AudioFileUrls.hello}
+      #{AudioFileUrls.hello()}
     </Play>
 
     <Gather
@@ -34,7 +34,7 @@ defmodule LennyWeb.TwiML do
     />
 
     <Play>
-      #{AudioFileUrls.hello_are_you_there}
+      #{AudioFileUrls.hello_are_you_there()}
     </Play>
 
     <Gather

@@ -48,7 +48,7 @@ defmodule LennyWeb.CallLiveTest do
       sid: "CAXXXX1234",
       from: "+13126180256",
       to: "+18384653669",
-      ended_at: nil,
+      ended_at: nil
     }
     |> Repo.insert!()
 
@@ -70,7 +70,7 @@ defmodule LennyWeb.CallLiveTest do
       sid: "CAXXXX1234",
       from: "+13126180256",
       to: "+18384653669",
-      ended_at: nil,
+      ended_at: nil
     }
     |> Repo.insert!()
 
@@ -109,7 +109,7 @@ defmodule LennyWeb.CallLiveTest do
       sid: "CAXXXX1234",
       from: "+13126180256",
       to: "+18384653669",
-      ended_at: nil,
+      ended_at: nil
     }
     |> Repo.insert!()
 
@@ -146,7 +146,7 @@ defmodule LennyWeb.CallLiveTest do
       sid: "CAXXXX1234",
       from: "+13126180256",
       to: "+18384653669",
-      ended_at: nil,
+      ended_at: nil
     }
     |> Repo.insert!()
 
@@ -183,7 +183,7 @@ defmodule LennyWeb.CallLiveTest do
       sid: "CAXXXX1234",
       from: "+13126180256",
       to: "+18384653669",
-      ended_at: nil,
+      ended_at: nil
     }
     |> Repo.insert!()
 
