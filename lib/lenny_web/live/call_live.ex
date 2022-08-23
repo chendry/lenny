@@ -47,6 +47,7 @@ defmodule LennyWeb.CallLive do
       </p>
 
       <%= if @sid do %>
+        <button phx-click="say" value="00">00</button>
         <button phx-click="say" value="01">01</button>
         <button phx-click="say" value="02">02</button>
         <button phx-click="say" value="03">03</button>
@@ -65,7 +66,6 @@ defmodule LennyWeb.CallLive do
         <button phx-click="say" value="16">16</button>
         <button phx-click="say" value="17">17</button>
         <button phx-click="say" value="18">18</button>
-        <button phx-click="say" value="19">19</button>
       <% end %>
     </div>
     """
