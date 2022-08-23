@@ -32,6 +32,7 @@ defmodule Lenny.Calls do
   def get_active_call(phone) do
     Call
     |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
+    |> where([c], is_nil(c.ended_at))
     |> order_by([c], desc: c.id)
     |> limit(1)
     |> Repo.one()
