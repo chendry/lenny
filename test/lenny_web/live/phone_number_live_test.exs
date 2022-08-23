@@ -1,7 +1,6 @@
 defmodule LennyWeb.PhoneNumberLiveTest do
   use LennyWeb.ConnCase
 
-  import Mox
   import Phoenix.LiveViewTest
 
   alias Lenny.Repo
@@ -24,9 +23,9 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     assert html =~ "has invalid format"
 
     Lenny.TwilioMock
-    |> expect(:verify_start, fn "+13126180256", "sms" -> {:ok, "VE-XXXX"} end)
-    |> expect(:verify_check, fn "VE-XXXX", "1234" -> {:error, "invalid according to twilio"} end)
-    |> expect(:verify_check, fn "VE-XXXX", "5678" -> :ok end)
+    |> Mox.expect(:verify_start, fn "+13126180256", "sms" -> {:ok, "VE-XXXX"} end)
+    |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" -> {:error, "invalid according to twilio"} end)
+    |> Mox.expect(:verify_check, fn "VE-XXXX", "5678" -> :ok end)
 
     html =
       lenny_live
@@ -74,8 +73,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     assert html =~ ~r{<h1.*>\s*Change your phone number}
 
     Lenny.TwilioMock
-    |> expect(:verify_start, fn "+13125551234", "sms" -> {:ok, "VE-XXXX"} end)
-    |> expect(:verify_check, fn "VE-XXXX", "9999" -> :ok end)
+    |> Mox.expect(:verify_start, fn "+13125551234", "sms" -> {:ok, "VE-XXXX"} end)
+    |> Mox.expect(:verify_check, fn "VE-XXXX", "9999" -> :ok end)
 
     html =
       lenny_live
@@ -117,8 +116,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     assert html =~ ~r{<h1.*>\s*Change your phone number}
 
     Lenny.TwilioMock
-    |> expect(:verify_start, fn "+15551113333", "sms" -> {:ok, "VE-XXXX"} end)
-    |> expect(:verify_cancel, fn "VE-XXXX" -> :ok end)
+    |> Mox.expect(:verify_start, fn "+15551113333", "sms" -> {:ok, "VE-XXXX"} end)
+    |> Mox.expect(:verify_cancel, fn "VE-XXXX" -> :ok end)
 
     html =
       lenny_live
@@ -166,8 +165,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     assert html =~ "Change your phone number"
 
     Lenny.TwilioMock
-    |> expect(:verify_start, fn "+15551231234", "sms" -> {:ok, "VE-XXXX"} end)
-    |> expect(:verify_check, fn "VE-XXXX", "1234" -> :ok end)
+    |> Mox.expect(:verify_start, fn "+15551231234", "sms" -> {:ok, "VE-XXXX"} end)
+    |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" -> :ok end)
 
     _html =
       lenny_live
