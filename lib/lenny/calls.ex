@@ -4,6 +4,12 @@ defmodule Lenny.Calls do
   alias Lenny.Calls.Call
   alias Lenny.Repo
 
+  def get_by_sid!(sid) do
+    Call
+    |> where(sid: ^sid)
+    |> Repo.one!()
+  end
+
   def create_from_twilio_params!(params) do
     %Call{
       sid: params["CallSid"],

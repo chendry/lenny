@@ -131,4 +131,31 @@ defmodule LennyWeb.LennyLiveTest do
     assert html =~ "Approved: +15551112222"
     refute html =~ "Pending: +15551113333"
   end
+
+  test "handle a call", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, html} = live(conn, "/lenny")
+    assert html =~ "Waiting for a forwarded call..."
+    refute html =~ "Active call:"
+
+    Phoenix.ConnTest.build_conn()
+    |> post("/twilio/incoming", %{"CallSid" => "CAXXX", "From" => "+13126180256"})
+
+    html = render(lenny_live)
+    refute html =~ "Waiting for a forwarded call..."
+    assert html =~ "Active call: CAXXX"
+
+    Phoenix.ConnTest.build_conn()
+    |> post("/twilio/status/call", %{"CallSid" => "CAXXX", "CallStatus" => "completed"})
+
+    html = render(lenny_live)
+    assert html =~ "Waiting for a forwarded call..."
+    refute html =~ "Active call: CAXXX"
+  end
 end

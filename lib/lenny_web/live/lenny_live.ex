@@ -10,7 +10,18 @@ defmodule LennyWeb.LennyLive do
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
     user = Accounts.get_user_by_session_token(user_token)
-    {:ok, assign(socket, :user, user)}
+
+    if connected?(socket) do
+      phone_number = PhoneNumbers.get_approved_phone_number(user)
+      if phone_number != nil do
+        Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{phone_number.phone}")
+      end
+    end
+
+    {:ok,
+     socket
+     |> assign(:user, user)
+     |> assign(:sid, nil)}
   end
 
   @impl true
@@ -54,7 +65,11 @@ defmodule LennyWeb.LennyLive do
       <%= if @live_action == :index do %>
         <%= if @approved_phone_number do %>
           <h1 class="text-3xl font-bold mb-4">
-            Waiting for a forwarded call...
+            <%= if @sid == nil do %>
+              Waiting for a forwarded call...
+            <% else %>
+              Active call: <%= @sid %>
+            <% end %>
           </h1>
         <% end %>
         <%= live_patch "Change", to: "/lenny/new", class: "text-blue-600" %>
@@ -176,5 +191,15 @@ defmodule LennyWeb.LennyLive do
     end
 
     {:noreply, push_patch(socket, to: "/lenny")}
+  end
+
+  @impl true
+  def handle_info({:call, :started, sid}, socket) do
+    {:noreply, assign(socket, :sid, sid)}
+  end
+
+  @impl true
+  def handle_info({:call, :ended}, socket) do
+    {:noreply, assign(socket, :sid, nil)}
   end
 end
