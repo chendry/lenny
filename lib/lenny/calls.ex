@@ -1,6 +1,7 @@
 defmodule Lenny.Calls do
-  alias Lenny.Calls.Call
+  import Ecto.Query
 
+  alias Lenny.Calls.Call
   alias Lenny.Repo
 
   def create_from_twilio_params!(params) do
@@ -15,9 +16,10 @@ defmodule Lenny.Calls do
   end
 
   def mark_as_finished!(sid) do
+    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+
     Call
-    |> Repo.get_by(sid: sid)
-    |> Ecto.Changeset.change(ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
-    |> Repo.update!()
+    |> where(sid: ^sid)
+    |> Repo.update_all(set: [ended_at: now])
   end
 end
