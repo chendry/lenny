@@ -13,7 +13,7 @@ defmodule LennyWeb.CallLiveTest do
   test "handle a call", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
 
-    {:ok, live_view, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/wait")
     assert html =~ "Waiting for a forwarded call..."
     refute html =~ "Active call:"
 
@@ -38,7 +38,7 @@ defmodule LennyWeb.CallLiveTest do
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
     {:ok, _live_view, html} =
-      live(conn, "/calls")
+      live(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     assert html =~ "Active call: CAXXXX1234"
@@ -49,7 +49,7 @@ defmodule LennyWeb.CallLiveTest do
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
     {:ok, live_view, _html} =
-      live(conn, "/calls")
+      live(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
@@ -78,7 +78,7 @@ defmodule LennyWeb.CallLiveTest do
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
     {:ok, live_view, _html} =
-      live(conn, "/calls")
+      live(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
@@ -105,7 +105,7 @@ defmodule LennyWeb.CallLiveTest do
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
     {:ok, live_view, _html} =
-      live(conn, "/calls")
+      live(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
@@ -132,7 +132,7 @@ defmodule LennyWeb.CallLiveTest do
     call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
     {:ok, live_view, _html} =
-      live(conn, "/calls")
+      live(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock

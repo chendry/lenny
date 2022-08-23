@@ -46,7 +46,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> form("form", %{"verification_form[code]" => "5678"})
       |> render_submit()
-      |> follow_redirect(conn, "/calls")
+      |> follow_redirect(conn, "/wait")
 
     assert html =~ "Approved: +13126180256"
   end
@@ -54,7 +54,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "change a number", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
 
-    {:ok, live_view, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/wait")
 
     assert html =~ ~r{<h1.*>\s*Waiting for a forwarded call}
     assert html =~ "Approved: +13126180256"
@@ -83,7 +83,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> form("form", %{"verification_form[code]" => "9999"})
       |> render_submit()
-      |> follow_redirect(conn, "/calls")
+      |> follow_redirect(conn, "/wait")
 
     refute html =~ "Pending: +13125551234"
     assert html =~ "Approved: +13125551234"
@@ -92,7 +92,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "cancel changing a number", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+15551112222")
 
-    {:ok, live_view, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/wait")
 
     assert html =~ ~r{<h1.*>\s*Waiting for a forwarded call}
     assert html =~ "Approved: +15551112222"
@@ -121,7 +121,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> element("a", "Cancel")
       |> render_click()
-      |> follow_redirect(conn, "/calls")
+      |> follow_redirect(conn, "/wait")
 
     assert html =~ "Approved: +15551112222"
     refute html =~ "Pending: +15551113333"
@@ -131,7 +131,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     phone_number_fixture(user, phone: "+13126180256")
     call_fixture(sid: "CAXXXX5678", from: "+15551231234")
 
-    {:ok, live_view, html} = live(conn, "/calls")
+    {:ok, live_view, html} = live(conn, "/wait")
     assert html =~ "Waiting for a forwarded call..."
 
     {:ok, live_view, html} =
@@ -155,7 +155,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> form("form", %{"verification_form[code]" => "1234"})
       |> render_submit()
-      |> follow_redirect(conn, "/calls")
+      |> follow_redirect(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX5678")
 
     assert html =~ "Active call: CAXXXX5678"
