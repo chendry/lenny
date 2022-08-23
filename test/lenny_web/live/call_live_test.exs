@@ -170,4 +170,33 @@ defmodule LennyWeb.CallLiveTest do
       |> element("#dtmf-pound")
       |> render_click()
   end
+
+  test "hang up", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    %Call{
+      sid: "CAXXXX1234",
+      from: "+13126180256",
+      to: "+18384653669",
+      ended_at: nil,
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, _html} = live(conn, "/calls")
+
+    Lenny.TwilioMock
+    |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+      assert twiml =~ "<Hangup />"
+    end)
+
+    _html =
+      lenny_live
+      |> element("#hangup")
+      |> render_click()
+  end
 end

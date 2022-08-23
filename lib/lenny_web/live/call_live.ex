@@ -79,6 +79,8 @@ defmodule LennyWeb.CallLive do
           <button id="say_16" class={say_button_class()} phx-click="say" value={16}>Hello?</button>
           <button id="say_17" class={say_button_class()} phx-click="say" value={17}>Hello, are you there?</button>
           <button id="say_18" class={say_button_class()} phx-click="say" value={18}>Sorry, bit of a problem...</button>
+
+          <button id="hangup" class={hangup_button_class()} phx-click="hangup">Hang Up</button>
         </div>
 
         <table class="mt-8">
@@ -103,14 +105,15 @@ defmodule LennyWeb.CallLive do
             <td><button id="dtmf-pound" class={dtmf_button_class()} phx-click="dtmf" value="#">#</button></td>
           </tr>
         </table>
-
       <% end %>
     </div>
     """
   end
 
-  defp say_button_class, do: ~w{ rounded-lg border-2 bg-gray-100 px-2 py-1 border-gray-800 text-blue-600 font-bold }
-  defp dtmf_button_class, do: say_button_class() ++ ~w{ w-10 m-1}
+  defp say_button_class(), do: common_button_class() ++ ~w{border-gray-600 bg-gray-100 text-blue-600}
+  defp dtmf_button_class, do: say_button_class() ++ ~w{w-10 m-1}
+  defp hangup_button_class, do: common_button_class() ++ ~w{border-red-800 bg-red-600 text-white}
+  defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold}
 
   @impl true
   def handle_info({:call, :started, sid}, socket) do
@@ -159,6 +162,20 @@ defmodule LennyWeb.CallLive do
       <Response>
         <Play digits="#{key}" />
         <Pause length="120" />
+      </Response>
+      """
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hangup", _params, socket) do
+    Twilio.modify_call(
+      socket.assigns.sid,
+      """
+      <Response>
+        <Hangup />
       </Response>
       """
     )
