@@ -8,7 +8,8 @@ defmodule Lenny.PhoneNumbersFixtures do
       attrs
       |> Enum.into(%{
         phone: random_phone_number(),
-        channel: "sms"
+        channel: "sms",
+        verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second),
       })
 
     %PhoneNumber{user_id: user.id}

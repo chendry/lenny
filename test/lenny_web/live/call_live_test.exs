@@ -2,20 +2,15 @@ defmodule LennyWeb.CallLiveTest do
   use LennyWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Lenny.PhoneNumbersFixtures
 
   alias Lenny.Repo
   alias Lenny.Calls.Call
-  alias Lenny.PhoneNumbers.PhoneNumber
 
   setup [:register_and_log_in_user]
 
   test "handle a call", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     {:ok, live_view, html} = live(conn, "/calls")
     assert html =~ "Waiting for a forwarded call..."
@@ -38,12 +33,7 @@ defmodule LennyWeb.CallLiveTest do
   end
 
   test "load page with an active call in progress", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     %Call{
       sid: "CAXXXX1234",
@@ -62,12 +52,7 @@ defmodule LennyWeb.CallLiveTest do
   end
 
   test "push the say buttons during a call", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     %Call{
       sid: "CAXXXX1234",
@@ -103,12 +88,7 @@ defmodule LennyWeb.CallLiveTest do
   end
 
   test "push the say buttons with autopilot off during a call", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     %Call{
       sid: "CAXXXX1234",
@@ -142,12 +122,7 @@ defmodule LennyWeb.CallLiveTest do
   end
 
   test "push the DTMF buttons", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     %Call{
       sid: "CAXXXX1234",
@@ -181,12 +156,7 @@ defmodule LennyWeb.CallLiveTest do
   end
 
   test "hang up", %{conn: conn, user: user} do
-    %PhoneNumber{
-      user_id: user.id,
-      phone: "+13126180256",
-      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    }
-    |> Repo.insert!()
+    phone_number_fixture(user, phone: "+13126180256")
 
     call =
       %Call{
