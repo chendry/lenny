@@ -36,4 +36,8 @@ defmodule Lenny.Calls do
     |> limit(1)
     |> Repo.one()
   end
+
+  def get_effective_number(%Call{} = call) do
+    call.forwarded_from || call.from
+  end
 end
