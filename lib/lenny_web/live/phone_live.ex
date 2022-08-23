@@ -1,9 +1,8 @@
-defmodule LennyWeb.LennyLive do
+defmodule LennyWeb.PhoneLive do
   use LennyWeb, :live_view
 
   alias Lenny.Accounts
   alias Lenny.Twilio
-  alias Lenny.Calls
   alias Lenny.PhoneNumbers
   alias Lenny.PhoneNumbers.PhoneNumber
   alias Lenny.PhoneNumbers.VerificationForm
@@ -11,42 +10,18 @@ defmodule LennyWeb.LennyLive do
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
     user = Accounts.get_user_by_session_token(user_token)
-
-    {:ok, socket |> assign(:user, user)}
+    {:ok, assign(socket, user: user)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
     user = socket.assigns.user
 
-    phone_number = PhoneNumbers.get_approved_phone_number(user)
-    call = phone_number && Calls.get_active_call(phone_number.phone)
-
-    if connected?(socket) do
-      if phone_number != nil do
-        Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{phone_number.phone}")
-      end
-    end
-
     {:noreply,
      socket
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))
-     |> assign(:sid, call && call.sid)
      |> apply_action(socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :index, _params) do
-    cond do
-      socket.assigns.approved_phone_number == nil ->
-        push_patch(socket, to: "/lenny/new")
-
-      socket.assigns.pending_phone_number ->
-        push_patch(socket, to: "/lenny/verify")
-
-      true ->
-        socket
-    end
   end
 
   defp apply_action(socket, :new, _params) do
@@ -62,20 +37,7 @@ defmodule LennyWeb.LennyLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto pt-4">
-      <%= if @live_action == :index do %>
-        <%= if @approved_phone_number do %>
-          <h1 class="text-3xl font-bold mb-4">
-            <%= if @sid == nil do %>
-              Waiting for a forwarded call...
-            <% else %>
-              Active call: <%= @sid %>
-            <% end %>
-          </h1>
-        <% end %>
-        <%= live_patch "Change", to: "/lenny/new", class: "text-blue-600" %>
-      <% end %>
-
+    <div class="container mx-auto p-4 px-2">
       <%= if @live_action == :new do %>
         <h1 class="text-3xl font-bold mb-4">
           <%= if @approved_phone_number == nil do %>
@@ -97,7 +59,7 @@ defmodule LennyWeb.LennyLive do
           <div class="mt-4">
             <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
             <%= if @approved_phone_number do %>
-              <%= live_patch "Cancel", to: "/lenny", class: "ml-4 text-blue-600" %>
+              <%= live_patch "Cancel", to: "/call", class: "ml-4 text-blue-600" %>
             <% end %>
           </div>
         </.form>
@@ -148,7 +110,7 @@ defmodule LennyWeb.LennyLive do
     )
     |> case do
       {:ok, _phone_number} ->
-        {:noreply, push_patch(socket, to: "/lenny/verify")}
+        {:noreply, push_patch(socket, to: "/phone/verify")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -167,7 +129,7 @@ defmodule LennyWeb.LennyLive do
     )
     |> case do
       {:ok, _phone_number} ->
-        {:noreply, push_patch(socket, to: "/lenny")}
+        {:noreply, push_redirect(socket, to: "/call")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -178,7 +140,7 @@ defmodule LennyWeb.LennyLive do
         {:noreply,
          socket
          |> put_flash(:error, message)
-         |> push_patch(to: "/lenny")}
+         |> push_patch(to: "/phone/new")}
     end
   end
 
@@ -191,16 +153,6 @@ defmodule LennyWeb.LennyLive do
       PhoneNumbers.soft_delete_phone_number(phone_number)
     end
 
-    {:noreply, push_patch(socket, to: "/lenny")}
-  end
-
-  @impl true
-  def handle_info({:call, :started, sid}, socket) do
-    {:noreply, assign(socket, :sid, sid)}
-  end
-
-  @impl true
-  def handle_info({:call, :ended}, socket) do
-    {:noreply, assign(socket, :sid, nil)}
+    {:noreply, push_redirect(socket, to: "/call")}
   end
 end
