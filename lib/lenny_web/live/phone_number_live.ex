@@ -59,7 +59,7 @@ defmodule LennyWeb.PhoneNumberLive do
           <div class="mt-4">
             <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-2 py-1" %>
             <%= if @approved_phone_number do %>
-              <%= live_patch "Cancel", to: "/calls", class: "ml-4 text-blue-600" %>
+              <%= live_redirect "Cancel", to: "/calls", class: "ml-4 text-blue-600" %>
             <% end %>
           </div>
         </.form>
