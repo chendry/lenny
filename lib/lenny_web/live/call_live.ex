@@ -53,8 +53,7 @@ defmodule LennyWeb.CallLive do
           <label>
             <input id="autopilot" type="checkbox" checked={@autopilot} phx-click="toggle_autopilot">
             <span class="ml-2">
-              Autopilot
-              <%= inspect @autopilot %>
+              Automatically proceed to next sound
             </span>
           </label>
         </div>
