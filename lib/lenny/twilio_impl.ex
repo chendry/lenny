@@ -69,6 +69,24 @@ defmodule Lenny.TwilioImpl do
     end
   end
 
+  @impl true
+  def modify_call(sid, twiml) do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Calls/#{sid}.json"
+
+    query = [
+      Twiml: twiml
+    ]
+
+    {:ok, %{status_code: 200}} =
+      HTTPoison.post(
+        url,
+        URI.encode_query(query),
+        headers()
+      )
+
+    :ok
+  end
+
   defp headers do
     credentials = Base.encode64("#{account_sid()}:#{auth_token()}")
 
