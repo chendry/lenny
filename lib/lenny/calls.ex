@@ -13,4 +13,11 @@ defmodule Lenny.Calls do
     }
     |> Repo.insert!()
   end
+
+  def mark_as_finished!(sid) do
+    Call
+    |> Repo.get_by(sid: sid)
+    |> Ecto.Changeset.change(ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+    |> Repo.update!()
+  end
 end

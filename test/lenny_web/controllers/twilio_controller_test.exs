@@ -1,6 +1,9 @@
 defmodule LennyWeb.TwilioControllerTest do
   use LennyWeb.ConnCase
 
+  alias Lenny.Repo
+  alias Lenny.Calls.Call
+
   test "POST /twilio/incoming", %{conn: conn} do
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -36,7 +39,16 @@ defmodule LennyWeb.TwilioControllerTest do
     assert response(conn, 200) =~ "/autopilot/1"
   end
 
-  test "POST /twilio/status/call", %{conn: conn} do
+  test "POST /twilio/status/call to end call", %{conn: conn} do
+    call =
+      %Call{
+        sid: "CA1ec1bf246aa203e56716b602d6f6c8c9",
+        from: "13126180256",
+        to: "19384653669",
+        params: %{}
+      }
+      |> Repo.insert!()
+
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "ApiVersion" => "2010-04-01",
@@ -71,6 +83,9 @@ defmodule LennyWeb.TwilioControllerTest do
     }
 
     conn = post(conn, "/twilio/status/call", params)
-    assert response(conn, 200) == "OK"
+    assert conn.status == 200
+
+    call = Repo.get(Call, call.id)
+    assert call.ended_at != nil
   end
 end

@@ -24,8 +24,13 @@ defmodule LennyWeb.TwilioController do
     )
   end
 
-  def call_status(conn, params) do
+  def call_status(conn, %{"CallSid" => sid} = params) do
     Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
+
+    if params["CallStatus"] == "completed" do
+      Calls.mark_as_finished!(sid)
+    end
+
     send_resp(conn, 200, "OK")
   end
 end
