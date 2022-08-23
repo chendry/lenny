@@ -11,6 +11,14 @@ defmodule LennyWeb.LennyLive do
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
     user = Accounts.get_user_by_session_token(user_token)
+
+    {:ok, socket |> assign(:user, user)}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    user = socket.assigns.user
+
     phone_number = PhoneNumbers.get_approved_phone_number(user)
     call = phone_number && Calls.get_active_call(phone_number.phone)
 
@@ -20,20 +28,11 @@ defmodule LennyWeb.LennyLive do
       end
     end
 
-    {:ok,
-     socket
-     |> assign(:user, user)
-     |> assign(:sid, call && call.sid)}
-  end
-
-  @impl true
-  def handle_params(params, _url, socket) do
-    user = socket.assigns.user
-
     {:noreply,
      socket
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))
+     |> assign(:sid, call && call.sid)
      |> apply_action(socket.assigns.live_action, params)}
   end
 

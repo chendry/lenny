@@ -181,4 +181,47 @@ defmodule LennyWeb.LennyLiveTest do
     refute html =~ "Waiting for a forwarded call..."
     assert html =~ "Active call: CAXXXX1234"
   end
+
+  test "change number to a number with an active call", %{conn: conn, user: user} do
+    %PhoneNumber{
+      user_id: user.id,
+      phone: "+13126180256",
+      verified_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+    |> Repo.insert!()
+
+    %Call{
+      sid: "CAXXXX5678",
+      from: "+15551231234",
+      to: "+18384653669",
+      ended_at: nil,
+    }
+    |> Repo.insert!()
+
+    {:ok, lenny_live, html} = live(conn, "/lenny")
+
+    assert html =~ "Waiting for a forwarded call..."
+
+    Lenny.TwilioMock
+    |> expect(:verify_start, fn "+15551231234", "sms" -> {:ok, "VE-XXXX"} end)
+    |> expect(:verify_check, fn "VE-XXXX", "1234" -> :ok end)
+
+    _html =
+      lenny_live
+      |> element("a", "Change")
+      |> render_click()
+
+    _html =
+      lenny_live
+      |> form("form", %{"phone_number[phone]" => "+15551231234"})
+      |> render_submit()
+
+    html =
+      lenny_live
+      |> form("form", %{"verification_form[code]" => "1234"})
+      |> render_submit()
+
+    assert html =~ "Approved: +15551231234"
+    assert html =~ "Active call: CAXXXX5678"
+  end
 end
