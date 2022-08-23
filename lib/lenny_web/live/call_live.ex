@@ -31,7 +31,7 @@ defmodule LennyWeb.CallLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto pt-4 px-2">
+    <div class="container mx-auto py-4 px-2">
       <h1 class="text-3xl font-bold">
         <%= if @sid == nil do %>
           Waiting for a forwarded call...
@@ -47,29 +47,33 @@ defmodule LennyWeb.CallLive do
       </p>
 
       <%= if @sid do %>
-        <button phx-click="say" value="00">00</button>
-        <button phx-click="say" value="01">01</button>
-        <button phx-click="say" value="02">02</button>
-        <button phx-click="say" value="03">03</button>
-        <button phx-click="say" value="04">04</button>
-        <button phx-click="say" value="05">05</button>
-        <button phx-click="say" value="06">06</button>
-        <button phx-click="say" value="07">07</button>
-        <button phx-click="say" value="08">08</button>
-        <button phx-click="say" value="09">09</button>
-        <button phx-click="say" value="10">10</button>
-        <button phx-click="say" value="11">11</button>
-        <button phx-click="say" value="12">12</button>
-        <button phx-click="say" value="13">13</button>
-        <button phx-click="say" value="14">14</button>
-        <button phx-click="say" value="15">15</button>
-        <button phx-click="say" value="16">16</button>
-        <button phx-click="say" value="17">17</button>
-        <button phx-click="say" value="18">18</button>
+        <div class="mt-4 flex flex-col space-y-4">
+          <button class={button_class()} phx-click="say" value={00}>Hello, this is Lenny.</button>
+          <button class={button_class()} phx-click="say" value={01}>Sorry, I can barely hear 'ya there.</button>
+          <button class={button_class()} phx-click="say" value={02}>Yes, yes yes.</button>
+          <button class={button_class()} phx-click="say" value={03}>Oh good! Yes yes yes yes.</button>
+          <button class={button_class()} phx-click="say" value={04}>Someone did call last week about the same.  Was that you?</button>
+          <button class={button_class()} phx-click="say" value={05}>Sorry, what was your name again?</button>
+          <button class={button_class()} phx-click="say" value={06}>Well, it's funny that you call because...</button>
+          <button class={button_class()} phx-click="say" value={07}>I couldn't quite catch 'ya there, what was that again?</button>
+          <button class={button_class()} phx-click="say" value={08}>Sorry... again?</button>
+          <button class={button_class()} phx-click="say" value={09}>Could you say that again please?</button>
+          <button class={button_class()} phx-click="say" value={10}>Yes, yes, yes...</button>
+          <button class={button_class()} phx-click="say" value={11}>Sorry, which company did you say you were calling from, again?</button>
+          <button class={button_class()} phx-click="say" value={12}>The last time call someone called up...</button>
+          <button class={button_class()} phx-click="say" value={13}>Since you've put it that way...</button>
+          <button class={button_class()} phx-click="say" value={14}>With the world finances the way they are...</button>
+          <button class={button_class()} phx-click="say" value={15}>That does sound good, you've been very patient...</button>
+          <button class={button_class()} phx-click="say" value={16}>Hello?</button>
+          <button class={button_class()} phx-click="say" value={17}>Hello, are you there?</button>
+          <button class={button_class()} phx-click="say" value={18}>Sorry, bit of a problem...</button>
+        </div>
       <% end %>
     </div>
     """
   end
+
+  defp button_class, do: ~w{ rounded-lg border-2 bg-gray-100 px-2 py-1 border-gray-800 text-blue-600 font-bold }
 
   @impl true
   def handle_info({:call, :started, sid}, socket) do
