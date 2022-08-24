@@ -12,12 +12,14 @@ defmodule LennyWeb.CallLive do
       Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
     end
 
+    call = Calls.get_by_sid!(sid)
+
     {:ok,
      socket
      |> assign(:sid, sid)
-     |> assign(:call, Calls.get_by_sid!(sid))
+     |> assign(:call, call)
      |> assign(:media, nil)
-     |> assign(:ended, false)
+     |> assign(:ended, call.ended_at != nil)
      |> assign(:autopilot, true)}
   end
 

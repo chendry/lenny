@@ -121,4 +121,11 @@ defmodule LennyWeb.CallLiveTest do
 
     assert Repo.get(Call, call.id).ended_at != nil
   end
+
+  test "visit a call that has ended", %{conn: conn} do
+    call_fixture(sid: "CA007", ended_at: ~N[2022-08-24 14:03:31])
+
+    {:ok, _live_view, html} = live(conn, "/calls/CA007")
+    assert html =~ "Call ended"
+  end
 end
