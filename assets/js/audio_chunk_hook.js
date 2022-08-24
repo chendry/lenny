@@ -1,40 +1,3 @@
-const decodeTable = [0, 132, 396, 924, 1980, 4092, 8316, 16764]
-
-function mulawDecodeSample(mulawSample) {
-  mulawSample = ~mulawSample
-
-  const sign = (mulawSample & 0x80)
-  const exponent = (mulawSample >> 4) & 0x07
-  const mantissa = mulawSample & 0x0F
-
-  let sample = decodeTable[exponent] + (mantissa << (exponent+3))
-
-  if (sign != 0)
-    sample = -sample
-
-  return sample
-}
-
-function mulawDecode(samples) {
-  let pcmSamples = new Int16Array(samples.length)
-
-  for (let i = 0; i < samples.length; i++) {
-    pcmSamples[i] = mulawDecodeSample(samples[i])
-  }
-
-  return pcmSamples
-}
-
-function base64decode(str) {
-  const binary = atob(str)
-  const bytes = new Uint8Array(binary.length)
-
-  for (let i = 0; i < binary.length; i ++)
-    bytes[i] = binary.charCodeAt(i)
-
-  return bytes
-}
-
 let audioCtx = null
 let clockOffset = null
 
@@ -73,4 +36,41 @@ export const CreateAudioContextHook = {
       }
     })
   }
+}
+
+const decodeTable = [0, 132, 396, 924, 1980, 4092, 8316, 16764]
+
+function mulawDecodeSample(mulawSample) {
+  mulawSample = ~mulawSample
+
+  const sign = (mulawSample & 0x80)
+  const exponent = (mulawSample >> 4) & 0x07
+  const mantissa = mulawSample & 0x0F
+
+  let sample = decodeTable[exponent] + (mantissa << (exponent+3))
+
+  if (sign != 0)
+    sample = -sample
+
+  return sample
+}
+
+function mulawDecode(samples) {
+  let pcmSamples = new Int16Array(samples.length)
+
+  for (let i = 0; i < samples.length; i++) {
+    pcmSamples[i] = mulawDecodeSample(samples[i])
+  }
+
+  return pcmSamples
+}
+
+function base64decode(str) {
+  const binary = atob(str)
+  const bytes = new Uint8Array(binary.length)
+
+  for (let i = 0; i < binary.length; i ++)
+    bytes[i] = binary.charCodeAt(i)
+
+  return bytes
 }
