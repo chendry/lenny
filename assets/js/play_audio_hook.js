@@ -1,21 +1,8 @@
-const audioCtx = new (window.AudioContext || window.webkitAudioContext())()
+import {audioCtx} from "./start_audio_context_hook"
+
 let clockOffset = null
 
-export const StartAudioHook = {
-  mounted() {
-    this.pushEvent("audio_ctx_state", {state: audioCtx.state})
-
-    audioCtx.onstatechange = () => {
-      this.pushEvent("audio_ctx_state", {state: audioCtx.state})
-    }
-
-    this.el.addEventListener("click", () => {
-      audioCtx.resume()
-    })
-  }
-}
-
-export const PlayAudioChunkHook = {
+export const PlayAudioHook = {
   mounted() {
     const pcm = mulawDecode(base64decode(this.el.dataset.payload))
     const timestamp = parseInt(this.el.dataset.timestamp, 10) / 1000

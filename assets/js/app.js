@@ -26,10 +26,8 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
-import {
-    StartAudioHook,
-    PlayAudioChunkHook
-} from "./audio_hooks"
+import {StartAudioContextHook} from "./start_audio_context_hook"
+import {PlayAudioHook} from "./play_audio_hook"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
@@ -39,8 +37,8 @@ let liveSocket = new LiveSocket(
   {
     params: {_csrf_token: csrfToken},
     hooks: {
-      StartAudio: StartAudioHook,
-      PlayAudioChunk: PlayAudioChunkHook
+      StartAudioContextHook,
+      PlayAudioHook
     }
   }
 )

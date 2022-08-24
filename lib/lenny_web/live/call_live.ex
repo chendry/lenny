@@ -34,7 +34,7 @@ defmodule LennyWeb.CallLive do
 
       <p class="mt-4">
         <%= if @audio_ctx_state != "running" do %>
-          <button id="create-audio-context" phx-hook="StartAudio" class="text-blue-600">
+          <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class="text-blue-600">
             Start Audio
           </button>
         <% else %>
@@ -46,8 +46,8 @@ defmodule LennyWeb.CallLive do
 
       <%= if @media do %>
         <div
-          id={"play-audio-chunk-#{@media.chunk}"}
-          phx-hook="PlayAudioChunk"
+          id={"play-audio-hook-#{@media.chunk}"}
+          phx-hook="PlayAudioHook"
           data-payload={@media.payload}
           data-timestamp={@media.timestamp}
         />
