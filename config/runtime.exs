@@ -20,6 +20,18 @@ if System.get_env("PHX_SERVER") do
   config :lenny, LennyWeb.Endpoint, server: true
 end
 
+host = System.get_env("PHX_HOST") || "localhost"
+url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "80")
+url_scheme = System.get_env("PHX_URL_SCHEME") || "http"
+http_port = String.to_integer(System.get_env("PORT") || "4000")
+
+config :lenny, LennyWeb.Endpoint,
+  url: [host: host, port: url_port, scheme: url_scheme],
+  http: [
+    ip: {0, 0, 0, 0},
+    port: http_port
+  ]
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
@@ -48,19 +60,7 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
-
   config :lenny, LennyWeb.Endpoint,
-    url: [host: host, port: 443, scheme: "https"],
-    http: [
-      # Enable IPv6 and bind on all interfaces.
-      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-      # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
-      # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: port
-    ],
     check_origin: false,
     secret_key_base: secret_key_base
 
