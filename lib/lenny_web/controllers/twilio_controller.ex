@@ -12,7 +12,7 @@ defmodule LennyWeb.TwilioController do
     call = Calls.create_from_twilio_params!(params)
     from = Calls.get_effective_number(call)
 
-    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{from}", {:call_started, sid})
+    Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 
     conn
     |> put_resp_content_type("text/xml")

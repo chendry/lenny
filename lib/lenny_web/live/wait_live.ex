@@ -19,7 +19,7 @@ defmodule LennyWeb.WaitLive do
         {:ok, push_redirect(socket, to: "/calls/#{call.sid}")}
       else
         if connected?(socket) do
-          Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{phone_number.phone}")
+          Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
         end
 
         {:ok, assign(socket, :phone_number, phone_number)}
