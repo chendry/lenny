@@ -13,16 +13,19 @@ defmodule LennyWeb.WaitLive do
     if phone_number == nil do
       {:ok, push_redirect(socket, to: "/phone_numbers/new")}
     else
-      call = Calls.get_active_call(phone_number.phone)
+      case Calls.get_active_calls(phone_number.phone) do
+        [call] ->
+          {:ok, push_redirect(socket, to: "/calls/#{call.sid}")}
 
-      if call do
-        {:ok, push_redirect(socket, to: "/calls/#{call.sid}")}
-      else
-        if connected?(socket) do
-          Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
-        end
+        calls ->
+          if connected?(socket) do
+            Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
+          end
 
-        {:ok, assign(socket, :phone_number, phone_number)}
+          {:ok,
+           socket
+           |> assign(:phone_number, phone_number)
+           |> assign(:calls, calls)}
       end
     end
   end
@@ -38,6 +41,15 @@ defmodule LennyWeb.WaitLive do
         Approved: <%= @phone_number.phone %>
         (<%= live_redirect "Change number", to: "/phone_numbers/new", class: "text-blue-600" %>)
       </p>
+      <%= if not Enum.empty?(@calls) do %>
+        <ul id="calls">
+          <%= for call <- @calls do %>
+            <li>
+              <%= live_redirect call.forwarded_from || call.from, to: "/calls/#{call.sid}" %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     </div>
     """
   end

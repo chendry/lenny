@@ -29,4 +29,30 @@ defmodule LennyWeb.WaitLiveTest do
 
     assert html =~ "Active call: CAXXXX1234"
   end
+
+  test "loading /wait with multiple active calls shows links for those calls", %{conn: conn, user: user} do
+    phone_number_fixture(user, phone: "+12223334444")
+
+    call_fixture(sid: "CA001", from: "+12223334444")
+    call_fixture(sid: "CA002", from: "+12223334444", forwarded_from: "+14445556666")
+    call_fixture(sid: "CA003", from: "+15555555555")
+    call_fixture(sid: "CA004", from: "+15555555555")
+    call_fixture(sid: "CA005", from: "+12223334444", ended_at: ~N[2022-08-24 00:51:20])
+
+    {:ok, live_view, _html} = live(conn, "/wait")
+
+    html =
+      live_view
+      |> element("ul#calls")
+      |> render()
+
+    assert html =~ "+12223334444"
+    assert html =~ "+14445556666"
+    refute html =~ "+15555555555"
+
+    live_view
+    |> element("a", "+14445556666")
+    |> render_click()
+    |> follow_redirect(conn, "/calls/CA002")
+  end
 end

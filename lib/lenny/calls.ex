@@ -29,13 +29,12 @@ defmodule Lenny.Calls do
     |> Repo.update_all(set: [ended_at: now])
   end
 
-  def get_active_call(phone) do
+  def get_active_calls(phone) do
     Call
     |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
     |> where([c], is_nil(c.ended_at))
-    |> order_by([c], desc: c.id)
-    |> limit(1)
-    |> Repo.one()
+    |> order_by([c], c.id)
+    |> Repo.all()
   end
 
   def get_effective_number(%Call{} = call) do
