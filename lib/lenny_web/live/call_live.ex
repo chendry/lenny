@@ -32,15 +32,15 @@ defmodule LennyWeb.CallLive do
       </h1>
 
       <p class="mt-4">
-        <button id="create-audio-context" phx-hook="CreateAudioContext" lass="text-blue-600">
-          Create Audio Context
+        <button id="create-audio-context" phx-hook="StartAudio" lass="text-blue-600">
+          Start Audio
         </button>
       </p>
 
       <%= if @media do %>
         <div
-          id={"audio-chunk-#{@media.chunk}"}
-          phx-hook="AudioChunk"
+          id={"play-audio-chunk-#{@media.chunk}"}
+          phx-hook="PlayAudioChunk"
           data-payload={@media.payload}
           data-timestamp={@media.timestamp}
         />
