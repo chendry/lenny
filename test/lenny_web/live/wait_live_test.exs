@@ -10,8 +10,7 @@ defmodule LennyWeb.WaitLiveTest do
   test "incoming calls trigger redirect to call", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
 
-    {:ok, live_view, html} = live(conn, "/wait")
-    assert html =~ "Waiting for a forwarded call..."
+    {:ok, live_view, _html} = live(conn, "/wait")
 
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/incoming", %{"CallSid" => "CAXXX", "From" => "+13126180256"})
@@ -27,7 +26,7 @@ defmodule LennyWeb.WaitLiveTest do
       live(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX1234")
 
-    assert html =~ "Active call: CAXXXX1234"
+    assert html =~ ~S{data-sid="CAXXXX1234"}
   end
 
   test "loading /wait with multiple active calls shows links for those calls", %{conn: conn, user: user} do

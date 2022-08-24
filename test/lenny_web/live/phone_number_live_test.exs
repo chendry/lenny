@@ -10,14 +10,14 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "register a number", %{conn: conn} do
     {:ok, live_view, html} = live(conn, "/phone_numbers/new")
 
-    assert html =~ ~r{<h1.*>\s*Register a phone number}
+    assert html =~ ~r{<h1.*>\s*Register a Phone Number}
 
     html =
       live_view
       |> form("form", %{"phone_number[phone]" => "555-555-5555"})
       |> render_submit()
 
-    assert html =~ ~r{<h1.*>\s*Register a phone number}
+    assert html =~ ~r{<h1.*>\s*Register a Phone Number}
     assert html =~ "has invalid format"
 
     Lenny.TwilioMock
@@ -32,14 +32,14 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> form("form", %{"phone_number[phone]" => "+13126180256"})
       |> render_submit()
 
-    assert html =~ ~r{<h1.*>\s*Verify your phone number}
+    assert html =~ ~r{<h1.*>\s*Verify your Phone Number}
 
     html =
       live_view
       |> form("form", %{"verification_form[code]" => "1234"})
       |> render_submit()
 
-    assert html =~ ~r{<h1.*>\s*Verify your phone number}
+    assert html =~ ~r{<h1.*>\s*Verify your Phone Number}
     assert html =~ "invalid according to twilio"
 
     {:ok, _live_view, html} =
@@ -48,7 +48,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> render_submit()
       |> follow_redirect(conn, "/wait")
 
-    assert html =~ "Approved: +13126180256"
+    assert html =~ ~S{<span id="approved-number">+13126180256</span>}
   end
 
   test "change a number", %{conn: conn, user: user} do
@@ -56,16 +56,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     {:ok, live_view, html} = live(conn, "/wait")
 
-    assert html =~ ~r{<h1.*>\s*Waiting for a forwarded call}
-    assert html =~ "Approved: +13126180256"
+    assert html =~ "+13126180256"
 
-    {:ok, live_view, html} =
+    {:ok, live_view, _html} =
       live_view
       |> element("a", "Change")
       |> render_click()
       |> follow_redirect(conn, "/phone_numbers/new")
-
-    assert html =~ ~r{<h1.*>\s*Change your phone number}
 
     Lenny.TwilioMock
     |> Mox.expect(:verify_start, fn "+13125551234", "sms" -> {:ok, "VE-XXXX"} end)
@@ -76,8 +73,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> form("form", %{"phone_number[phone]" => "+13125551234"})
       |> render_submit()
 
-    assert html =~ "Approved: +13126180256"
-    assert html =~ "Pending: +13125551234"
+    assert html =~ "+13125551234"
 
     {:ok, _live_view, html} =
       live_view
@@ -86,7 +82,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> follow_redirect(conn, "/wait")
 
     refute html =~ "Pending: +13125551234"
-    assert html =~ "Approved: +13125551234"
+    assert html =~ "+13125551234"
   end
 
   test "cancel changing a number", %{conn: conn, user: user} do
@@ -94,8 +90,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     {:ok, live_view, html} = live(conn, "/wait")
 
-    assert html =~ ~r{<h1.*>\s*Waiting for a forwarded call}
-    assert html =~ "Approved: +15551112222"
+    assert html =~ ~S{<span id="approved-number">+15551112222</span>}
 
     {:ok, live_view, html} =
       live_view
@@ -103,7 +98,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> render_click()
       |> follow_redirect(conn, "/phone_numbers/new")
 
-    assert html =~ ~r{<h1.*>\s*Change your phone number}
+    assert html =~ ~r{<h1.*>\s*Change your Phone Number}
 
     Lenny.TwilioMock
     |> Mox.expect(:verify_start, fn "+15551113333", "sms" -> {:ok, "VE-XXXX"} end)
@@ -114,8 +109,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> form("form", %{"phone_number[phone]" => "+15551113333"})
       |> render_submit()
 
-    assert html =~ "Approved: +15551112222"
-    assert html =~ "Pending: +15551113333"
+    assert html =~ ~S(<span id="pending-number">+15551113333</span>)
 
     {:ok, _live_view, html} =
       live_view
@@ -123,24 +117,23 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> render_click()
       |> follow_redirect(conn, "/wait")
 
-    assert html =~ "Approved: +15551112222"
-    refute html =~ "Pending: +15551113333"
+    assert html =~ ~S{<span id="approved-number">+15551112222</span>}
+    refute html =~ "+15551113333"
   end
 
   test "change number to a number with an active call", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
     call_fixture(sid: "CAXXXX5678", from: "+15551231234")
 
-    {:ok, live_view, html} = live(conn, "/wait")
-    assert html =~ "Waiting for a forwarded call..."
+    {:ok, live_view, _html} = live(conn, "/wait")
 
     {:ok, live_view, html} =
       live_view
-      |> element("a", "Change number")
+      |> element("a", "Change Number")
       |> render_click()
       |> follow_redirect(conn, "/phone_numbers/new")
 
-    assert html =~ "Change your phone number"
+    assert html =~ "Change your Phone Number"
 
     Lenny.TwilioMock
     |> Mox.expect(:verify_start, fn "+15551231234", "sms" -> {:ok, "VE-XXXX"} end)
@@ -158,6 +151,6 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> follow_redirect(conn, "/wait")
       |> follow_redirect(conn, "/calls/CAXXXX5678")
 
-    assert html =~ "Active call: CAXXXX5678"
+    assert html =~ ~S{data-sid="CAXXXX5678"}
   end
 end

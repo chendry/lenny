@@ -14,7 +14,7 @@ defmodule LennyWeb.CallLiveTest do
     call = call_fixture(sid: "CAXXX")
 
     {:ok, live_view, html} = live(conn, "/calls/CAXXX")
-    assert html =~ "Active call: CAXXX"
+    assert html =~ ~S(data-sid="CAXXX")
 
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/status/call", %{"CallSid" => "CAXXX", "CallStatus" => "completed"})

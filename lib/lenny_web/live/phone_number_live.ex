@@ -41,9 +41,9 @@ defmodule LennyWeb.PhoneNumberLive do
       <%= if @live_action == :new do %>
         <h1 class="text-3xl font-bold mb-4">
           <%= if @approved_phone_number == nil do %>
-            Register a phone number
+            Register a Phone Number
           <% else %>
-            Change your phone number
+            Change your Phone Number
           <% end %>
         </h1>
 
@@ -67,11 +67,16 @@ defmodule LennyWeb.PhoneNumberLive do
 
       <%= if @live_action == :verify do %>
         <h1 class="text-3xl font-bold mb-4">
-          Verify your phone number:
+          Verify your Phone Number
         </h1>
 
         <p class="my-2">
-          <%= @pending_phone_number.phone %>
+          We sent a code to
+          <span class="font-bold">
+            <span id="pending-number"><%= @pending_phone_number.phone %></span>
+          </span>.
+          Please enter that code to verify your phone
+          number:
         </p>
 
         <.form for={@changeset} let={f} phx-submit="verify_phone_number">
@@ -89,15 +94,6 @@ defmodule LennyWeb.PhoneNumberLive do
           </div>
         </.form>
       <% end %>
-
-      <div class="mt-4">
-        <%= if @approved_phone_number do %>
-          <div>Approved: <%= @approved_phone_number.phone %></div>
-        <% end %>
-        <%= if @pending_phone_number do %>
-          <div>Pending: <%= @pending_phone_number.phone %></div>
-        <% end %>
-      </div>
     </div>
     """
   end

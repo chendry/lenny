@@ -35,12 +35,19 @@ defmodule LennyWeb.WaitLive do
     ~H"""
     <div class="container mx-auto pt-4 pb-12 px-2">
       <h1 class="text-3xl font-bold">
-        Waiting for a forwarded call...
+        Waiting for Your Call
       </h1>
       <p class="mt-4">
-        Approved: <%= @phone_number.phone %>
-        (<%= live_redirect "Change number", to: "/phone_numbers/new", class: "text-blue-600" %>)
+        This page will automatically refresh when we receive a call from your phone number:
       </p>
+      <div class="text-center">
+        <div class="mt-4 text-center text-green-600 text-xl font-bold tracking-[0.25rem]">
+          <span id="approved-number"><%= @phone_number.phone %></span>
+        </div>
+        <p>
+          <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-600" %>
+        </p>
+      </div>
       <%= if not Enum.empty?(@calls) do %>
         <ul id="calls">
           <%= for call <- @calls do %>

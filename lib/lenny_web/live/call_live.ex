@@ -12,12 +12,11 @@ defmodule LennyWeb.CallLive do
       Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
     end
 
-    call = Calls.get_by_sid!(sid)
-
     {:ok,
      socket
      |> assign(:sid, sid)
-     |> assign(:ended, call.ended_at != nil)
+     |> assign(:call, Calls.get_by_sid!(sid))
+     |> assign(:ended, false)
      |> assign(:autopilot, true)}
   end
 
@@ -25,22 +24,29 @@ defmodule LennyWeb.CallLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto pt-4 pb-12 px-2">
-      <p class="mt-4">
-        Active call: <%= @sid %>
+      <h1 class="text-3xl font-bold" data-sid={@sid}>
+        Lenny has Answered!
+      </h1>
+
+      <p class="mt-2">
+        Incoming call from
+        <span id="call-from" class="font-bold text-blue-600">
+          <%= @call.forwarded_from || @call.from %>
+        </span>
       </p>
 
       <%= if @ended do %>
         <p class="mt-4">Call ended.</p>
       <% else %>
 
-        <label class="mt-4">
+        <label class="block mt-8">
           <input id="autopilot" type="checkbox" checked={@autopilot} phx-click="toggle_autopilot">
           <span class="ml-2">
             Automatically proceed to next sound
           </span>
         </label>
 
-        <div class="mt-4 flex flex-col space-y-4">
+        <div class="mt-8 flex flex-col space-y-4">
           <button id="say_00" class={say_button_class()} phx-click="say" value={00}>Hello, this is Lenny.</button>
           <button id="say_01" class={say_button_class()} phx-click="say" value={01}>Sorry, I can barely hear 'ya there.</button>
           <button id="say_02" class={say_button_class()} phx-click="say" value={02}>Yes, yes yes.</button>
