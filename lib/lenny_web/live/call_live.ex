@@ -13,12 +13,12 @@ defmodule LennyWeb.CallLive do
     end
 
     call = Calls.get_by_sid!(sid)
-    
+
     {:ok,
-      socket
-      |> assign(:sid, sid)
-      |> assign(:ended, call.ended_at != nil)
-      |> assign(:autopilot, true)}
+     socket
+     |> assign(:sid, sid)
+     |> assign(:ended, call.ended_at != nil)
+     |> assign(:autopilot, true)}
   end
 
   @impl true
@@ -97,7 +97,11 @@ defmodule LennyWeb.CallLive do
     do: common_button_class() ++ ~w{border-gray-600 from-slate-200 to-slate-300 text-slate-700}
 
   defp dtmf_button_class, do: say_button_class() ++ ~w{w-10 m-1}
-  defp hangup_button_class, do: common_button_class() ++ ~w{border-red-600 from-red-500 to-red-600 text-white font-extrabold}
+
+  defp hangup_button_class,
+    do:
+      common_button_class() ++
+        ~w{border-red-600 from-red-500 to-red-600 text-white font-extrabold}
 
   defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
 
