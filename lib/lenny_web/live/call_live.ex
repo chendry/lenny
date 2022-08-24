@@ -16,6 +16,7 @@ defmodule LennyWeb.CallLive do
      socket
      |> assign(:sid, sid)
      |> assign(:call, Calls.get_by_sid!(sid))
+     |> assign(:media, nil)
      |> assign(:ended, false)
      |> assign(:autopilot, true)}
   end
@@ -27,6 +28,10 @@ defmodule LennyWeb.CallLive do
       <h1 class="text-3xl font-bold" data-sid={@sid}>
         Lenny has Answered!
       </h1>
+
+      <div class="my-4">
+        <%= inspect @media %>
+      </div>
 
       <p class="mt-2">
         Incoming call from
@@ -110,6 +115,11 @@ defmodule LennyWeb.CallLive do
         ~w{border-red-600 from-red-500 to-red-600 text-white font-extrabold}
 
   defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
+
+  @impl true
+  def handle_info({:media, media}, socket) do
+    {:noreply, assign(socket, :media, media)}
+  end
 
   @impl true
   def handle_info(:call_ended, socket) do

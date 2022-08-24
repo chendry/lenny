@@ -21,10 +21,22 @@ defmodule LennyWeb.TwilioController do
       """
       <?xml version="1.0" encoding="UTF-8"?>
       <Response>
+        <Start>
+          <Stream url="#{stream_url()}" track="both_tracks" />
+        </Start>
         #{TwiML.autopilot_iteration(0)}
       </Response>
       """
     )
+  end
+
+  def stream_url do
+    base_url =
+      Routes.url(LennyWeb.Endpoint)
+      |> String.replace_leading("https", "wss")
+      |> String.replace_leading("http", "ws")
+
+    "#{base_url}/twilio/stream/websocket"
   end
 
   def call_status(conn, %{"CallSid" => sid} = params) do

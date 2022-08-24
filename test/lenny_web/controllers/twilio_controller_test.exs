@@ -34,9 +34,14 @@ defmodule LennyWeb.TwilioControllerTest do
       "ToZip" => ""
     }
 
-    conn = post(conn, "/twilio/incoming", params)
-    assert response(conn, 200) =~ "lenny_00.mp3"
-    assert response(conn, 200) =~ "/autopilot/1"
+    xml =
+      conn
+      |> post("/twilio/incoming", params)
+      |> response(200)
+
+    assert xml =~ "lenny_00.mp3"
+    assert xml =~ "/autopilot/1"
+    assert xml =~ "ws://localhost:4002/twilio/stream"
   end
 
   test "POST /twilio/status/call to end call", %{conn: conn} do
