@@ -26,8 +26,24 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+import {
+    AudioChunkHook,
+    CreateAudioContextHook
+} from "./audio_chunk_hook"
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+
+let liveSocket = new LiveSocket(
+  "/live",
+  Socket,
+  {
+    params: {_csrf_token: csrfToken},
+    hooks: {
+      CreateAudioContext: CreateAudioContextHook,
+      AudioChunk: AudioChunkHook
+    }
+  }
+)
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})

@@ -29,9 +29,20 @@ defmodule LennyWeb.CallLive do
         Lenny has Answered!
       </h1>
 
-      <div class="my-4">
-        <%= inspect @media %>
-      </div>
+      <p class="mt-4">
+        <button id="create-audio-context" phx-hook="CreateAudioContext" lass="text-blue-600">
+          Create Audio Context
+        </button>
+      </p>
+
+      <%= if @media do %>
+        <div
+          id={"audio-chunk-#{@media.chunk}"}
+          phx-hook="AudioChunk"
+          data-payload={@media.payload}
+          data-timestamp={@media.timestamp}
+        />
+      <% end %>
 
       <p class="mt-2">
         Incoming call from
