@@ -54,4 +54,13 @@ defmodule LennyWeb.WaitLiveTest do
     |> render_click()
     |> follow_redirect(conn, "/calls/CA002")
   end
+
+  test "/wait redirects if there is a pending phone number", %{conn: conn, user: user} do
+    phone_number_fixture(user)
+    phone_number_fixture(user, verified_at: nil)
+
+    {:ok, _live_view, _html} =
+      live(conn, "/wait")
+      |> follow_redirect(conn, "/phone_numbers/verify")
+  end
 end

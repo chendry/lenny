@@ -153,4 +153,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     assert html =~ ~S{data-sid="CAXXXX5678"}
   end
+
+  test "/phone_numbers/new redirects if there is a pending phone number", %{conn: conn, user: user} do
+    phone_number_fixture(user)
+    phone_number_fixture(user, verified_at: nil)
+
+    {:ok, _live_view, _html} =
+      live(conn, "/phone_numbers/new")
+      |> follow_redirect(conn, "/phone_numbers/verify")
+  end
 end

@@ -13,19 +13,23 @@ defmodule LennyWeb.WaitLive do
     if phone_number == nil do
       {:ok, push_redirect(socket, to: "/phone_numbers/new")}
     else
-      case Calls.get_active_calls(phone_number.phone) do
-        [call] ->
-          {:ok, push_redirect(socket, to: "/calls/#{call.sid}")}
+      if PhoneNumbers.get_pending_phone_number(user) do
+        {:ok, push_redirect(socket, to: "/phone_numbers/verify")}
+      else
+        case Calls.get_active_calls(phone_number.phone) do
+          [call] ->
+            {:ok, push_redirect(socket, to: "/calls/#{call.sid}")}
 
-        calls ->
-          if connected?(socket) do
-            Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
-          end
+          calls ->
+            if connected?(socket) do
+              Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
+            end
 
-          {:ok,
-           socket
-           |> assign(:phone_number, phone_number)
-           |> assign(:calls, calls)}
+            {:ok,
+            socket
+            |> assign(:phone_number, phone_number)
+            |> assign(:calls, calls)}
+        end
       end
     end
   end

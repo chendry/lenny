@@ -25,8 +25,12 @@ defmodule LennyWeb.PhoneNumberLive do
   end
 
   defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:changeset, PhoneNumber.changeset())
+    if PhoneNumbers.get_pending_phone_number(socket.assigns.user) do
+      push_redirect(socket, to: "/phone_numbers/verify")
+    else
+      socket
+      |> assign(:changeset, PhoneNumber.changeset())
+    end
   end
 
   defp apply_action(socket, :verify, _params) do
