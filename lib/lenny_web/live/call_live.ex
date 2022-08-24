@@ -61,7 +61,12 @@ defmodule LennyWeb.CallLive do
       </p>
 
       <%= if @ended do %>
-        <p class="mt-4">Call ended.</p>
+        <p class="mt-4">
+          Call ended.
+          <%= live_redirect to: "/wait", class: "text-blue-600" do %>
+            Wait for another call
+          <% end %>
+        </p>
       <% else %>
 
         <label class="block mt-8">
