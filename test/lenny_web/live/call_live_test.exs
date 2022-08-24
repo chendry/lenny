@@ -10,20 +10,10 @@ defmodule LennyWeb.CallLiveTest do
 
   setup [:register_and_log_in_user]
 
-  test "handle a call", %{conn: conn, user: user} do
-    phone_number_fixture(user, phone: "+13126180256")
+  test "call status webhook with CallStatus=completed ends the call", %{conn: conn} do
+    call = call_fixture(sid: "CAXXX")
 
-    {:ok, live_view, html} = live(conn, "/wait")
-    assert html =~ "Waiting for a forwarded call..."
-    refute html =~ "Active call:"
-
-    Phoenix.ConnTest.build_conn()
-    |> post("/twilio/incoming", %{"CallSid" => "CAXXX", "From" => "+13126180256"})
-
-    {path, _flash} = assert_redirect(live_view)
-    {:ok, live_view, html} = live(conn, path)
-
-    refute html =~ "Waiting for a forwarded call..."
+    {:ok, live_view, html} = live(conn, "/calls/CAXXX")
     assert html =~ "Active call: CAXXX"
 
     Phoenix.ConnTest.build_conn()
@@ -31,26 +21,14 @@ defmodule LennyWeb.CallLiveTest do
 
     html = render(live_view)
     assert html =~ "Call ended."
-  end
-
-  test "load page with an active call in progress", %{conn: conn, user: user} do
-    phone_number_fixture(user, phone: "+13126180256")
-    call_fixture(sid: "CAXXXX1234", from: "+13126180256")
-
-    {:ok, _live_view, html} =
-      live(conn, "/wait")
-      |> follow_redirect(conn, "/calls/CAXXXX1234")
-
-    assert html =~ "Active call: CAXXXX1234"
+    assert Repo.get(Call, call.id).ended_at != nil
   end
 
   test "push the say buttons during a call", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
-    {:ok, live_view, _html} =
-      live(conn, "/wait")
-      |> follow_redirect(conn, "/calls/CAXXXX1234")
+    {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
@@ -77,9 +55,7 @@ defmodule LennyWeb.CallLiveTest do
     phone_number_fixture(user, phone: "+13126180256")
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
-    {:ok, live_view, _html} =
-      live(conn, "/wait")
-      |> follow_redirect(conn, "/calls/CAXXXX1234")
+    {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
@@ -104,9 +80,7 @@ defmodule LennyWeb.CallLiveTest do
     phone_number_fixture(user, phone: "+13126180256")
     call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
-    {:ok, live_view, _html} =
-      live(conn, "/wait")
-      |> follow_redirect(conn, "/calls/CAXXXX1234")
+    {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
@@ -131,9 +105,7 @@ defmodule LennyWeb.CallLiveTest do
     phone_number_fixture(user, phone: "+13126180256")
     call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
 
-    {:ok, live_view, _html} =
-      live(conn, "/wait")
-      |> follow_redirect(conn, "/calls/CAXXXX1234")
+    {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
