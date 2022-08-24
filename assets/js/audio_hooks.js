@@ -3,6 +3,12 @@ let clockOffset = null
 
 export const StartAudioHook = {
   mounted() {
+    this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+
+    audioCtx.onstatechange = () => {
+      this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+    }
+
     this.el.addEventListener("click", () => {
       audioCtx.resume()
     })

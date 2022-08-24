@@ -18,6 +18,7 @@ defmodule LennyWeb.CallLive do
      socket
      |> assign(:sid, sid)
      |> assign(:call, call)
+     |> assign(:audio_ctx_state, nil)
      |> assign(:media, nil)
      |> assign(:ended, call.ended_at != nil)
      |> assign(:autopilot, true)}
@@ -32,9 +33,15 @@ defmodule LennyWeb.CallLive do
       </h1>
 
       <p class="mt-4">
-        <button id="create-audio-context" phx-hook="StartAudio" lass="text-blue-600">
-          Start Audio
-        </button>
+        <%= if @audio_ctx_state != "running" do %>
+          <button id="create-audio-context" phx-hook="StartAudio" class="text-blue-600">
+            Start Audio
+          </button>
+        <% else %>
+          <div class="text-green-600">
+            Audio Started
+          </div>
+        <% end %>
       </p>
 
       <%= if @media do %>
@@ -137,6 +144,11 @@ defmodule LennyWeb.CallLive do
   @impl true
   def handle_info(:call_ended, socket) do
     {:noreply, assign(socket, :ended, true)}
+  end
+
+  @impl true
+  def handle_event("audio_ctx_state", %{"state" => state}, socket) do
+    {:noreply, assign(socket, :audio_ctx_state, state)}
   end
 
   @impl true
