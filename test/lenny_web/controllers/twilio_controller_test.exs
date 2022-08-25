@@ -41,7 +41,7 @@ defmodule LennyWeb.TwilioControllerTest do
 
     assert xml =~ "lenny_00.mp3"
     assert xml =~ "/autopilot/1"
-    assert xml =~ "ws://localhost:4002/twilio/stream"
+    assert xml =~ "ws://localhost/twilio/stream/websocket"
   end
 
   test "POST /twilio/status/call to end call", %{conn: conn} do
