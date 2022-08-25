@@ -21,13 +21,8 @@ defmodule LennyWeb.TwilioStreamSocket do
       %{"event" => "start", "start" => %{"callSid" => call_sid}} ->
         {:ok, Map.put(state, :call_sid, call_sid)}
 
-      %{"media" => %{"chunk" => chunk, "timestamp" => timestamp, "payload" => payload}} ->
-        Phoenix.PubSub.broadcast(
-          Lenny.PubSub,
-          "call:#{state.call_sid}",
-          {:media, %{chunk: chunk, timestamp: timestamp, payload: payload}}
-        )
-
+      %{"media" => media} ->
+        Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{state.call_sid}", {:media, media})
         {:ok, state}
 
       _ ->

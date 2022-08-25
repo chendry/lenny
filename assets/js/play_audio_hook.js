@@ -2,7 +2,32 @@ import {audioCtx} from "./start_audio_context_hook"
 
 export const PlayAudioHook = {
   mounted() {
+    const callStart = {
+      "inbound": null,
+      "outbound": null
+    }
+
+    const lastCallStartRefresh = {
+      "inbound": null,
+      "outbound": null
+    }
+
+    const refreshIntervals = {
+      "inbound": 1,
+      "outbound": 15
+    }
+
+    const refreshCallStart = (track, timestamp) => {
+      callStart[track] = audioCtx.currentTime - timestamp
+      lastCallStartRefresh[track] = audioCtx.currentTime
+    }
+
     this.handleEvent("media", ({media}) => {
+      if (audioCtx.state != "running") {
+        return
+      }
+
+      const timestamp = parseInt(media.timestamp, 10) / 1000
       const pcm = mulawDecode(base64decode(media.payload))
       const buffer = audioCtx.createBuffer(1, pcm.length, 8000)
       const channelData = buffer.getChannelData(0)
@@ -16,7 +41,11 @@ export const PlayAudioHook = {
       source.connect(audioCtx.destination)
       source.buffer = buffer
 
-      source.start(0)
+      if (callStart[media.track] == null || lastCallStartRefresh[media.track] < audioCtx.currentTime - refreshIntervals[media.track]) {
+        refreshCallStart(media.track, timestamp)
+      }
+
+      source.start(callStart[media.track] + timestamp + 0.100)
     })
   }
 }
