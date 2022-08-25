@@ -80,25 +80,25 @@ defmodule LennyWeb.CallLive do
         </label>
 
         <div class="mt-8 flex flex-col space-y-4">
-          <button id="say_00" class={say_button_class(@iteration == 00)} phx-click="say" value={00}>Hello, this is Lenny.</button>
-          <button id="say_01" class={say_button_class(@iteration == 01)} phx-click="say" value={01}>Sorry, I can barely hear 'ya there.</button>
-          <button id="say_02" class={say_button_class(@iteration == 02)} phx-click="say" value={02}>Yes, yes yes.</button>
-          <button id="say_03" class={say_button_class(@iteration == 03)} phx-click="say" value={03}>Oh good! Yes yes yes yes.</button>
-          <button id="say_04" class={say_button_class(@iteration == 04)} phx-click="say" value={04}>Someone did call last week about the same.  Was that you?</button>
-          <button id="say_05" class={say_button_class(@iteration == 05)} phx-click="say" value={05}>Sorry, what was your name again?</button>
-          <button id="say_06" class={say_button_class(@iteration == 06)} phx-click="say" value={06}>Well, it's funny that you call because...</button>
-          <button id="say_07" class={say_button_class(@iteration == 07)} phx-click="say" value={07}>I couldn't quite catch 'ya there, what was that again?</button>
-          <button id="say_08" class={say_button_class(@iteration == 08)} phx-click="say" value={08}>Sorry... again?</button>
-          <button id="say_09" class={say_button_class(@iteration == 09)} phx-click="say" value={09}>Could you say that again please?</button>
-          <button id="say_10" class={say_button_class(@iteration == 10)} phx-click="say" value={10}>Yes, yes, yes...</button>
-          <button id="say_11" class={say_button_class(@iteration == 11)} phx-click="say" value={11}>Sorry, which company did you say you were calling from, again?</button>
-          <button id="say_12" class={say_button_class(@iteration == 12)} phx-click="say" value={12}>The last time call someone called up...</button>
-          <button id="say_13" class={say_button_class(@iteration == 13)} phx-click="say" value={13}>Since you've put it that way...</button>
-          <button id="say_14" class={say_button_class(@iteration == 14)} phx-click="say" value={14}>With the world finances the way they are...</button>
-          <button id="say_15" class={say_button_class(@iteration == 15)} phx-click="say" value={15}>That does sound good, you've been very patient...</button>
-          <button id="say_16" class={say_button_class(@iteration == 16)} phx-click="say" value={16}>Hello?</button>
-          <button id="say_17" class={say_button_class(@iteration == 17)} phx-click="say" value={17}>Hello, are you there?</button>
-          <button id="say_18" class={say_button_class(@iteration == 18)} phx-click="say" value={18}>Sorry, bit of a problem...</button>
+          <button {say_button_attrs(@iteration, 00)}>Hello, this is Lenny.</button>
+          <button {say_button_attrs(@iteration, 01)}>Sorry, I can barely hear 'ya there.</button>
+          <button {say_button_attrs(@iteration, 02)}>Yes, yes yes.</button>
+          <button {say_button_attrs(@iteration, 03)}>Oh good! Yes yes yes yes.</button>
+          <button {say_button_attrs(@iteration, 04)}>Someone did call last week about the same.  Was that you?</button>
+          <button {say_button_attrs(@iteration, 05)}>Sorry, what was your name again?</button>
+          <button {say_button_attrs(@iteration, 06)}>Well, it's funny that you call because...</button>
+          <button {say_button_attrs(@iteration, 07)}>I couldn't quite catch 'ya there, what was that again?</button>
+          <button {say_button_attrs(@iteration, 08)}>Sorry... again?</button>
+          <button {say_button_attrs(@iteration, 09)}>Could you say that again please?</button>
+          <button {say_button_attrs(@iteration, 10)}>Yes, yes, yes...</button>
+          <button {say_button_attrs(@iteration, 11)}>Sorry, which company did you say you were calling from, again?</button>
+          <button {say_button_attrs(@iteration, 12)}>The last time call someone called up...</button>
+          <button {say_button_attrs(@iteration, 13)}>Since you've put it that way...</button>
+          <button {say_button_attrs(@iteration, 14)}>With the world finances the way they are...</button>
+          <button {say_button_attrs(@iteration, 15)}>That does sound good, you've been very patient...</button>
+          <button {say_button_attrs(@iteration, 16)}>Hello?</button>
+          <button {say_button_attrs(@iteration, 17)}>Hello, are you there?</button>
+          <button {say_button_attrs(@iteration, 18)}>Sorry, bit of a problem...</button>
         </div>
 
         <table class="mt-8 mx-auto">
@@ -134,6 +134,15 @@ defmodule LennyWeb.CallLive do
 
   defp audio_button_class(),
     do: common_button_class() ++ ~w{border-blue-600 from-blue-400 to-blue-600 text-white}
+
+  defp say_button_attrs(iteration, i) do
+    %{
+      "id" => "say_" <> String.pad_leading("#{i}", 2, "0") ,
+      "class" => say_button_class(i == iteration),
+      "phx-click" => "say",
+      "value" => i
+    }
+  end
 
   defp say_button_class(active) do
     text_color =
