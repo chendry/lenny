@@ -59,22 +59,14 @@ defmodule LennyWeb.TwilioController do
       Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech_result, speech})
     end
 
-    response =
+    {response, i} =
       if Calls.get_autopilot(sid) do
-        """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <Response>
-          #{TwiML.lenny(i + 1)}
-        </Response>
-        """
+        {~s(<?xml version="1.0" encoding="UTF-8"?><Response>#{TwiML.lenny(i + 1)}</Response>), i + 1}
       else
-        """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <Response>
-          #{TwiML.gather(120, i)}
-        </Response>
-        """
+        {~s(<?xml version="1.0" encoding="UTF-8"?><Response>#{TwiML.gather(120, i)}</Response>), i}
       end
+
+    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:iteration, i})
 
     conn
     |> put_resp_content_type("text/xml")

@@ -17,6 +17,7 @@ defmodule LennyWeb.CallLive do
      socket
      |> assign(:sid, sid)
      |> assign(:call, call)
+     |> assign(:iteration, 0)
      |> assign(:speech_result, nil)
      |> assign(:audio_ctx_state, nil)
      |> assign(:ended, call.ended_at != nil)
@@ -79,25 +80,25 @@ defmodule LennyWeb.CallLive do
         </label>
 
         <div class="mt-8 flex flex-col space-y-4">
-          <button id="say_00" class={say_button_class()} phx-click="say" value={00}>Hello, this is Lenny.</button>
-          <button id="say_01" class={say_button_class()} phx-click="say" value={01}>Sorry, I can barely hear 'ya there.</button>
-          <button id="say_02" class={say_button_class()} phx-click="say" value={02}>Yes, yes yes.</button>
-          <button id="say_03" class={say_button_class()} phx-click="say" value={03}>Oh good! Yes yes yes yes.</button>
-          <button id="say_04" class={say_button_class()} phx-click="say" value={04}>Someone did call last week about the same.  Was that you?</button>
-          <button id="say_05" class={say_button_class()} phx-click="say" value={05}>Sorry, what was your name again?</button>
-          <button id="say_06" class={say_button_class()} phx-click="say" value={06}>Well, it's funny that you call because...</button>
-          <button id="say_07" class={say_button_class()} phx-click="say" value={07}>I couldn't quite catch 'ya there, what was that again?</button>
-          <button id="say_08" class={say_button_class()} phx-click="say" value={08}>Sorry... again?</button>
-          <button id="say_09" class={say_button_class()} phx-click="say" value={09}>Could you say that again please?</button>
-          <button id="say_10" class={say_button_class()} phx-click="say" value={10}>Yes, yes, yes...</button>
-          <button id="say_11" class={say_button_class()} phx-click="say" value={11}>Sorry, which company did you say you were calling from, again?</button>
-          <button id="say_12" class={say_button_class()} phx-click="say" value={12}>The last time call someone called up...</button>
-          <button id="say_13" class={say_button_class()} phx-click="say" value={13}>Since you've put it that way...</button>
-          <button id="say_14" class={say_button_class()} phx-click="say" value={14}>With the world finances the way they are...</button>
-          <button id="say_15" class={say_button_class()} phx-click="say" value={15}>That does sound good, you've been very patient...</button>
-          <button id="say_16" class={say_button_class()} phx-click="say" value={16}>Hello?</button>
-          <button id="say_17" class={say_button_class()} phx-click="say" value={17}>Hello, are you there?</button>
-          <button id="say_18" class={say_button_class()} phx-click="say" value={18}>Sorry, bit of a problem...</button>
+          <button id="say_00" class={say_button_class(@iteration == 00)} phx-click="say" value={00}>Hello, this is Lenny.</button>
+          <button id="say_01" class={say_button_class(@iteration == 01)} phx-click="say" value={01}>Sorry, I can barely hear 'ya there.</button>
+          <button id="say_02" class={say_button_class(@iteration == 02)} phx-click="say" value={02}>Yes, yes yes.</button>
+          <button id="say_03" class={say_button_class(@iteration == 03)} phx-click="say" value={03}>Oh good! Yes yes yes yes.</button>
+          <button id="say_04" class={say_button_class(@iteration == 04)} phx-click="say" value={04}>Someone did call last week about the same.  Was that you?</button>
+          <button id="say_05" class={say_button_class(@iteration == 05)} phx-click="say" value={05}>Sorry, what was your name again?</button>
+          <button id="say_06" class={say_button_class(@iteration == 06)} phx-click="say" value={06}>Well, it's funny that you call because...</button>
+          <button id="say_07" class={say_button_class(@iteration == 07)} phx-click="say" value={07}>I couldn't quite catch 'ya there, what was that again?</button>
+          <button id="say_08" class={say_button_class(@iteration == 08)} phx-click="say" value={08}>Sorry... again?</button>
+          <button id="say_09" class={say_button_class(@iteration == 09)} phx-click="say" value={09}>Could you say that again please?</button>
+          <button id="say_10" class={say_button_class(@iteration == 10)} phx-click="say" value={10}>Yes, yes, yes...</button>
+          <button id="say_11" class={say_button_class(@iteration == 11)} phx-click="say" value={11}>Sorry, which company did you say you were calling from, again?</button>
+          <button id="say_12" class={say_button_class(@iteration == 12)} phx-click="say" value={12}>The last time call someone called up...</button>
+          <button id="say_13" class={say_button_class(@iteration == 13)} phx-click="say" value={13}>Since you've put it that way...</button>
+          <button id="say_14" class={say_button_class(@iteration == 14)} phx-click="say" value={14}>With the world finances the way they are...</button>
+          <button id="say_15" class={say_button_class(@iteration == 15)} phx-click="say" value={15}>That does sound good, you've been very patient...</button>
+          <button id="say_16" class={say_button_class(@iteration == 16)} phx-click="say" value={16}>Hello?</button>
+          <button id="say_17" class={say_button_class(@iteration == 17)} phx-click="say" value={17}>Hello, are you there?</button>
+          <button id="say_18" class={say_button_class(@iteration == 18)} phx-click="say" value={18}>Sorry, bit of a problem...</button>
         </div>
 
         <table class="mt-8 mx-auto">
@@ -134,10 +135,17 @@ defmodule LennyWeb.CallLive do
   defp audio_button_class(),
     do: common_button_class() ++ ~w{border-blue-600 from-blue-400 to-blue-600 text-white}
 
-  defp say_button_class(),
-    do: common_button_class() ++ ~w{border-gray-600 from-slate-200 to-slate-300 text-slate-700}
+  defp say_button_class(active) do
+    text_color =
+      if active,
+        do: "text-blue-600",
+        else: "text-slate-700"
 
-  defp dtmf_button_class, do: say_button_class() ++ ~w{w-10 m-1}
+    common_button_class() ++ ~w{border-gray-600 from-slate-200 to-slate-300} ++ [text_color]
+  end
+
+  defp dtmf_button_class,
+    do: common_button_class() ++ ~w{w-10 m-1 border-gray-600 from-slate-200 to-slate-300}
 
   defp hangup_button_class,
     do:
@@ -149,6 +157,11 @@ defmodule LennyWeb.CallLive do
   @impl true
   def handle_info({:media, media}, socket) do
     {:noreply, push_event(socket, "media", %{media: media})}
+  end
+
+  @impl true
+  def handle_info({:iteration, i}, socket) do
+    {:noreply, assign(socket, :iteration, i)}
   end
 
   @impl true
@@ -179,6 +192,12 @@ defmodule LennyWeb.CallLive do
   @impl true
   def handle_event("say", %{"value" => i}, socket) do
     i = String.to_integer(i)
+
+    Phoenix.PubSub.broadcast(
+      Lenny.PubSub,
+      "call:#{socket.assigns.sid}",
+      {:iteration, i}
+    )
 
     Twilio.modify_call(
       socket.assigns.sid,
