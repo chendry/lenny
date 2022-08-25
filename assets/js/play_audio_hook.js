@@ -1,7 +1,5 @@
 import {audioCtx} from "./start_audio_context_hook"
 
-let clockOffset = null
-
 export const PlayAudioHook = {
   mounted() {
     const pcm = mulawDecode(base64decode(this.el.dataset.payload))
@@ -18,34 +16,7 @@ export const PlayAudioHook = {
     source.connect(audioCtx.destination)
     source.buffer = buffer
 
-    if (clockOffset == null) {
-      /* this is the first chunk.  timestamp is the offset in seconds
-       * into the call from which this audio came from.  Set
-       * clockOffset to the current time, minus the timestamp, and
-       * plus 50 milliseconds.  The 50 milliseconds gives us a little
-       * bit of a buffer so we can smooth the audio.  Doing this will
-       * cause the call to source.start below to play the first audio
-       * chunk exactly 50ms from now */
-      clockOffset = (audioCtx.currentTime - timestamp) + 0.05;
-    }
-
-    if (clockOffset + timestamp < audioCtx.currentTime) {
-      /* this audio chunk arrived late; maybe we're getting data too
-       * slow.  We're supposed to start it at a some point in the past
-       * which isn't feasible.  Instead, change our clockOffset so
-       * that the chunk is played 50ms from now. */
-      clockOffset = (audioCtx.currentTime - timestamp) + 0.05;
-    }
-
-    if (clockOffset + timestamp > audioCtx.currentTime + 0.10) {
-      /* now we're receiving audio chunks which were obviously
-       * recorded in the past, but we're scheduling playback for over
-       * 100ms into the future.  This is avoidable lag, so change
-       * clockOffset so that the chunk is played 50ms from now. */
-      clockOffset = (audioCtx.currentTime - timestamp) + 0.05;
-    }
-
-    source.start(clockOffset + timestamp)
+    source.start(0)
   }
 }
 
