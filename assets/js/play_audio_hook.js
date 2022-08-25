@@ -2,51 +2,41 @@ import {audioCtx} from "./start_audio_context_hook"
 
 export const PlayAudioHook = {
   mounted() {
-    const callStart = {
-      "inbound": null,
-      "outbound": null
+    this.handleEvent("media", buildMediaHandlerForTrack("inbound", 15))
+    this.handleEvent("media", buildMediaHandlerForTrack("outbound", 1))
+  }
+}
+
+function buildMediaHandlerForTrack(track, callStartRefreshInterval) {
+  let lastCallStartRefresh = null
+  let callStart = null
+
+  return ({media}) => {
+    if (audioCtx.state != "running" || media.track != track) {
+      return
     }
 
-    const lastCallStartRefresh = {
-      "inbound": null,
-      "outbound": null
+    const timestamp = parseInt(media.timestamp, 10) / 1000
+    const pcm = mulawDecode(base64decode(media.payload))
+    const buffer = audioCtx.createBuffer(1, pcm.length, 8000)
+    const channelData = buffer.getChannelData(0)
+
+    for (let i = 0; i < pcm.length; i ++) {
+      channelData[i] = pcm[i] / 65535
     }
 
-    const refreshIntervals = {
-      "inbound": 1,
-      "outbound": 15
+    const source = audioCtx.createBufferSource()
+    source.connect(audioCtx.destination)
+    source.buffer = buffer
+
+    const currentTime = audioCtx.currentTime
+
+    if (callStart == null || lastCallStartRefresh < currentTime - callStartRefreshInterval) {
+      callStart = currentTime - timestamp
+      lastCallStartRefresh = currentTime
     }
 
-    const refreshCallStart = (track, timestamp) => {
-      callStart[track] = audioCtx.currentTime - timestamp
-      lastCallStartRefresh[track] = audioCtx.currentTime
-    }
-
-    this.handleEvent("media", ({media}) => {
-      if (audioCtx.state != "running") {
-        return
-      }
-
-      const timestamp = parseInt(media.timestamp, 10) / 1000
-      const pcm = mulawDecode(base64decode(media.payload))
-      const buffer = audioCtx.createBuffer(1, pcm.length, 8000)
-      const channelData = buffer.getChannelData(0)
-
-      for (let i = 0; i < pcm.length; i ++) {
-        channelData[i] = pcm[i] / 65535
-      }
-
-      const source = audioCtx.createBufferSource()
-
-      source.connect(audioCtx.destination)
-      source.buffer = buffer
-
-      if (callStart[media.track] == null || lastCallStartRefresh[media.track] < audioCtx.currentTime - refreshIntervals[media.track]) {
-        refreshCallStart(media.track, timestamp)
-      }
-
-      source.start(callStart[media.track] + timestamp + 0.100)
-    })
+    source.start(callStart + timestamp + 0.250)
   }
 }
 
