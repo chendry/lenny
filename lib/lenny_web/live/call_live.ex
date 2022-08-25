@@ -18,6 +18,7 @@ defmodule LennyWeb.CallLive do
      socket
      |> assign(:sid, sid)
      |> assign(:call, call)
+     |> assign(:speech_result, nil)
      |> assign(:audio_ctx_state, nil)
      |> assign(:ended, call.ended_at != nil)
      |> assign(:autopilot, true)}
@@ -37,6 +38,10 @@ defmodule LennyWeb.CallLive do
           <%= @call.forwarded_from || @call.from %>
         </span>
       </p>
+
+      <div id="speech-result" class="flex flex-col justify-center items-center mt-4 h-16 text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
+        <span><%= @speech_result %></span>
+      </div>
 
       <%= if not @ended do %>
         <p class="mt-4 flex flex-col">
@@ -145,6 +150,11 @@ defmodule LennyWeb.CallLive do
   @impl true
   def handle_info({:media, media}, socket) do
     {:noreply, push_event(socket, "media", %{media: media})}
+  end
+
+  @impl true
+  def handle_info({:speech_result, speech_result}, socket) do
+    {:noreply, assign(socket, :speech_result, speech_result)}
   end
 
   @impl true

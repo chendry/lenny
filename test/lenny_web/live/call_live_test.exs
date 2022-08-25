@@ -19,8 +19,8 @@ defmodule LennyWeb.CallLiveTest do
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/status/call", %{"CallSid" => "CAXXX", "CallStatus" => "completed"})
 
-    flash = assert_redirect live_view, "/wait"
-    assert  flash["info"] == "Call ended."
+    flash = assert_redirect(live_view, "/wait")
+    assert flash["info"] == "Call ended."
 
     assert Repo.get(Call, call.id).ended_at != nil
   end
@@ -129,5 +129,55 @@ defmodule LennyWeb.CallLiveTest do
     {:ok, _live_view, html} = live(conn, "/calls/CA007")
     assert html =~ "Call ended"
     refute html =~ "Start Audio"
+  end
+
+  test "show what the person says during autopilot", %{conn: conn} do
+    call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c")
+
+    {:ok, live_view, html} = live(conn, "/calls/CA165c28bffa7817b0ccd857fa1adc124c")
+
+    refute html =~ "I'm a banana"
+
+    Phoenix.ConnTest.build_conn()
+    |> post(
+      "/autopilot/3",
+      %{
+        "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "ApiVersion" => "2010-04-01",
+        "CallSid" => "CA165c28bffa7817b0ccd857fa1adc124c",
+        "CallStatus" => "in-progress",
+        "Called" => "+19384653669",
+        "CalledCity" => "",
+        "CalledCountry" => "US",
+        "CalledState" => "AL",
+        "CalledZip" => "",
+        "Caller" => "+13126180256",
+        "CallerCity" => "CHICAGO",
+        "CallerCountry" => "US",
+        "CallerState" => "IL",
+        "CallerZip" => "60605",
+        "Confidence" => "0.91283864",
+        "Direction" => "inbound",
+        "From" => "+13126180256",
+        "FromCity" => "CHICAGO",
+        "FromCountry" => "US",
+        "FromState" => "IL",
+        "FromZip" => "60605",
+        "Language" => "en-US",
+        "SpeechResult" => "I'm a banana.",
+        "To" => "+19384653669",
+        "ToCity" => "",
+        "ToCountry" => "US",
+        "ToState" => "AL",
+        "ToZip" => ""
+      }
+    )
+
+    html =
+      live_view
+      |> element("#speech-result")
+      |> render()
+    
+    assert html =~ "I&#39;m a banana."
   end
 end
