@@ -4,7 +4,7 @@ defmodule LennyWeb.TwiML do
   alias LennyWeb.AudioFileUrls
 
   def autopilot_iteration(i) do
-    next_action_url = Routes.autopilot_url(Endpoint, :iteration, i + 1)
+    next_action_url = Routes.twilio_url(Endpoint, :autopilot, i + 1)
 
     """
     <Play>

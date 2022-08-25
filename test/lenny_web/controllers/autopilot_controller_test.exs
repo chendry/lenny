@@ -33,10 +33,10 @@ defmodule LennyWeb.AutopilotControllerTest do
       "ToZip" => ""
     }
 
-    conn = post(conn, "/autopilot/1", params)
+    conn = post(conn, "/twilio/autopilot/1", params)
     assert response(conn, 200) =~ "lenny_01.mp3"
     refute response(conn, 200) =~ "lenny_02.mp3"
-    assert response(conn, 200) =~ "/autopilot/2"
+    assert response(conn, 200) =~ "/twilio/autopilot/2"
   end
 
   test "POST /autopilot/2", %{conn: conn} do
@@ -71,9 +71,9 @@ defmodule LennyWeb.AutopilotControllerTest do
       "ToZip" => ""
     }
 
-    conn = post(conn, "/autopilot/2", params)
+    conn = post(conn, "/twilio/autopilot/2", params)
     assert response(conn, 200) =~ "lenny_02.mp3"
     refute response(conn, 200) =~ "lenny_03.mp3"
-    assert response(conn, 200) =~ "/autopilot/3"
+    assert response(conn, 200) =~ "/twilio/autopilot/3"
   end
 end

@@ -50,6 +50,28 @@ defmodule LennyWeb.TwilioController do
     send_resp(conn, 200, "OK")
   end
 
+  def autopilot(conn, %{"CallSid" => sid, "i" => i} = params) do
+    Logger.info("#{__MODULE__}: iteration: #{inspect(params)}")
+
+    i = String.to_integer(i)
+
+    if speech = params["SpeechResult"] do
+      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech_result, speech})
+    end
+
+    conn
+    |> put_resp_content_type("text/xml")
+    |> send_resp(
+      200,
+      """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <Response>
+        #{TwiML.autopilot_iteration(i)}
+      </Response>
+      """
+    )
+  end
+
   def gather(conn, %{"CallSid" => sid} = params) do
     Logger.info("#{__MODULE__}: gather: #{inspect(params)}")
 

@@ -140,7 +140,7 @@ defmodule LennyWeb.CallLiveTest do
 
     Phoenix.ConnTest.build_conn()
     |> post(
-      "/autopilot/3",
+      "/twilio/autopilot/3",
       %{
         "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "ApiVersion" => "2010-04-01",
