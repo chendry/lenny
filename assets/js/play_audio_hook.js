@@ -2,21 +2,22 @@ import {audioCtx} from "./start_audio_context_hook"
 
 export const PlayAudioHook = {
   mounted() {
-    const pcm = mulawDecode(base64decode(this.el.dataset.payload))
-    const timestamp = parseInt(this.el.dataset.timestamp, 10) / 1000
-    const buffer = audioCtx.createBuffer(1, pcm.length, 8000)
-    const channelData = buffer.getChannelData(0)
+    this.handleEvent("media", ({media}) => {
+      const pcm = mulawDecode(base64decode(media.payload))
+      const buffer = audioCtx.createBuffer(1, pcm.length, 8000)
+      const channelData = buffer.getChannelData(0)
 
-    for (let i = 0; i < pcm.length; i ++) {
-      channelData[i] = pcm[i] / 65535
-    }
+      for (let i = 0; i < pcm.length; i ++) {
+        channelData[i] = pcm[i] / 65535
+      }
 
-    const source = audioCtx.createBufferSource()
+      const source = audioCtx.createBufferSource()
 
-    source.connect(audioCtx.destination)
-    source.buffer = buffer
+      source.connect(audioCtx.destination)
+      source.buffer = buffer
 
-    source.start(0)
+      source.start(0)
+    })
   }
 }
 

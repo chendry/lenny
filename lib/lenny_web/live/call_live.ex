@@ -19,7 +19,6 @@ defmodule LennyWeb.CallLive do
      |> assign(:sid, sid)
      |> assign(:call, call)
      |> assign(:audio_ctx_state, nil)
-     |> assign(:media, nil)
      |> assign(:ended, call.ended_at != nil)
      |> assign(:autopilot, true)}
   end
@@ -44,14 +43,7 @@ defmodule LennyWeb.CallLive do
         <% end %>
       </p>
 
-      <%= if @media do %>
-        <div
-          id={"play-audio-hook-#{@media.chunk}"}
-          phx-hook="PlayAudioHook"
-          data-payload={@media.payload}
-          data-timestamp={@media.timestamp}
-        />
-      <% end %>
+      <div id="play-audio-hook" phx-hook="PlayAudioHook" />
 
       <p class="mt-2">
         Incoming call from
@@ -143,7 +135,7 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_info({:media, media}, socket) do
-    {:noreply, assign(socket, :media, media)}
+    {:noreply, push_event(socket, "media", %{media: media})}
   end
 
   @impl true
