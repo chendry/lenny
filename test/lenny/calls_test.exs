@@ -113,4 +113,11 @@ defmodule Lenny.CallsTest do
 
     assert Calls.get_active_calls(phone) == [c3, c5]
   end
+
+  test "set_autopilot! / get_autopilot" do
+    call_fixture(sid: "CA001", autopilot: true)
+    assert Calls.get_autopilot("CA001") == true
+    Calls.set_autopilot!("CA001", false)
+    assert Calls.get_autopilot("CA001") == false
+  end
 end

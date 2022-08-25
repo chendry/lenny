@@ -30,6 +30,19 @@ defmodule Lenny.Calls do
     |> Repo.update_all(set: [ended_at: now])
   end
 
+  def set_autopilot!(sid, autopilot) do
+    Call
+    |> where(sid: ^sid)
+    |> Repo.update_all(set: [autopilot: autopilot])
+  end
+
+  def get_autopilot(sid) do
+    Call
+    |> where(sid: ^sid)
+    |> select([c], c.autopilot)
+    |> Repo.one()
+  end
+
   def get_active_calls(phone) do
     Call
     |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
