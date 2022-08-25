@@ -180,4 +180,54 @@ defmodule LennyWeb.CallLiveTest do
     
     assert html =~ "I&#39;m a banana."
   end
+
+  test "show what the person says without autopilot", %{conn: conn} do
+    call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c")
+
+    {:ok, live_view, html} = live(conn, "/calls/CA165c28bffa7817b0ccd857fa1adc124c")
+
+    refute html =~ "We only have yardsticks"
+
+    Phoenix.ConnTest.build_conn()
+    |> post(
+      "/twilio/gather",
+      %{
+        "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "ApiVersion" => "2010-04-01",
+        "CallSid" => "CA165c28bffa7817b0ccd857fa1adc124c",
+        "CallStatus" => "in-progress",
+        "Called" => "+19384653669",
+        "CalledCity" => "",
+        "CalledCountry" => "US",
+        "CalledState" => "AL",
+        "CalledZip" => "",
+        "Caller" => "+13126180256",
+        "CallerCity" => "CHICAGO",
+        "CallerCountry" => "US",
+        "CallerState" => "IL",
+        "CallerZip" => "60605",
+        "Confidence" => "0.91283864",
+        "Direction" => "inbound",
+        "From" => "+13126180256",
+        "FromCity" => "CHICAGO",
+        "FromCountry" => "US",
+        "FromState" => "IL",
+        "FromZip" => "60605",
+        "Language" => "en-US",
+        "SpeechResult" => "We only have yardsticks.",
+        "To" => "+19384653669",
+        "ToCity" => "",
+        "ToCountry" => "US",
+        "ToState" => "AL",
+        "ToZip" => ""
+      }
+    )
+
+    html =
+      live_view
+      |> element("#speech-result")
+      |> render()
+    
+    assert html =~ "We only have yardsticks."
+  end
 end

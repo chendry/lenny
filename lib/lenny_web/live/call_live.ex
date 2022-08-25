@@ -187,7 +187,7 @@ defmodule LennyWeb.CallLive do
         <Play>
           #{AudioFileUrls.lenny(i)}
         </Play>
-        <Pause length="120" />
+        #{TwiML.gather(120, Routes.twilio_url(socket, :gather))}
         """
       end
 

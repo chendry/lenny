@@ -43,6 +43,7 @@ defmodule LennyWeb.Router do
 
     post "/twilio/incoming", TwilioController, :incoming
     post "/twilio/status/call", TwilioController, :call_status
+    post "/twilio/gather", TwilioController, :gather
     post "/autopilot/:i", AutopilotController, :iteration
   end
 

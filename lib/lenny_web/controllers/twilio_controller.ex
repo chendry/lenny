@@ -30,7 +30,7 @@ defmodule LennyWeb.TwilioController do
     )
   end
 
-  def stream_url do
+  defp stream_url do
     base_url =
       Routes.url(LennyWeb.Endpoint)
       |> String.replace_leading("https", "wss")
@@ -48,5 +48,25 @@ defmodule LennyWeb.TwilioController do
     end
 
     send_resp(conn, 200, "OK")
+  end
+
+  def gather(conn, %{"CallSid" => sid} = params) do
+    Logger.info("#{__MODULE__}: gather: #{inspect(params)}")
+
+    if speech = params["SpeechResult"] do
+      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech_result, speech})
+    end
+
+    conn
+    |> put_resp_content_type("text/xml")
+    |> send_resp(
+      200,
+      """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <Response>
+        #{TwiML.gather(120, Routes.twilio_url(conn, :gather))}
+      </Response>
+      """
+    )
   end
 end

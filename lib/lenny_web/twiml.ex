@@ -11,39 +11,31 @@ defmodule LennyWeb.TwiML do
       #{AudioFileUrls.lenny(i)}
     </Play>
 
-    <Gather
-      input="speech"
-      speechModel="phone_call"
-      enhanced="true"
-      timeout="7"
-      speechTimeout="auto"
-      action="#{next_action_url}"
-    />
+    #{gather(7, next_action_url)}
 
     <Play>
       #{AudioFileUrls.hello()}
     </Play>
 
-    <Gather
-      input="speech"
-      speechModel="phone_call"
-      enhanced="true"
-      timeout="5"
-      speechTimeout="auto"
-      action="#{next_action_url}"
-    />
+    #{gather(5, next_action_url)}
 
     <Play>
       #{AudioFileUrls.hello_are_you_there()}
     </Play>
 
+    #{gather(5, next_action_url)}
+    """
+  end
+
+  def gather(timeout, action) do
+    """
     <Gather
       input="speech"
       speechModel="phone_call"
       enhanced="true"
-      timeout="5"
+      timeout="#{timeout}"
       speechTimeout="auto"
-      action="#{next_action_url}"
+      action="#{action}"
     />
     """
   end
