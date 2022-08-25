@@ -17,11 +17,11 @@ defmodule LennyWeb.CallLive do
      socket
      |> assign(:sid, sid)
      |> assign(:call, call)
-     |> assign(:iteration, 0)
-     |> assign(:speech_result, nil)
+     |> assign(:iteration, call.iteration)
+     |> assign(:speech, call.speech)
      |> assign(:audio_ctx_state, nil)
      |> assign(:ended, call.ended_at != nil)
-     |> assign(:autopilot, Calls.get_autopilot(sid))}
+     |> assign(:autopilot, call.autopilot)}
   end
 
   @impl true
@@ -39,8 +39,8 @@ defmodule LennyWeb.CallLive do
         </span>
       </p>
 
-      <div id="speech-result" class="flex flex-col justify-center items-center mt-4 h-16 text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
-        <span><%= @speech_result %></span>
+      <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
+        <span><%= @speech %></span>
       </div>
 
       <%= if not @ended do %>
@@ -165,8 +165,8 @@ defmodule LennyWeb.CallLive do
   end
 
   @impl true
-  def handle_info({:speech_result, speech_result}, socket) do
-    {:noreply, assign(socket, :speech_result, speech_result)}
+  def handle_info({:speech, speech}, socket) do
+    {:noreply, assign(socket, :speech, speech)}
   end
 
   @impl true
@@ -193,11 +193,7 @@ defmodule LennyWeb.CallLive do
   def handle_event("say", %{"value" => i}, socket) do
     i = String.to_integer(i)
 
-    Phoenix.PubSub.broadcast(
-      Lenny.PubSub,
-      "call:#{socket.assigns.sid}",
-      {:iteration, i}
-    )
+    Calls.save_and_broadcast_iteration!(socket.assigns.sid, i)
 
     Twilio.modify_call(
       socket.assigns.sid,

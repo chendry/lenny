@@ -16,6 +16,8 @@ defmodule Lenny.Calls do
       from: params["From"],
       to: params["To"],
       forwarded_from: params["ForwardedFrom"],
+      iteration: 0,
+      speech: nil,
       autopilot: true,
       params: params
     }
@@ -53,5 +55,17 @@ defmodule Lenny.Calls do
 
   def get_effective_number(%Call{} = call) do
     call.forwarded_from || call.from
+  end
+
+  def save_and_broadcast_speech!(sid, speech) do
+    call = Repo.get_by(Call, sid: sid)
+    Ecto.Changeset.change(call, speech: speech) |> Repo.update!()
+    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech, speech})
+  end
+
+  def save_and_broadcast_iteration!(sid, iteration) do
+    call = Repo.get_by(Call, sid: sid)
+    Ecto.Changeset.change(call, iteration: iteration) |> Repo.update!()
+    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:iteration, iteration})
   end
 end

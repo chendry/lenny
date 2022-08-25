@@ -175,7 +175,7 @@ defmodule LennyWeb.CallLiveTest do
 
     html =
       live_view
-      |> element("#speech-result")
+      |> element("#speech")
       |> render()
     
     assert html =~ "I&#39;m a banana."
@@ -225,7 +225,7 @@ defmodule LennyWeb.CallLiveTest do
 
     html =
       live_view
-      |> element("#speech-result")
+      |> element("#speech")
       |> render()
     
     assert html =~ "We only have yardsticks."

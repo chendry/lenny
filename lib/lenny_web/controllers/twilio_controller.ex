@@ -56,7 +56,7 @@ defmodule LennyWeb.TwilioController do
     i = String.to_integer(i)
 
     if speech = params["SpeechResult"] do
-      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech_result, speech})
+      Calls.save_and_broadcast_speech!(sid, speech)
     end
 
     {response, i} =
@@ -66,7 +66,7 @@ defmodule LennyWeb.TwilioController do
         {~s(<?xml version="1.0" encoding="UTF-8"?><Response>#{TwiML.gather(120, i)}</Response>), i}
       end
 
-    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:iteration, i})
+    Calls.save_and_broadcast_iteration!(sid, i)
 
     conn
     |> put_resp_content_type("text/xml")
