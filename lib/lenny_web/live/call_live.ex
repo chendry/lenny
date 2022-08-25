@@ -128,7 +128,7 @@ defmodule LennyWeb.CallLive do
   end
 
   defp audio_button_class(),
-    do: common_button_class() ++ ~w{border-blue-600 from-blue-500 to-blue-600 text-white}
+    do: common_button_class() ++ ~w{border-blue-600 from-blue-400 to-blue-600 text-white}
 
   defp say_button_class(),
     do: common_button_class() ++ ~w{border-gray-600 from-slate-200 to-slate-300 text-slate-700}
@@ -138,7 +138,7 @@ defmodule LennyWeb.CallLive do
   defp hangup_button_class,
     do:
       common_button_class() ++
-        ~w{border-red-500 from-red-500 to-red-600 text-white font-extrabold}
+        ~w{border-red-500 from-red-400 to-red-600 text-white font-extrabold}
 
   defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
 
