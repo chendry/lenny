@@ -39,7 +39,7 @@ defmodule LennyWeb.WaitLive do
     ~H"""
     <div class="container mx-auto pt-4 pb-12 px-2">
       <h1 class="text-3xl font-bold">
-        Waiting for Your Call
+        Waiting For Call
       </h1>
 
       <p class="mt-4">
