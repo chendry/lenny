@@ -763,11 +763,6 @@ select {
   margin-right: auto;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
 .my-2 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -781,12 +776,12 @@ select {
   margin-top: 1rem;
 }
 
-.mt-8 {
-  margin-top: 2rem;
-}
-
 .ml-2 {
   margin-left: 0.5rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .mb-4 {
@@ -897,14 +892,19 @@ select {
   border-width: 1px;
 }
 
+.border-blue-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(37 99 235 / var(--tw-border-opacity));
+}
+
 .border-gray-600 {
   --tw-border-opacity: 1;
   border-color: rgb(75 85 99 / var(--tw-border-opacity));
 }
 
-.border-red-600 {
+.border-red-500 {
   --tw-border-opacity: 1;
-  border-color: rgb(220 38 38 / var(--tw-border-opacity));
+  border-color: rgb(239 68 68 / var(--tw-border-opacity));
 }
 
 .border-green-600 {
@@ -926,6 +926,12 @@ select {
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
 }
 
+.from-blue-500 {
+  --tw-gradient-from: #3b82f6;
+  --tw-gradient-to: rgb(59 130 246 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 .from-slate-200 {
   --tw-gradient-from: #e2e8f0;
   --tw-gradient-to: rgb(226 232 240 / 0);
@@ -936,6 +942,10 @@ select {
   --tw-gradient-from: #ef4444;
   --tw-gradient-to: rgb(239 68 68 / 0);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-blue-600 {
+  --tw-gradient-to: #2563eb;
 }
 
 .to-slate-300 {
@@ -1023,8 +1033,17 @@ select {
   font-weight: 400;
 }
 
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+
 .tracking-\[0\.25rem\] {
   letter-spacing: 0.25rem;
+}
+
+.text-green-600 {
+  --tw-text-opacity: 1;
+  color: rgb(22 163 74 / var(--tw-text-opacity));
 }
 
 .text-blue-600 {
@@ -1032,19 +1051,14 @@ select {
   color: rgb(37 99 235 / var(--tw-text-opacity));
 }
 
-.text-slate-700 {
-  --tw-text-opacity: 1;
-  color: rgb(51 65 85 / var(--tw-text-opacity));
-}
-
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.text-green-600 {
+.text-slate-700 {
   --tw-text-opacity: 1;
-  color: rgb(22 163 74 / var(--tw-text-opacity));
+  color: rgb(51 65 85 / var(--tw-text-opacity));
 }
 
 .text-green-800 {

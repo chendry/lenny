@@ -31,26 +31,30 @@ defmodule LennyWeb.CallLive do
         Lenny has Answered!
       </h1>
 
-      <p class="mt-4">
+      <p class="mt-2">
+        Incoming call from
+        <span id="call-from" class="font-bold text-green-600 tracking-widest">
+          <%= @call.forwarded_from || @call.from %>
+        </span>
+      </p>
+
+      <p class="mt-4 flex flex-col">
         <%= if @audio_ctx_state != "running" do %>
-          <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class="text-blue-600">
-            Start Audio
+          <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={audio_button_class()}>
+            <span class="ml-2">
+              Start Audio
+            </span>
           </button>
         <% else %>
-          <div class="text-green-600">
-            Audio Started
-          </div>
+          <button id="stop-audio-context-hook" phx-hook="StopAudioContextHook" class={audio_button_class()}>
+            <span class="ml-2">
+              Stop Audio
+            </span>
+          </button>
         <% end %>
       </p>
 
       <div id="play-audio-hook" phx-hook="PlayAudioHook" />
-
-      <p class="mt-2">
-        Incoming call from
-        <span id="call-from" class="font-bold text-blue-600">
-          <%= @call.forwarded_from || @call.from %>
-        </span>
-      </p>
 
       <%= if @ended do %>
         <p class="mt-4">
@@ -121,6 +125,9 @@ defmodule LennyWeb.CallLive do
     """
   end
 
+  defp audio_button_class(),
+    do: common_button_class() ++ ~w{border-blue-600 from-blue-500 to-blue-600 text-white}
+
   defp say_button_class(),
     do: common_button_class() ++ ~w{border-gray-600 from-slate-200 to-slate-300 text-slate-700}
 
@@ -129,7 +136,7 @@ defmodule LennyWeb.CallLive do
   defp hangup_button_class,
     do:
       common_button_class() ++
-        ~w{border-red-600 from-red-500 to-red-600 text-white font-extrabold}
+        ~w{border-red-500 from-red-500 to-red-600 text-white font-extrabold}
 
   defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
 
