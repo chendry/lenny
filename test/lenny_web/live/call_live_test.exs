@@ -127,5 +127,6 @@ defmodule LennyWeb.CallLiveTest do
 
     {:ok, _live_view, html} = live(conn, "/calls/CA007")
     assert html =~ "Call ended"
+    refute html =~ "Start Audio"
   end
 end
