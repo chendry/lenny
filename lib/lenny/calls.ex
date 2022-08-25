@@ -16,6 +16,7 @@ defmodule Lenny.Calls do
       from: params["From"],
       to: params["To"],
       forwarded_from: params["ForwardedFrom"],
+      autopilot: true,
       params: params
     }
     |> Repo.insert!()

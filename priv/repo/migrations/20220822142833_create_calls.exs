@@ -7,6 +7,7 @@ defmodule Lenny.Repo.Migrations.CreateCalls do
       add :from, :string, null: false
       add :to, :string, null: false
       add :forwarded_from, :string
+      add :autopilot, :boolean, null: false
       add :ended_at, :naive_datetime
       add :params, :map, null: false
 

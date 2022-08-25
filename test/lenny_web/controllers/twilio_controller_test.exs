@@ -4,11 +4,13 @@ defmodule LennyWeb.TwilioControllerTest do
   alias Lenny.Repo
   alias Lenny.Calls.Call
 
+  import Lenny.CallsFixtures
+
   test "POST /twilio/incoming", %{conn: conn} do
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "ApiVersion" => "2010-04-01",
-      "CallSid" => "CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "CallSid" => "CAcd3d0f9f054366f89712ef4278630247",
       "CallStatus" => "ringing",
       "CallToken" => "...",
       "Called" => "+19384653669",
@@ -42,17 +44,12 @@ defmodule LennyWeb.TwilioControllerTest do
     assert xml =~ "lenny_00.mp3"
     assert xml =~ "/autopilot/1"
     assert xml =~ "ws://localhost/twilio/stream/websocket"
+
+    assert Repo.get_by(Call, sid: "CAcd3d0f9f054366f89712ef4278630247") != nil
   end
 
   test "POST /twilio/status/call to end call", %{conn: conn} do
-    call =
-      %Call{
-        sid: "CA1ec1bf246aa203e56716b602d6f6c8c9",
-        from: "13126180256",
-        to: "19384653669",
-        params: %{}
-      }
-      |> Repo.insert!()
+    call = call_fixture(sid: "CA1ec1bf246aa203e56716b602d6f6c8c9")
 
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",

@@ -9,6 +9,7 @@ defmodule Lenny.CallsFixtures do
         sid: random_sid(),
         from: random_phone_number(),
         to: random_phone_number(),
+        autopilot: true,
         ended_at: nil,
         params: %{}
       })
