@@ -3,31 +3,29 @@ defmodule LennyWeb.TwiML do
   alias LennyWeb.Endpoint
   alias LennyWeb.AudioFileUrls
 
-  def autopilot_iteration(i) do
-    next_action_url = Routes.twilio_url(Endpoint, :autopilot, i + 1)
-
+  def lenny(i) do
     """
     <Play>
       #{AudioFileUrls.lenny(i)}
     </Play>
 
-    #{gather(7, next_action_url)}
+    #{gather(7, i)}
 
     <Play>
       #{AudioFileUrls.hello()}
     </Play>
 
-    #{gather(5, next_action_url)}
+    #{gather(5, i)}
 
     <Play>
       #{AudioFileUrls.hello_are_you_there()}
     </Play>
 
-    #{gather(5, next_action_url)}
+    #{gather(5, i)}
     """
   end
 
-  def gather(timeout, action) do
+  def gather(timeout, i) do
     """
     <Gather
       input="speech"
@@ -35,7 +33,7 @@ defmodule LennyWeb.TwiML do
       enhanced="true"
       timeout="#{timeout}"
       speechTimeout="auto"
-      action="#{action}"
+      action="#{Routes.twilio_url(Endpoint, :gather, i)}"
     />
     """
   end

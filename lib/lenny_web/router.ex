@@ -43,8 +43,7 @@ defmodule LennyWeb.Router do
 
     post "/twilio/incoming", TwilioController, :incoming
     post "/twilio/status/call", TwilioController, :call_status
-    post "/twilio/autopilot/:i", TwilioController, :autopilot
-    post "/twilio/gather", TwilioController, :gather
+    post "/twilio/gather/:i", TwilioController, :gather
   end
 
   # Enables LiveDashboard only for development

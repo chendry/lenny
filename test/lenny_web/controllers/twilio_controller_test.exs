@@ -42,7 +42,7 @@ defmodule LennyWeb.TwilioControllerTest do
       |> response(200)
 
     assert xml =~ "lenny_00.mp3"
-    assert xml =~ "/autopilot/1"
+    assert xml =~ "/twilio/gather/0"
     assert xml =~ "ws://localhost/twilio/stream/websocket"
 
     assert Repo.get_by(Call, sid: "CAcd3d0f9f054366f89712ef4278630247") != nil

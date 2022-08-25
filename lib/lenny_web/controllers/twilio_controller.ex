@@ -24,7 +24,7 @@ defmodule LennyWeb.TwilioController do
         <Start>
           <Stream url="#{stream_url()}" track="both_tracks" />
         </Start>
-        #{TwiML.autopilot_iteration(0)}
+        #{TwiML.lenny(0)}
       </Response>
       """
     )
@@ -50,8 +50,8 @@ defmodule LennyWeb.TwilioController do
     send_resp(conn, 200, "OK")
   end
 
-  def autopilot(conn, %{"CallSid" => sid, "i" => i} = params) do
-    Logger.info("#{__MODULE__}: iteration: #{inspect(params)}")
+  def gather(conn, %{"CallSid" => sid, "i" => i} = params) do
+    Logger.info("#{__MODULE__}: gather: #{inspect(params)}")
 
     i = String.to_integer(i)
 
@@ -59,36 +59,25 @@ defmodule LennyWeb.TwilioController do
       Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech_result, speech})
     end
 
-    conn
-    |> put_resp_content_type("text/xml")
-    |> send_resp(
-      200,
-      """
-      <?xml version="1.0" encoding="UTF-8"?>
-      <Response>
-        #{TwiML.autopilot_iteration(i)}
-      </Response>
-      """
-    )
-  end
-
-  def gather(conn, %{"CallSid" => sid} = params) do
-    Logger.info("#{__MODULE__}: gather: #{inspect(params)}")
-
-    if speech = params["SpeechResult"] do
-      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech_result, speech})
-    end
+    response =
+      if Calls.get_autopilot(sid) do
+        """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+          #{TwiML.lenny(i + 1)}
+        </Response>
+        """
+      else
+        """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+          #{TwiML.gather(120, i)}
+        </Response>
+        """
+      end
 
     conn
     |> put_resp_content_type("text/xml")
-    |> send_resp(
-      200,
-      """
-      <?xml version="1.0" encoding="UTF-8"?>
-      <Response>
-        #{TwiML.gather(120, Routes.twilio_url(conn, :gather))}
-      </Response>
-      """
-    )
+    |> send_resp(200, response)
   end
 end

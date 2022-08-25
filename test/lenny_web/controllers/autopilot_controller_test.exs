@@ -1,7 +1,11 @@
 defmodule LennyWeb.AutopilotControllerTest do
   use LennyWeb.ConnCase
 
-  test "POST /autopilot/1", %{conn: conn} do
+  import Lenny.CallsFixtures
+
+  test "POST /twilio/gather/1 with autopilot", %{conn: conn} do
+    call_fixture(sid: "CAc1df328a4f55e68e333ab387c1dd8e87", autopilot: true)
+
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "ApiVersion" => "2010-04-01",
@@ -33,13 +37,19 @@ defmodule LennyWeb.AutopilotControllerTest do
       "ToZip" => ""
     }
 
-    conn = post(conn, "/twilio/autopilot/1", params)
-    assert response(conn, 200) =~ "lenny_01.mp3"
-    refute response(conn, 200) =~ "lenny_02.mp3"
-    assert response(conn, 200) =~ "/twilio/autopilot/2"
+    response =
+      conn
+      |> post("/twilio/gather/1", params)
+      |> response(200)
+
+    refute response =~ "lenny_01.mp3"
+    assert response =~ "lenny_02.mp3"
+    assert response =~ "/twilio/gather/2"
   end
 
-  test "POST /autopilot/2", %{conn: conn} do
+  test "POST /twilio/lenny/1 without autopilot", %{conn: conn} do
+    call_fixture(sid: "CAc1df328a4f55e68e333ab387c1dd8e87", autopilot: false)
+
     params = %{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "ApiVersion" => "2010-04-01",
@@ -71,9 +81,12 @@ defmodule LennyWeb.AutopilotControllerTest do
       "ToZip" => ""
     }
 
-    conn = post(conn, "/twilio/autopilot/2", params)
-    assert response(conn, 200) =~ "lenny_02.mp3"
-    refute response(conn, 200) =~ "lenny_03.mp3"
-    assert response(conn, 200) =~ "/twilio/autopilot/3"
+    response =
+      conn
+      |> post("/twilio/gather/1", params)
+      |> response(200)
+
+    refute response =~ ".mp3"
+    assert response =~ "/twilio/gather/1"
   end
 end

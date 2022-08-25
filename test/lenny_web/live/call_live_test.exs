@@ -34,11 +34,11 @@ defmodule LennyWeb.CallLiveTest do
     Lenny.TwilioMock
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
       assert twiml =~ "lenny_01.mp3"
-      assert twiml =~ "autopilot"
+      assert twiml =~ "/twilio/gather/1"
     end)
     |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
       assert twiml =~ "lenny_03.mp3"
-      assert twiml =~ "autopilot"
+      assert twiml =~ "/twilio/gather/3"
     end)
 
     _html =
@@ -140,7 +140,7 @@ defmodule LennyWeb.CallLiveTest do
 
     Phoenix.ConnTest.build_conn()
     |> post(
-      "/twilio/autopilot/3",
+      "/twilio/gather/3",
       %{
         "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "ApiVersion" => "2010-04-01",
@@ -182,7 +182,7 @@ defmodule LennyWeb.CallLiveTest do
   end
 
   test "show what the person says without autopilot", %{conn: conn} do
-    call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c")
+    call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c", autopilot: true)
 
     {:ok, live_view, html} = live(conn, "/calls/CA165c28bffa7817b0ccd857fa1adc124c")
 
@@ -190,7 +190,7 @@ defmodule LennyWeb.CallLiveTest do
 
     Phoenix.ConnTest.build_conn()
     |> post(
-      "/twilio/gather",
+      "/twilio/gather/1",
       %{
         "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "ApiVersion" => "2010-04-01",

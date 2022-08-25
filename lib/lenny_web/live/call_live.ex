@@ -3,7 +3,6 @@ defmodule LennyWeb.CallLive do
 
   alias Lenny.Calls
   alias Lenny.Twilio
-  alias LennyWeb.AudioFileUrls
   alias LennyWeb.TwiML
 
   @impl true
@@ -21,7 +20,7 @@ defmodule LennyWeb.CallLive do
      |> assign(:speech_result, nil)
      |> assign(:audio_ctx_state, nil)
      |> assign(:ended, call.ended_at != nil)
-     |> assign(:autopilot, true)}
+     |> assign(:autopilot, Calls.get_autopilot(sid))}
   end
 
   @impl true
@@ -172,28 +171,18 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("toggle_autopilot", _params, socket) do
-    {:noreply, assign(socket, :autopilot, not socket.assigns.autopilot)}
+    autopilot = not socket.assigns.autopilot
+    Calls.set_autopilot!(socket.assigns.sid, autopilot)
+    {:noreply, assign(socket, :autopilot, autopilot)}
   end
 
   @impl true
   def handle_event("say", %{"value" => i}, socket) do
     i = String.to_integer(i)
 
-    body =
-      if socket.assigns.autopilot do
-        TwiML.autopilot_iteration(i)
-      else
-        """
-        <Play>
-          #{AudioFileUrls.lenny(i)}
-        </Play>
-        #{TwiML.gather(120, Routes.twilio_url(socket, :gather))}
-        """
-      end
-
     Twilio.modify_call(
       socket.assigns.sid,
-      "<Response>#{body}</Response>"
+      "<Response>#{TwiML.lenny(i)}</Response>"
     )
 
     {:noreply, socket}
