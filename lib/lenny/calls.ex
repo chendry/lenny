@@ -81,10 +81,11 @@ defmodule Lenny.Calls do
     )
   end
 
-  def get_all_calls(phone) do
+  def get_all_calls_for_user_id(user_id) do
     Call
-    |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
-    |> order_by([c], c.id)
+    |> join(:inner, [c], u in assoc(c, :users))
+    |> where([c, u], u.id == ^user_id)
+    |> select([c, u], c)
     |> Repo.all()
   end
 

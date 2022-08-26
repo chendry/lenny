@@ -3,6 +3,8 @@ defmodule Lenny.Calls.Call do
   import Ecto.Changeset
 
   schema "calls" do
+    many_to_many :users, Lenny.Accounts.User, join_through: "users_calls"
+
     field :sid, :string
     field :from, :string
     field :to, :string

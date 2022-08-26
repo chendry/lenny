@@ -3,9 +3,7 @@ defmodule Lenny.CallsTest do
 
   alias Lenny.Calls
   alias Lenny.Calls.Call
-  alias Lenny.Calls.UsersCalls
 
-  import Ecto.Query
   import Lenny.CallsFixtures
   import Lenny.AccountsFixtures
   import Lenny.PhoneNumbersFixtures
@@ -140,6 +138,7 @@ defmodule Lenny.CallsTest do
     u2 = user_fixture()
     u3a = user_fixture()
     u3b = user_fixture()
+    u4 = user_fixture()
 
     phone_number_fixture(u1, phone: "+13126180001")
     phone_number_fixture(u1, phone: "+13126180002", verified_at: nil)
@@ -150,7 +149,7 @@ defmodule Lenny.CallsTest do
     phone_number_fixture(u3a, phone: "+13126180003")
     phone_number_fixture(u3b, phone: "+13126180003")
 
-    call =
+    c1 =
       Calls.create_from_twilio_params!(%{
         "CallSid" => "CA001",
         "From" => "+13126180001",
@@ -158,14 +157,7 @@ defmodule Lenny.CallsTest do
         "To" => "+1888GOLENNY"
       })
 
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: [call_id: ^call.id],
-               select: uc.user_id,
-               order_by: uc.user_id
-           ) == [u1.id]
-
-    call =
+    c2 =
       Calls.create_from_twilio_params!(%{
         "CallSid" => "CA002",
         "From" => "+13126180002",
@@ -173,14 +165,7 @@ defmodule Lenny.CallsTest do
         "To" => "+1888GOLENNY"
       })
 
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: [call_id: ^call.id],
-               select: uc.user_id,
-               order_by: uc.user_id
-           ) == [u2.id]
-
-    call =
+    c3 =
       Calls.create_from_twilio_params!(%{
         "CallSid" => "CA003",
         "From" => "+13126180003",
@@ -188,11 +173,10 @@ defmodule Lenny.CallsTest do
         "To" => "+1888GOLENNY"
       })
 
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: [call_id: ^call.id],
-               select: uc.user_id,
-               order_by: uc.user_id
-           ) == [u3a.id, u3b.id]
+    assert Calls.get_all_calls_for_user_id(u1.id) == [c1]
+    assert Calls.get_all_calls_for_user_id(u2.id) == [c2]
+    assert Calls.get_all_calls_for_user_id(u3a.id) == [c3]
+    assert Calls.get_all_calls_for_user_id(u3b.id) == [c3]
+    assert Calls.get_all_calls_for_user_id(u4.id) == []
   end
 end

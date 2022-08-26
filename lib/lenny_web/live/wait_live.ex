@@ -25,7 +25,7 @@ defmodule LennyWeb.WaitLive do
         {:ok,
          socket
          |> assign(:phone_number, phone_number)
-         |> assign(:calls, Calls.get_all_calls(phone_number.phone))}
+         |> assign(:calls, Calls.get_all_calls_for_user_id(user.id))}
     end
   end
 
