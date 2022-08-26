@@ -15,10 +15,14 @@ defmodule LennyWeb.CallLive.Buttons do
   end
 
   defp say_class(active) do
-    text_color = if active, do: "text-blue-600", else: "text-slate-700"
-    active = if active, do: "active-say-button", else: nil
+    extra =
+      if active do
+        ~w{border-green-700 text-green-700 active-say-button}
+      else
+        ~w{border-gray-600 text-slate-700}
+      end
 
-    shared() ++ [text_color, active] ++ ~w{border-gray-600 from-slate-200 to-slate-300}
+    shared() ++ ~w{from-slate-200 to-slate-300} ++ extra
   end
 
   def dtmf_class,

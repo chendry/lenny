@@ -28,12 +28,12 @@ defmodule LennyWeb.CallLive do
 
       <p class="mt-2">
         Incoming call from
-        <span id="call-from" class="font-bold text-green-600 tracking-widest">
+        <span id="call-from" class="font-bold text-green-700 tracking-widest">
           <%= @call.forwarded_from || @call.from %>
         </span>
       </p>
 
-      <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
+      <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
         <span><%= @call.speech %></span>
       </div>
 
