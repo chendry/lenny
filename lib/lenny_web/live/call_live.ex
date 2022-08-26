@@ -4,6 +4,7 @@ defmodule LennyWeb.CallLive do
   alias Lenny.Calls
   alias Lenny.Twilio
   alias LennyWeb.TwiML
+  alias LennyWeb.CallLive.Buttons
 
   @impl true
   def mount(%{"sid" => sid}, _session, socket) do
@@ -46,13 +47,13 @@ defmodule LennyWeb.CallLive do
       <%= if not @ended do %>
         <p class="mt-4 flex flex-col">
           <%= if @audio_ctx_state != "running" do %>
-            <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={audio_button_class()}>
+            <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={Buttons.audio_class()}>
               <span class="ml-2">
                 Start Audio
               </span>
             </button>
           <% else %>
-            <button id="stop-audio-context-hook" phx-hook="StopAudioContextHook" class={audio_button_class()}>
+            <button id="stop-audio-context-hook" phx-hook="StopAudioContextHook" class={Buttons.audio_class()}>
               <span class="ml-2">
                 Stop Audio
               </span>
@@ -80,88 +81,57 @@ defmodule LennyWeb.CallLive do
         </label>
 
         <div class="mt-8 flex flex-col space-y-4">
-          <button {say_button_attrs(@iteration, 00)}>Hello, this is Lenny.</button>
-          <button {say_button_attrs(@iteration, 01)}>Sorry, I can barely hear 'ya there.</button>
-          <button {say_button_attrs(@iteration, 02)}>Yes, yes yes.</button>
-          <button {say_button_attrs(@iteration, 03)}>Oh good! Yes yes yes yes.</button>
-          <button {say_button_attrs(@iteration, 04)}>Someone did call last week about the same.  Was that you?</button>
-          <button {say_button_attrs(@iteration, 05)}>Sorry, what was your name again?</button>
-          <button {say_button_attrs(@iteration, 06)}>Well, it's funny that you call because...</button>
-          <button {say_button_attrs(@iteration, 07)}>I couldn't quite catch 'ya there, what was that again?</button>
-          <button {say_button_attrs(@iteration, 08)}>Sorry... again?</button>
-          <button {say_button_attrs(@iteration, 09)}>Could you say that again please?</button>
-          <button {say_button_attrs(@iteration, 10)}>Yes, yes, yes...</button>
-          <button {say_button_attrs(@iteration, 11)}>Sorry, which company did you say you were calling from, again?</button>
-          <button {say_button_attrs(@iteration, 12)}>The last time call someone called up...</button>
-          <button {say_button_attrs(@iteration, 13)}>Since you've put it that way...</button>
-          <button {say_button_attrs(@iteration, 14)}>With the world finances the way they are...</button>
-          <button {say_button_attrs(@iteration, 15)}>That does sound good, you've been very patient...</button>
-          <button {say_button_attrs(@iteration, 16)}>Hello?</button>
-          <button {say_button_attrs(@iteration, 17)}>Hello, are you there?</button>
-          <button {say_button_attrs(@iteration, 18)}>Sorry, bit of a problem...</button>
+          <button {Buttons.say_attrs(@iteration, 00)}>Hello, this is Lenny.</button>
+          <button {Buttons.say_attrs(@iteration, 01)}>Sorry, I can barely hear 'ya there.</button>
+          <button {Buttons.say_attrs(@iteration, 02)}>Yes, yes yes.</button>
+          <button {Buttons.say_attrs(@iteration, 03)}>Oh good! Yes yes yes yes.</button>
+          <button {Buttons.say_attrs(@iteration, 04)}>Someone did call last week about the same.  Was that you?</button>
+          <button {Buttons.say_attrs(@iteration, 05)}>Sorry, what was your name again?</button>
+          <button {Buttons.say_attrs(@iteration, 06)}>Well, it's funny that you call because...</button>
+          <button {Buttons.say_attrs(@iteration, 07)}>I couldn't quite catch 'ya there, what was that again?</button>
+          <button {Buttons.say_attrs(@iteration, 08)}>Sorry... again?</button>
+          <button {Buttons.say_attrs(@iteration, 09)}>Could you say that again please?</button>
+          <button {Buttons.say_attrs(@iteration, 10)}>Yes, yes, yes...</button>
+          <button {Buttons.say_attrs(@iteration, 11)}>Sorry, which company did you say you were calling from, again?</button>
+          <button {Buttons.say_attrs(@iteration, 12)}>The last time call someone called up...</button>
+          <button {Buttons.say_attrs(@iteration, 13)}>Since you've put it that way...</button>
+          <button {Buttons.say_attrs(@iteration, 14)}>With the world finances the way they are...</button>
+          <button {Buttons.say_attrs(@iteration, 15)}>That does sound good, you've been very patient...</button>
+          <button {Buttons.say_attrs(@iteration, 16)}>Hello?</button>
+          <button {Buttons.say_attrs(@iteration, 17)}>Hello, are you there?</button>
+          <button {Buttons.say_attrs(@iteration, 18)}>Sorry, bit of a problem...</button>
         </div>
 
         <table class="mt-8 mx-auto">
           <tr>
-            <td><button id="dtmf-1" class={dtmf_button_class()} phx-click="dtmf" value="1">1</button></td>
-            <td><button id="dtmf-2" class={dtmf_button_class()} phx-click="dtmf" value="2">2</button></td>
-            <td><button id="dtmf-3" class={dtmf_button_class()} phx-click="dtmf" value="3">3</button></td>
+            <td><button id="dtmf-1" class={Buttons.dtmf_class()} phx-click="dtmf" value="1">1</button></td>
+            <td><button id="dtmf-2" class={Buttons.dtmf_class()} phx-click="dtmf" value="2">2</button></td>
+            <td><button id="dtmf-3" class={Buttons.dtmf_class()} phx-click="dtmf" value="3">3</button></td>
           </tr>
           <tr>
-            <td><button id="dtmf-4" class={dtmf_button_class()} phx-click="dtmf" value="4">4</button></td>
-            <td><button id="dtmf-5" class={dtmf_button_class()} phx-click="dtmf" value="5">5</button></td>
-            <td><button id="dtmf-6" class={dtmf_button_class()} phx-click="dtmf" value="6">6</button></td>
+            <td><button id="dtmf-4" class={Buttons.dtmf_class()} phx-click="dtmf" value="4">4</button></td>
+            <td><button id="dtmf-5" class={Buttons.dtmf_class()} phx-click="dtmf" value="5">5</button></td>
+            <td><button id="dtmf-6" class={Buttons.dtmf_class()} phx-click="dtmf" value="6">6</button></td>
           </tr>
           <tr>
-            <td><button id="dtmf-7" class={dtmf_button_class()} phx-click="dtmf" value="7">7</button></td>
-            <td><button id="dtmf-8" class={dtmf_button_class()} phx-click="dtmf" value="8">8</button></td>
-            <td><button id="dtmf-9" class={dtmf_button_class()} phx-click="dtmf" value="9">9</button></td>
+            <td><button id="dtmf-7" class={Buttons.dtmf_class()} phx-click="dtmf" value="7">7</button></td>
+            <td><button id="dtmf-8" class={Buttons.dtmf_class()} phx-click="dtmf" value="8">8</button></td>
+            <td><button id="dtmf-9" class={Buttons.dtmf_class()} phx-click="dtmf" value="9">9</button></td>
           </tr>
           <tr>
-            <td><button id="dtmf-star" class={dtmf_button_class()} phx-click="dtmf" value="*">*</button></td>
-            <td><button id="dtmf-0" class={dtmf_button_class()} phx-click="dtmf" value="0">0</button></td>
-            <td><button id="dtmf-pound" class={dtmf_button_class()} phx-click="dtmf" value="#">#</button></td>
+            <td><button id="dtmf-star" class={Buttons.dtmf_class()} phx-click="dtmf" value="*">*</button></td>
+            <td><button id="dtmf-0" class={Buttons.dtmf_class()} phx-click="dtmf" value="0">0</button></td>
+            <td><button id="dtmf-pound" class={Buttons.dtmf_class()} phx-click="dtmf" value="#">#</button></td>
           </tr>
         </table>
 
         <div class="mt-8 flex flex-col">
-          <button id="hangup" class={hangup_button_class()} phx-click="hangup">Hang Up</button>
+          <button id="hangup" class={Buttons.hangup_class()} phx-click="hangup">Hang Up</button>
         </div>
       <% end %>
     </div>
     """
   end
-
-  defp audio_button_class(),
-    do: common_button_class() ++ ~w{border-blue-600 from-blue-400 to-blue-600 text-white}
-
-  defp say_button_attrs(iteration, i) do
-    %{
-      "id" => "say_" <> String.pad_leading("#{i}", 2, "0") ,
-      "class" => say_button_class(i == iteration),
-      "phx-click" => "say",
-      "value" => i
-    }
-  end
-
-  defp say_button_class(active) do
-    text_color =
-      if active,
-        do: "text-blue-600",
-        else: "text-slate-700"
-
-    common_button_class() ++ ~w{border-gray-600 from-slate-200 to-slate-300} ++ [text_color]
-  end
-
-  defp dtmf_button_class,
-    do: common_button_class() ++ ~w{w-10 m-1 border-gray-600 from-slate-200 to-slate-300}
-
-  defp hangup_button_class,
-    do:
-      common_button_class() ++
-        ~w{border-red-500 from-red-400 to-red-600 text-white font-extrabold}
-
-  defp common_button_class(), do: ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
 
   @impl true
   def handle_info({:media, media}, socket) do
