@@ -177,7 +177,7 @@ defmodule LennyWeb.CallLiveTest do
       live_view
       |> element("#speech")
       |> render()
-    
+
     assert html =~ "I&#39;m a banana."
   end
 
@@ -227,7 +227,89 @@ defmodule LennyWeb.CallLiveTest do
       live_view
       |> element("#speech")
       |> render()
-    
+
     assert html =~ "We only have yardsticks."
+  end
+
+  test "the active button changes in response to say buttons", %{conn: conn} do
+    call_fixture(sid: "CA8aa913b958d95117e0571810014050ec")
+
+    {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
+
+    html =
+      live_view
+      |> element(".active-say-button")
+      |> render()
+
+    assert html =~ "Hello, this is Lenny"
+
+    Lenny.TwilioMock
+    |> Mox.expect(:modify_call, fn _, _ -> nil end)
+
+    live_view
+    |> element("button#say_03")
+    |> render_click()
+
+    html =
+      live_view
+      |> element(".active-say-button")
+      |> render()
+
+    assert html =~ "Oh good! Yes yes yes yes"
+  end
+
+  test "the active button changes in response to autopilot", %{conn: conn} do
+    call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true)
+
+    {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
+
+    html =
+      live_view
+      |> element(".active-say-button")
+      |> render()
+
+    assert html =~ "Hello, this is Lenny"
+
+    Phoenix.ConnTest.build_conn()
+    |> post(
+      "/twilio/gather/0",
+      %{
+        "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "ApiVersion" => "2010-04-01",
+        "CallSid" => "CA8aa913b958d95117e0571810014050ec",
+        "CallStatus" => "in-progress",
+        "Called" => "+19384653669",
+        "CalledCity" => "",
+        "CalledCountry" => "US",
+        "CalledState" => "AL",
+        "CalledZip" => "",
+        "Caller" => "+13126180256",
+        "CallerCity" => "CHICAGO",
+        "CallerCountry" => "US",
+        "CallerState" => "IL",
+        "CallerZip" => "60605",
+        "Confidence" => "0.8307753",
+        "Direction" => "inbound",
+        "From" => "+13126180256",
+        "FromCity" => "CHICAGO",
+        "FromCountry" => "US",
+        "FromState" => "IL",
+        "FromZip" => "60605",
+        "Language" => "en-US",
+        "SpeechResult" => "Hi Lenny.",
+        "To" => "+19384653669",
+        "ToCity" => "",
+        "ToCountry" => "US",
+        "ToState" => "AL",
+        "ToZip" => ""
+      }
+    )
+
+    html =
+      live_view
+      |> element(".active-say-button")
+      |> render()
+
+    assert html =~ "Sorry, I can barely hear &#39;ya there."
   end
 end
