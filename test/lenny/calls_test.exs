@@ -139,6 +139,7 @@ defmodule Lenny.CallsTest do
     u3a = user_fixture()
     u3b = user_fixture()
     u4 = user_fixture()
+    u5 = user_fixture()
 
     phone_number_fixture(u1, phone: "+13126180001")
     phone_number_fixture(u1, phone: "+13126180002", verified_at: nil)
@@ -148,6 +149,9 @@ defmodule Lenny.CallsTest do
 
     phone_number_fixture(u3a, phone: "+13126180003")
     phone_number_fixture(u3b, phone: "+13126180003")
+
+    phone_number_fixture(u4, phone: "+13126180004")
+    phone_number_fixture(u5, phone: "+13126180005")
 
     c1 =
       Calls.create_from_twilio_params!(%{
@@ -173,10 +177,19 @@ defmodule Lenny.CallsTest do
         "To" => "+1888GOLENNY"
       })
 
+    c4 =
+      Calls.create_from_twilio_params!(%{
+        "CallSid" => "CA004",
+        "From" => "+15554443333",
+        "ForwardedFrom" => "+13126180004",
+        "To" => "+1888GOLENNY"
+      })
+
     assert Calls.get_all_calls_for_user_id(u1.id) == [c1]
     assert Calls.get_all_calls_for_user_id(u2.id) == [c2]
     assert Calls.get_all_calls_for_user_id(u3a.id) == [c3]
     assert Calls.get_all_calls_for_user_id(u3b.id) == [c3]
-    assert Calls.get_all_calls_for_user_id(u4.id) == []
+    assert Calls.get_all_calls_for_user_id(u4.id) == [c4]
+    assert Calls.get_all_calls_for_user_id(u5.id) == []
   end
 end

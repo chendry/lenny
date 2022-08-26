@@ -29,16 +29,25 @@ defmodule Lenny.Calls do
         params: params
       )
 
-    now = NaiveDateTime.utc_now()
-
     {:ok, %{call: call}} =
       Multi.new()
       |> Multi.insert(:call, changeset)
       |> Multi.insert_all(:users_calls, UsersCalls, fn %{call: call} ->
         PhoneNumber
-        |> where([p], is_nil(p.deleted_at) and not is_nil(p.verified_at))
-        |> where([p], p.phone == ^call.from)
-        |> select([p], %{user_id: p.user_id, call_id: ^call.id, inserted_at: ^now, updated_at: ^now})
+        |> where([p], is_nil(p.deleted_at))
+        |> where([p], not is_nil(p.verified_at))
+        |> join(:inner, [p], c in Call,
+          on: c.id == ^call.id and (p.phone == c.from or p.phone == c.forwarded_from)
+        )
+        |> select(
+          [p, c],
+          %{
+            user_id: p.user_id,
+            call_id: c.id,
+            inserted_at: c.inserted_at,
+            updated_at: c.updated_at
+          }
+        )
       end)
       |> Repo.transaction()
 
