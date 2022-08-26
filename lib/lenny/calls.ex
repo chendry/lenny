@@ -29,37 +29,20 @@ defmodule Lenny.Calls do
         params: params
       )
 
+    now = NaiveDateTime.utc_now()
+
     {:ok, %{call: call}} =
       Multi.new()
       |> Multi.insert(:call, changeset)
-      |> Multi.insert_all(
-        :users_calls,
-        UsersCalls,
-        fn %{call: call} ->
-          build_users_calls_records(call)
-        end
-      )
+      |> Multi.insert_all(:users_calls, UsersCalls, fn %{call: call} ->
+        PhoneNumber
+        |> where([p], is_nil(p.deleted_at) and not is_nil(p.verified_at))
+        |> where([p], p.phone == ^call.from)
+        |> select([p], %{user_id: p.user_id, call_id: ^call.id, inserted_at: ^now, updated_at: ^now})
+      end)
       |> Repo.transaction()
 
     call
-  end
-
-  def build_users_calls_records(call) do
-    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-
-    PhoneNumber
-    |> where([p], is_nil(p.deleted_at) and not is_nil(p.verified_at))
-    |> where([p], p.phone == ^call.from)
-    |> select([p], p.user_id)
-    |> Repo.all()
-    |> Enum.map(fn user_id ->
-      %{
-        user_id: user_id,
-        call_id: call.id,
-        inserted_at: now,
-        updated_at: now
-      }
-    end)
   end
 
   def save_and_broadcast_call(sid, changes) when is_binary(sid) do
