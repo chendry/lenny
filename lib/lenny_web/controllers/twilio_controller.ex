@@ -14,6 +14,15 @@ defmodule LennyWeb.TwilioController do
 
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 
+    spawn fn ->
+      Lenny.Twilio.start_recording(sid)
+      :timer.sleep(1000)
+      Lenny.Twilio.start_recording(sid)
+      :timer.sleep(1000)
+      Lenny.Twilio.start_recording(sid)
+      :timer.sleep(1000)
+    end
+
     conn
     |> put_resp_content_type("text/xml")
     |> send_resp(
@@ -46,6 +55,11 @@ defmodule LennyWeb.TwilioController do
       Calls.save_and_broadcast_call(sid, ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
     end
 
+    send_resp(conn, 200, "OK")
+  end
+
+  def recording_status(conn, %{"CallSid" => _sid} = params) do
+    Logger.info("#{__MODULE__}: recording_status: #{inspect(params)}")
     send_resp(conn, 200, "OK")
   end
 
