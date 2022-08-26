@@ -14,15 +14,6 @@ defmodule LennyWeb.TwilioController do
 
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 
-    spawn fn ->
-      Lenny.Twilio.start_recording(sid)
-      :timer.sleep(1000)
-      Lenny.Twilio.start_recording(sid)
-      :timer.sleep(1000)
-      Lenny.Twilio.start_recording(sid)
-      :timer.sleep(1000)
-    end
-
     conn
     |> put_resp_content_type("text/xml")
     |> send_resp(
