@@ -92,4 +92,9 @@ defmodule Lenny.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  def settings_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:record_calls])
+  end
 end

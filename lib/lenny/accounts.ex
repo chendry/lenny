@@ -94,6 +94,16 @@ defmodule Lenny.Accounts do
     end
   end
 
+  def change_user_settings(user, attrs \\ %{}) do
+    User.settings_changeset(user, attrs)
+  end
+
+  def update_user_settings(user, attrs) do
+    user
+    |> User.settings_changeset(attrs)
+    |> Repo.update()
+  end
+
   ## Session
 
   def generate_user_session_token(user) do
