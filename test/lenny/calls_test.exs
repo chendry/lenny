@@ -3,8 +3,12 @@ defmodule Lenny.CallsTest do
 
   alias Lenny.Calls
   alias Lenny.Calls.Call
+  alias Lenny.Calls.UsersCalls
 
+  import Ecto.Query
   import Lenny.CallsFixtures
+  import Lenny.AccountsFixtures
+  import Lenny.PhoneNumbersFixtures
 
   test "create a call using twilio params for a forwarded call" do
     params = %{
@@ -129,5 +133,66 @@ defmodule Lenny.CallsTest do
         iteration: 1
       }
     }
+  end
+
+  test "new calls are associated with users based on verified phone numbers" do
+    u1 = user_fixture()
+    u2 = user_fixture()
+    u3a = user_fixture()
+    u3b = user_fixture()
+
+    phone_number_fixture(u1, phone: "+13126180001")
+    phone_number_fixture(u1, phone: "+13126180002", verified_at: nil)
+    phone_number_fixture(u1, phone: "+13126180003", deleted_at: ~N[2022-08-26 21:33:16])
+
+    phone_number_fixture(u2, phone: "+13126180002")
+
+    phone_number_fixture(u3a, phone: "+13126180003")
+    phone_number_fixture(u3b, phone: "+13126180003")
+
+    call =
+      Calls.create_from_twilio_params!(%{
+        "CallSid" => "CA001",
+        "From" => "+13126180001",
+        "ForwardedFrom" => nil,
+        "To" => "+1888GOLENNY"
+      })
+
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: [call_id: ^call.id],
+               select: uc.user_id,
+               order_by: uc.user_id
+           ) == [u1.id]
+
+    call =
+      Calls.create_from_twilio_params!(%{
+        "CallSid" => "CA002",
+        "From" => "+13126180002",
+        "ForwardedFrom" => nil,
+        "To" => "+1888GOLENNY"
+      })
+
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: [call_id: ^call.id],
+               select: uc.user_id,
+               order_by: uc.user_id
+           ) == [u2.id]
+
+    call =
+      Calls.create_from_twilio_params!(%{
+        "CallSid" => "CA003",
+        "From" => "+13126180003",
+        "ForwardedFrom" => nil,
+        "To" => "+1888GOLENNY"
+      })
+
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: [call_id: ^call.id],
+               select: uc.user_id,
+               order_by: uc.user_id
+           ) == [u3a.id, u3b.id]
   end
 end
