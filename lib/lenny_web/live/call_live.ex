@@ -12,24 +12,17 @@ defmodule LennyWeb.CallLive do
       Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
     end
 
-    call = Calls.get_by_sid!(sid)
-
     {:ok,
      socket
-     |> assign(:sid, sid)
-     |> assign(:call, call)
-     |> assign(:iteration, call.iteration)
-     |> assign(:speech, call.speech)
-     |> assign(:audio_ctx_state, nil)
-     |> assign(:ended, call.ended)
-     |> assign(:autopilot, call.autopilot)}
+     |> assign(:call, Calls.get_by_sid!(sid))
+     |> assign(:audio_ctx_state, nil)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div class="container mx-auto pt-4 pb-12 px-2">
-      <h1 class="text-3xl font-bold" data-sid={@sid}>
+      <h1 class="text-3xl font-bold" data-sid={@call.sid}>
         Lenny has Answered!
       </h1>
 
@@ -41,10 +34,10 @@ defmodule LennyWeb.CallLive do
       </p>
 
       <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
-        <span><%= @speech %></span>
+        <span><%= @call.speech %></span>
       </div>
 
-      <%= if not @ended do %>
+      <%= if not @call.ended do %>
         <p class="mt-4 flex flex-col">
           <%= if @audio_ctx_state != "running" do %>
             <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={Buttons.audio_class()}>
@@ -64,7 +57,7 @@ defmodule LennyWeb.CallLive do
 
       <div id="play-audio-hook" phx-hook="PlayAudioHook" />
 
-      <%= if @ended do %>
+      <%= if @call.ended do %>
         <p class="mt-4">
           Call ended.
           <%= live_redirect to: "/wait", class: "text-blue-600" do %>
@@ -74,32 +67,32 @@ defmodule LennyWeb.CallLive do
       <% else %>
 
         <label class="block mt-8">
-          <input id="autopilot" type="checkbox" checked={@autopilot} phx-click="toggle_autopilot">
+          <input id="autopilot" type="checkbox" checked={@call.autopilot} phx-click="toggle_autopilot">
           <span class="ml-2">
             Automatically proceed to next sound
           </span>
         </label>
 
         <div class="mt-8 flex flex-col space-y-4">
-          <button {Buttons.say_attrs(@iteration, 00)}>Hello, this is Lenny.</button>
-          <button {Buttons.say_attrs(@iteration, 01)}>Sorry, I can barely hear 'ya there.</button>
-          <button {Buttons.say_attrs(@iteration, 02)}>Yes, yes yes.</button>
-          <button {Buttons.say_attrs(@iteration, 03)}>Oh good! Yes yes yes yes.</button>
-          <button {Buttons.say_attrs(@iteration, 04)}>Someone did call last week about the same.  Was that you?</button>
-          <button {Buttons.say_attrs(@iteration, 05)}>Sorry, what was your name again?</button>
-          <button {Buttons.say_attrs(@iteration, 06)}>Well, it's funny that you call because...</button>
-          <button {Buttons.say_attrs(@iteration, 07)}>I couldn't quite catch 'ya there, what was that again?</button>
-          <button {Buttons.say_attrs(@iteration, 08)}>Sorry... again?</button>
-          <button {Buttons.say_attrs(@iteration, 09)}>Could you say that again please?</button>
-          <button {Buttons.say_attrs(@iteration, 10)}>Yes, yes, yes...</button>
-          <button {Buttons.say_attrs(@iteration, 11)}>Sorry, which company did you say you were calling from, again?</button>
-          <button {Buttons.say_attrs(@iteration, 12)}>The last time call someone called up...</button>
-          <button {Buttons.say_attrs(@iteration, 13)}>Since you've put it that way...</button>
-          <button {Buttons.say_attrs(@iteration, 14)}>With the world finances the way they are...</button>
-          <button {Buttons.say_attrs(@iteration, 15)}>That does sound good, you've been very patient...</button>
-          <button {Buttons.say_attrs(@iteration, 16)}>Hello?</button>
-          <button {Buttons.say_attrs(@iteration, 17)}>Hello, are you there?</button>
-          <button {Buttons.say_attrs(@iteration, 18)}>Sorry, bit of a problem...</button>
+          <button {Buttons.say_attrs(@call, 00)}>Hello, this is Lenny.</button>
+          <button {Buttons.say_attrs(@call, 01)}>Sorry, I can barely hear 'ya there.</button>
+          <button {Buttons.say_attrs(@call, 02)}>Yes, yes yes.</button>
+          <button {Buttons.say_attrs(@call, 03)}>Oh good! Yes yes yes yes.</button>
+          <button {Buttons.say_attrs(@call, 04)}>Someone did call last week about the same.  Was that you?</button>
+          <button {Buttons.say_attrs(@call, 05)}>Sorry, what was your name again?</button>
+          <button {Buttons.say_attrs(@call, 06)}>Well, it's funny that you call because...</button>
+          <button {Buttons.say_attrs(@call, 07)}>I couldn't quite catch 'ya there, what was that again?</button>
+          <button {Buttons.say_attrs(@call, 08)}>Sorry... again?</button>
+          <button {Buttons.say_attrs(@call, 09)}>Could you say that again please?</button>
+          <button {Buttons.say_attrs(@call, 10)}>Yes, yes, yes...</button>
+          <button {Buttons.say_attrs(@call, 11)}>Sorry, which company did you say you were calling from, again?</button>
+          <button {Buttons.say_attrs(@call, 12)}>The last time call someone called up...</button>
+          <button {Buttons.say_attrs(@call, 13)}>Since you've put it that way...</button>
+          <button {Buttons.say_attrs(@call, 14)}>With the world finances the way they are...</button>
+          <button {Buttons.say_attrs(@call, 15)}>That does sound good, you've been very patient...</button>
+          <button {Buttons.say_attrs(@call, 16)}>Hello?</button>
+          <button {Buttons.say_attrs(@call, 17)}>Hello, are you there?</button>
+          <button {Buttons.say_attrs(@call, 18)}>Sorry, bit of a problem...</button>
         </div>
 
         <table class="mt-8 mx-auto">
@@ -139,21 +132,15 @@ defmodule LennyWeb.CallLive do
   end
 
   @impl true
-  def handle_info({:iteration, i}, socket) do
-    {:noreply, assign(socket, :iteration, i)}
-  end
-
-  @impl true
-  def handle_info({:speech, speech}, socket) do
-    {:noreply, assign(socket, :speech, speech)}
-  end
-
-  @impl true
-  def handle_info(:call_ended, socket) do
-    {:noreply,
-     socket
-     |> put_flash(:info, "Call ended.")
-     |> push_redirect(to: "/wait")}
+  def handle_info({:call, call}, socket) do
+    if call.ended do
+      {:noreply,
+       socket
+       |> put_flash(:info, "Call ended.")
+       |> push_redirect(to: "/wait")}
+    else
+      {:noreply, assign(socket, :call, call)}
+    end
   end
 
   @impl true
@@ -163,19 +150,25 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("toggle_autopilot", _params, socket) do
-    autopilot = not socket.assigns.autopilot
-    Calls.set_autopilot!(socket.assigns.sid, autopilot)
-    {:noreply, assign(socket, :autopilot, autopilot)}
+    Calls.save_and_broadcast_call(
+      socket.assigns.call,
+      autopilot: not socket.assigns.call.autopilot
+    )
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("say", %{"value" => i}, socket) do
     i = String.to_integer(i)
 
-    Calls.save_and_broadcast_iteration!(socket.assigns.sid, i)
+    Calls.save_and_broadcast_call(
+      socket.assigns.call,
+      iteration: i
+    )
 
     Twilio.modify_call(
-      socket.assigns.sid,
+      socket.assigns.call.sid,
       "<Response>#{TwiML.lenny(i)}</Response>"
     )
 
@@ -185,7 +178,7 @@ defmodule LennyWeb.CallLive do
   @impl true
   def handle_event("dtmf", %{"value" => <<_>> = key}, socket) do
     Twilio.modify_call(
-      socket.assigns.sid,
+      socket.assigns.call.sid,
       """
       <Response>
         <Play digits="#{key}" />
@@ -199,10 +192,13 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("hangup", _params, socket) do
-    Calls.mark_as_finished!(socket.assigns.sid)
+    Calls.save_and_broadcast_call(
+      socket.assigns.call.sid,
+      ended: true
+    )
 
     Twilio.modify_call(
-      socket.assigns.sid,
+      socket.assigns.call.sid,
       """
       <Response>
         <Hangup />

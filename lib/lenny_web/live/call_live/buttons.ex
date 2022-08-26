@@ -1,12 +1,14 @@
 defmodule LennyWeb.CallLive.Buttons do
+  alias Lenny.Calls.Call
+
   def audio_class() do
     shared() ++ ~w{border-blue-600 from-blue-400 to-blue-600 text-white}
   end
 
-  def say_attrs(iteration, i) do
+  def say_attrs(%Call{} = call, i) do
     %{
       "id" => "say_" <> String.pad_leading("#{i}", 2, "0"),
-      "class" => say_class(i == iteration),
+      "class" => say_class(i == call.iteration),
       "phx-click" => "say",
       "value" => i
     }

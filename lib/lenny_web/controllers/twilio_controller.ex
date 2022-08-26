@@ -43,8 +43,7 @@ defmodule LennyWeb.TwilioController do
     Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
 
     if params["CallStatus"] == "completed" do
-      Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", :call_ended)
-      Calls.mark_as_finished!(sid)
+      Calls.save_and_broadcast_call(sid, ended: true)
     end
 
     send_resp(conn, 200, "OK")
@@ -54,20 +53,21 @@ defmodule LennyWeb.TwilioController do
     Logger.info("#{__MODULE__}: gather: #{inspect(params)}")
 
     i = String.to_integer(i)
+    call = Calls.get_by_sid!(sid)
 
-    if speech = params["SpeechResult"] do
-      Calls.save_and_broadcast_speech!(sid, speech)
-    end
-
-    {twiml, i} =
-      if Calls.get_autopilot(sid) do
+    {twiml, iteration} =
+      if call.autopilot do
         i = rem(i + 1, 19)
         {TwiML.lenny(i), i}
       else
         {TwiML.gather(120, i), i}
       end
 
-    Calls.save_and_broadcast_iteration!(sid, i)
+    Calls.save_and_broadcast_call(
+      call,
+      iteration: iteration,
+      speech: params["SpeechResult"]
+    )
 
     conn
     |> put_resp_content_type("text/xml")

@@ -114,10 +114,36 @@ defmodule Lenny.CallsTest do
     assert Calls.get_active_calls(phone) == [c3, c5]
   end
 
-  test "set_autopilot! / get_autopilot" do
-    call_fixture(sid: "CA001", autopilot: true)
-    assert Calls.get_autopilot("CA001") == true
-    Calls.set_autopilot!("CA001", false)
-    assert Calls.get_autopilot("CA001") == false
+  test "save_and_broadcast_call" do
+    call =
+      call_fixture(
+        sid: "CA001",
+        autopilot: true,
+        speech: nil,
+        ended: false,
+        iteration: 0
+      )
+
+    Phoenix.PubSub.subscribe(Lenny.PubSub, "call:CA001")
+
+    Calls.save_and_broadcast_call(
+      call,
+      autopilot: false,
+      speech: "hi",
+      ended: true,
+      iteration: 1
+    )
+
+    call = Repo.get(Call, call.id)
+
+    assert call.autopilot == false
+    assert call.speech == "hi"
+    assert call.ended == true
+    assert call.iteration == 1
+
+    assert_received {
+      :call,
+      %Call{sid: "CA001", autopilot: false, speech: "hi", ended: true, iteration: 1}
+    }
   end
 end

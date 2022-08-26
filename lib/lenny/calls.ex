@@ -25,23 +25,23 @@ defmodule Lenny.Calls do
     |> Repo.insert!()
   end
 
-  def mark_as_finished!(sid) do
-    Call
-    |> where(sid: ^sid)
-    |> Repo.update_all(set: [ended: true])
+  def save_and_broadcast_call(sid, changes) when is_binary(sid) do
+    sid
+    |> get_by_sid!()
+    |> save_and_broadcast_call(changes)
   end
 
-  def set_autopilot!(sid, autopilot) do
-    Call
-    |> where(sid: ^sid)
-    |> Repo.update_all(set: [autopilot: autopilot])
-  end
+  def save_and_broadcast_call(%Call{} = call, changes) do
+    call =
+      call
+      |> Ecto.Changeset.change(changes)
+      |> Repo.update!()
 
-  def get_autopilot(sid) do
-    Call
-    |> where(sid: ^sid)
-    |> select([c], c.autopilot)
-    |> Repo.one()
+    Phoenix.PubSub.broadcast(
+      Lenny.PubSub,
+      "call:#{call.sid}",
+      {:call, %{call | params: nil}}
+    )
   end
 
   def get_active_calls(phone) do
@@ -54,17 +54,5 @@ defmodule Lenny.Calls do
 
   def get_effective_number(%Call{} = call) do
     call.forwarded_from || call.from
-  end
-
-  def save_and_broadcast_speech!(sid, speech) do
-    call = Repo.get_by(Call, sid: sid)
-    Ecto.Changeset.change(call, speech: speech) |> Repo.update!()
-    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:speech, speech})
-  end
-
-  def save_and_broadcast_iteration!(sid, iteration) do
-    call = Repo.get_by(Call, sid: sid)
-    Ecto.Changeset.change(call, iteration: iteration) |> Repo.update!()
-    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", {:iteration, iteration})
   end
 end
