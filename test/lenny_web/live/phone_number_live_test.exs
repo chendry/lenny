@@ -3,7 +3,6 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures
-  import Lenny.CallsFixtures
 
   setup [:register_and_log_in_user]
 
@@ -119,39 +118,6 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     assert html =~ ~S{<span id="approved-number">+15551112222</span>}
     refute html =~ "+15551113333"
-  end
-
-  test "change number to a number with an active call", %{conn: conn, user: user} do
-    phone_number_fixture(user, phone: "+13126180256")
-    call_fixture(sid: "CAXXXX5678", from: "+15551231234")
-
-    {:ok, live_view, _html} = live(conn, "/wait")
-
-    {:ok, live_view, html} =
-      live_view
-      |> element("a", "Change Number")
-      |> render_click()
-      |> follow_redirect(conn, "/phone_numbers/new")
-
-    assert html =~ "Change your Phone Number"
-
-    Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn "+15551231234", "sms" -> {:ok, "VE-XXXX"} end)
-    |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" -> :ok end)
-
-    _html =
-      live_view
-      |> form("form", %{"phone_number[phone]" => "+15551231234"})
-      |> render_submit()
-
-    {:ok, _live_view, html} =
-      live_view
-      |> form("form", %{"verification_form[code]" => "1234"})
-      |> render_submit()
-      |> follow_redirect(conn, "/wait")
-      |> follow_redirect(conn, "/calls/CAXXXX5678")
-
-    assert html =~ ~S{data-sid="CAXXXX5678"}
   end
 
   test "/phone_numbers/new redirects if there is a pending phone number", %{conn: conn, user: user} do

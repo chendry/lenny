@@ -92,28 +92,6 @@ defmodule Lenny.CallsTest do
     assert call.params == params
   end
 
-  test "get_active_call returnss [] when no calls are active" do
-    phone = "+12223334444"
-
-    call_fixture(from: "+15555555555", ended_at: ~N[2022-08-26 18:07:43])
-    call_fixture(from: phone, ended_at: ~N[2022-08-26 18:07:43])
-    call_fixture(from: phone, ended_at: ~N[2022-08-26 18:07:43])
-
-    assert Calls.get_active_calls(phone) == []
-  end
-
-  test "get_active_call returns the a list of not-ended calls from a phone number in ascending order" do
-    phone = "+12223334444"
-
-    _c1 = call_fixture(from: phone, ended_at: ~N[2022-08-26 18:07:43])
-    _c2 = call_fixture(from: phone, ended_at: ~N[2022-08-26 18:07:43])
-    c3 = call_fixture(from: phone, ended_at: nil)
-    _c4 = call_fixture(from: "+15555555555", ended_at: nil)
-    c5 = call_fixture(from: phone, ended_at: nil)
-
-    assert Calls.get_active_calls(phone) == [c3, c5]
-  end
-
   test "save_and_broadcast_call" do
     call =
       call_fixture(
