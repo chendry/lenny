@@ -3,9 +3,9 @@ defmodule Lenny.Calls.UsersCalls do
   import Ecto.Changeset
 
   schema "users_calls" do
-    field :deleted_at, :naive_datetime
     field :user_id, :id
     field :call_id, :id
+    field :deleted_at, :naive_datetime
 
     timestamps()
   end
