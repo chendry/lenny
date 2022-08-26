@@ -10,7 +10,7 @@ defmodule Lenny.Repo.Migrations.CreateCalls do
       add :autopilot, :boolean, null: false
       add :speech, :text
       add :iteration, :integer, null: false
-      add :ended_at, :naive_datetime
+      add :ended, :boolean, null: false
       add :params, :map, null: false
 
       timestamps()

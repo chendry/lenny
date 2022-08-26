@@ -21,7 +21,7 @@ defmodule LennyWeb.CallLive do
      |> assign(:iteration, call.iteration)
      |> assign(:speech, call.speech)
      |> assign(:audio_ctx_state, nil)
-     |> assign(:ended, call.ended_at != nil)
+     |> assign(:ended, call.ended)
      |> assign(:autopilot, call.autopilot)}
   end
 

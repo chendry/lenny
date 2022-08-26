@@ -22,7 +22,7 @@ defmodule LennyWeb.CallLiveTest do
     flash = assert_redirect(live_view, "/wait")
     assert flash["info"] == "Call ended."
 
-    assert Repo.get(Call, call.id).ended_at != nil
+    assert Repo.get(Call, call.id).ended == true
   end
 
   test "push the say buttons during a call", %{conn: conn, user: user} do
@@ -113,18 +113,18 @@ defmodule LennyWeb.CallLiveTest do
       assert twiml =~ "<Hangup />"
     end)
 
-    assert Repo.get(Call, call.id).ended_at == nil
+    assert Repo.get(Call, call.id).ended == false
 
     _html =
       live_view
       |> element("#hangup")
       |> render_click()
 
-    assert Repo.get(Call, call.id).ended_at != nil
+    assert Repo.get(Call, call.id).ended == true
   end
 
   test "visit a call that has ended", %{conn: conn} do
-    call_fixture(sid: "CA007", ended_at: ~N[2022-08-24 14:03:31])
+    call_fixture(sid: "CA007", ended: true)
 
     {:ok, _live_view, html} = live(conn, "/calls/CA007")
     assert html =~ "Call ended"

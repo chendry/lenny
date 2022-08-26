@@ -16,6 +16,7 @@ defmodule Lenny.Calls do
       from: params["From"],
       to: params["To"],
       forwarded_from: params["ForwardedFrom"],
+      ended: false,
       iteration: 0,
       speech: nil,
       autopilot: true,
@@ -25,11 +26,9 @@ defmodule Lenny.Calls do
   end
 
   def mark_as_finished!(sid) do
-    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-
     Call
     |> where(sid: ^sid)
-    |> Repo.update_all(set: [ended_at: now])
+    |> Repo.update_all(set: [ended: true])
   end
 
   def set_autopilot!(sid, autopilot) do
@@ -48,7 +47,7 @@ defmodule Lenny.Calls do
   def get_active_calls(phone) do
     Call
     |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
-    |> where([c], is_nil(c.ended_at))
+    |> where([c], c.ended == false)
     |> order_by([c], c.id)
     |> Repo.all()
   end

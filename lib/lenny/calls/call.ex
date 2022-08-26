@@ -10,7 +10,7 @@ defmodule Lenny.Calls.Call do
     field :speech, :string
     field :iteration, :integer
     field :forwarded_from, :string
-    field :ended_at, :naive_datetime
+    field :ended, :boolean
     field :params, :map
 
     timestamps()
@@ -19,7 +19,7 @@ defmodule Lenny.Calls.Call do
   @doc false
   def changeset(call, attrs) do
     call
-    |> cast(attrs, [:sid, :from, :to, :forwarded_from, :ended_at, :params])
-    |> validate_required([:sid, :from, :to, :forwarded_from, :ended_at, :params])
+    |> cast(attrs, [:sid, :from, :to, :forwarded_from, :params])
+    |> validate_required([:sid, :from, :to, :forwarded_from, :params])
   end
 end
