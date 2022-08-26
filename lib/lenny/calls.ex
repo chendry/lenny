@@ -44,10 +44,9 @@ defmodule Lenny.Calls do
     )
   end
 
-  def get_active_calls(phone) do
+  def get_all_calls(phone) do
     Call
     |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
-    |> where([c], is_nil(c.ended_at))
     |> order_by([c], c.id)
     |> Repo.all()
   end

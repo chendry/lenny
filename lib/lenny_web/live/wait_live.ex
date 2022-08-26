@@ -10,27 +10,22 @@ defmodule LennyWeb.WaitLive do
     user = Accounts.get_user_by_session_token(user_token)
     phone_number = PhoneNumbers.get_approved_phone_number(user)
 
-    if phone_number == nil do
-      {:ok, push_redirect(socket, to: "/phone_numbers/new")}
-    else
-      if PhoneNumbers.get_pending_phone_number(user) do
+    cond do
+      phone_number == nil ->
+        {:ok, push_redirect(socket, to: "/phone_numbers/new")}
+
+      PhoneNumbers.get_pending_phone_number(user) ->
         {:ok, push_redirect(socket, to: "/phone_numbers/verify")}
-      else
-        case Calls.get_active_calls(phone_number.phone) do
-          [call] ->
-            {:ok, push_redirect(socket, to: "/calls/#{call.sid}")}
-
-          calls ->
-            if connected?(socket) do
-              Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
-            end
-
-            {:ok,
-            socket
-            |> assign(:phone_number, phone_number)
-            |> assign(:calls, calls)}
+        
+      true ->
+        if connected?(socket) do
+          Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
         end
-      end
+
+        {:ok,
+         socket
+         |> assign(:phone_number, phone_number)
+         |> assign(:calls, Calls.get_all_calls(phone_number.phone))}
     end
   end
 
@@ -46,27 +41,72 @@ defmodule LennyWeb.WaitLive do
         This page will automatically refresh when we receive a call from your phone number:
       </p>
 
-      <div class="mt-8 flex justify-center">
-        <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
-          <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
-            <span id="approved-number"><%= @phone_number.phone %></span>
-          </div>
-          <div class="mt-2">
-            <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-600 text-sm font-bold" %>
-          </div>
+      <div class="mt-8 bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
+        <h1 class="text-xl font-bold">
+          Your Verified Phone Number
+        </h1>
+        <div class="mt-2 text-green-600 text-xl font-bold tracking-[0.25rem]">
+          <span id="approved-number"><%= @phone_number.phone %></span>
+        </div>
+        <div class="mt-2">
+          <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-600 text-sm font-bold" %>
         </div>
       </div>
 
-      <%= if not Enum.empty?(@calls) do %>
-        <ul id="calls">
+      <h1 class="mt-8 text-3xl font-bold">
+        Call History
+      </h1>
+
+      <table class="mt-4 w-full">
+        <thead>
+          <tr>
+            <th class="pr-2 text-left">Time</th>
+            <th class="pr-2 text-left">Status</th>
+            <th class="pr-2 text-left">From</th>
+            <th class="pr-2 text-left">To</th>
+          </tr>
+        </thead>
+        <tbody>
           <%= for call <- @calls do %>
-            <li>
-              <%= live_redirect call.forwarded_from || call.from, to: "/calls/#{call.sid}" %>
-            </li>
+            <tr>
+              <td class="pr-2">
+                <.link_to_call call={call}>
+                  <%= Calendar.strftime(call.inserted_at, "%c") %>
+                </.link_to_call>
+              </td>
+              <td>
+                <.link_to_call call={call}>
+                  <%= if call.ended_at == nil do %>
+                    <span class="text-green-700">Connected</span>
+                  <% else %>
+                    <span class="text-red-700">Ended</span>
+                  <% end %>
+                </.link_to_call>
+              
+              </td>
+              <td class="pr-2">
+                <.link_to_call call={call}>
+                  <%= Calls.get_effective_number(call) %>
+                </.link_to_call>
+              </td>
+              <td class="pr-2">
+                <.link_to_call call={call}>
+                  <%= call.to %>
+                </.link_to_call>
+              </td>
+            </tr>
           <% end %>
-        </ul>
-      <% end %>
+        </tbody>
+      </table>
     </div>
+    """
+  end
+
+  def link_to_call(assigns) do
+    ~H"""
+    <%= live_redirect to: "/calls/#{@call.sid}" do %>
+      <%= render_slot(@inner_block) %>
+    <% end %>
     """
   end
 
