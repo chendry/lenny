@@ -32,6 +32,10 @@ defmodule LennyWeb.CallLive.Buttons do
     shared() ++ ~w{border-red-500 from-red-400 to-red-600 text-white font-extrabold}
   end
 
+  def wait_for_another_call_class do
+    shared() ++ ~w{border-gray-600 from-slate-100 to-slate-200 text-gray-700}
+  end
+
   defp shared() do
     ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
   end

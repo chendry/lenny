@@ -33,11 +33,11 @@ defmodule LennyWeb.CallLive do
         </span>
       </p>
 
-      <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
-        <span><%= @call.speech %></span>
-      </div>
-
       <%= if @call.ended_at == nil do %>
+        <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
+          <span><%= @call.speech %></span>
+        </div>
+
         <p class="mt-4 flex flex-col">
           <%= if @audio_ctx_state != "running" do %>
             <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={Buttons.audio_class()}>
@@ -58,12 +58,15 @@ defmodule LennyWeb.CallLive do
       <div id="play-audio-hook" phx-hook="PlayAudioHook" />
 
       <%= if @call.ended_at do %>
-        <p class="mt-4">
+        <div class="mt-4 font-bold text-green-700">
           Call ended.
-          <%= live_redirect to: "/wait", class: "text-blue-600" do %>
-            Wait for another call
+        </div>
+
+        <div class="mt-4">
+          <%= live_redirect to: "/wait", class: Buttons.wait_for_another_call_class() do %>
+            Back
           <% end %>
-        </p>
+        </div>
       <% else %>
 
         <label class="block mt-8">
