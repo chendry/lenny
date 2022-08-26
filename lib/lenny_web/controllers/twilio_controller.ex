@@ -59,17 +59,26 @@ defmodule LennyWeb.TwilioController do
       Calls.save_and_broadcast_speech!(sid, speech)
     end
 
-    {response, i} =
+    {twiml, i} =
       if Calls.get_autopilot(sid) do
-        {~s(<?xml version="1.0" encoding="UTF-8"?><Response>#{TwiML.lenny(i + 1)}</Response>), i + 1}
+        i = rem(i + 1, 19)
+        {TwiML.lenny(i), i}
       else
-        {~s(<?xml version="1.0" encoding="UTF-8"?><Response>#{TwiML.gather(120, i)}</Response>), i}
+        {TwiML.gather(120, i), i}
       end
 
     Calls.save_and_broadcast_iteration!(sid, i)
 
     conn
     |> put_resp_content_type("text/xml")
-    |> send_resp(200, response)
+    |> send_resp(
+      200,
+      """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <Response>
+        #{twiml}
+      </Response>)
+      """
+    )
   end
 end
