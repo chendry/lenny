@@ -312,4 +312,59 @@ defmodule LennyWeb.CallLiveTest do
 
     assert html =~ "Sorry, I can barely hear &#39;ya there."
   end
+
+  test "autopilot causes the first sound to play after the last sound", %{conn: conn} do
+    call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true, iteration: 18)
+
+    {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
+
+    html =
+      live_view
+      |> element(".active-say-button")
+      |> render()
+
+    assert html =~ "Sorry, bit of a problem..."
+
+    Phoenix.ConnTest.build_conn()
+    |> post(
+      "/twilio/gather/18",
+      %{
+        "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "ApiVersion" => "2010-04-01",
+        "CallSid" => "CA8aa913b958d95117e0571810014050ec",
+        "CallStatus" => "in-progress",
+        "Called" => "+19384653669",
+        "CalledCity" => "",
+        "CalledCountry" => "US",
+        "CalledState" => "AL",
+        "CalledZip" => "",
+        "Caller" => "+13126180256",
+        "CallerCity" => "CHICAGO",
+        "CallerCountry" => "US",
+        "CallerState" => "IL",
+        "CallerZip" => "60605",
+        "Confidence" => "0.8307753",
+        "Direction" => "inbound",
+        "From" => "+13126180256",
+        "FromCity" => "CHICAGO",
+        "FromCountry" => "US",
+        "FromState" => "IL",
+        "FromZip" => "60605",
+        "Language" => "en-US",
+        "SpeechResult" => "Hi Lenny.",
+        "To" => "+19384653669",
+        "ToCity" => "",
+        "ToCountry" => "US",
+        "ToState" => "AL",
+        "ToZip" => ""
+      }
+    )
+
+    html =
+      live_view
+      |> element(".active-say-button")
+      |> render()
+
+    assert html =~ "Hello, this is Lenny."
+  end
 end
