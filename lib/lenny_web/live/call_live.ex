@@ -37,7 +37,7 @@ defmodule LennyWeb.CallLive do
         <span><%= @call.speech %></span>
       </div>
 
-      <%= if not @call.ended do %>
+      <%= if @call.ended_at == nil do %>
         <p class="mt-4 flex flex-col">
           <%= if @audio_ctx_state != "running" do %>
             <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={Buttons.audio_class()}>
@@ -57,7 +57,7 @@ defmodule LennyWeb.CallLive do
 
       <div id="play-audio-hook" phx-hook="PlayAudioHook" />
 
-      <%= if @call.ended do %>
+      <%= if @call.ended_at do %>
         <p class="mt-4">
           Call ended.
           <%= live_redirect to: "/wait", class: "text-blue-600" do %>
@@ -133,7 +133,7 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_info({:call, call}, socket) do
-    if call.ended do
+    if call.ended_at do
       {:noreply,
        socket
        |> put_flash(:info, "Call ended.")
@@ -194,7 +194,7 @@ defmodule LennyWeb.CallLive do
   def handle_event("hangup", _params, socket) do
     Calls.save_and_broadcast_call(
       socket.assigns.call.sid,
-      ended: true
+      ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     )
 
     Twilio.modify_call(

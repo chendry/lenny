@@ -10,7 +10,7 @@ defmodule Lenny.Calls.Call do
     field :speech, :string
     field :iteration, :integer
     field :forwarded_from, :string
-    field :ended, :boolean
+    field :ended_at, :naive_datetime
     field :params, :map
 
     timestamps()

@@ -16,7 +16,7 @@ defmodule Lenny.Calls do
       from: params["From"],
       to: params["To"],
       forwarded_from: params["ForwardedFrom"],
-      ended: false,
+      ended_at: nil,
       iteration: 0,
       speech: nil,
       autopilot: true,
@@ -47,7 +47,7 @@ defmodule Lenny.Calls do
   def get_active_calls(phone) do
     Call
     |> where([c], c.from == ^phone or c.forwarded_from == ^phone)
-    |> where([c], c.ended == false)
+    |> where([c], is_nil(c.ended_at))
     |> order_by([c], c.id)
     |> Repo.all()
   end

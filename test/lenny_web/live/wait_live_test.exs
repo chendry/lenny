@@ -70,7 +70,7 @@ defmodule LennyWeb.WaitLiveTest do
     call_fixture(sid: "CA002", from: "+12223334444", forwarded_from: "+14445556666")
     call_fixture(sid: "CA003", from: "+15555555555")
     call_fixture(sid: "CA004", from: "+15555555555")
-    call_fixture(sid: "CA005", from: "+12223334444", ended: true)
+    call_fixture(sid: "CA005", from: "+12223334444", ended_at: ~N[2022-08-26 18:07:43])
 
     {:ok, live_view, _html} = live(conn, "/wait")
 

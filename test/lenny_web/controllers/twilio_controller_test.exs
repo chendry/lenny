@@ -88,7 +88,7 @@ defmodule LennyWeb.TwilioControllerTest do
     assert conn.status == 200
 
     call = Repo.get(Call, call.id)
-    assert call.ended == true
+    assert call.ended_at != nil
   end
 
   test "POST /twilio/gather/1 with autopilot", %{conn: conn} do

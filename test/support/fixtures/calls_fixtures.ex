@@ -12,7 +12,7 @@ defmodule Lenny.CallsFixtures do
         autopilot: true,
         iteration: 0,
         speech: nil,
-        ended: false,
+        ended_at: nil,
         params: %{}
       })
 
