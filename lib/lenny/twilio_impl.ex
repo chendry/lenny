@@ -1,6 +1,8 @@
 defmodule Lenny.TwilioImpl do
   @behaviour Lenny.Twilio
 
+  alias LennyWeb.Router.Helpers, as: Routes
+
   @impl true
   def verify_start(phone, channel) when channel in ["call", "sms"] do
     url = "https://verify.twilio.com/v2/Services/#{verification_service_sid()}/Verifications"
@@ -85,6 +87,27 @@ defmodule Lenny.TwilioImpl do
       )
 
     :ok
+  end
+
+  @impl true
+  def start_recording(sid) do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Calls/#{sid}/Recordings.json"
+
+    query = [
+      RecordingStatusCallback: Routes.twilio_url(LennyWeb.Endpoint, :recording_status),
+      RecordingStatusCallbackEvent: "in-progress completed absent"
+    ]
+
+    HTTPoison.post(
+      url,
+      URI.encode_query(query),
+      headers()
+    )
+    |> case do
+      {:ok, %{status_code: 200}} -> :ok
+      {:ok, %{status_code: 201}} -> :ok
+      error -> {:error, error}
+    end
   end
 
   defp headers do
