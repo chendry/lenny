@@ -75,7 +75,7 @@ defmodule Lenny.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
+    %User{record_calls: false}
     |> User.registration_changeset(attrs)
     |> Repo.insert()
   end
