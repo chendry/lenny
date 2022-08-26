@@ -3,6 +3,8 @@ defmodule Lenny.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
+    many_to_many :calls, Lenny.Calls.Call, join_through: "users_calls"
+
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
