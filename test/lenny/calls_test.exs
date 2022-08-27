@@ -3,6 +3,7 @@ defmodule Lenny.CallsTest do
 
   alias Lenny.Calls
   alias Lenny.Calls.Call
+  alias Lenny.Calls.UsersCalls
 
   import Lenny.CallsFixtures
   import Lenny.AccountsFixtures
@@ -191,5 +192,23 @@ defmodule Lenny.CallsTest do
     assert Calls.get_all_calls_for_user_id(u3b.id) == [c3]
     assert Calls.get_all_calls_for_user_id(u4.id) == [c4]
     assert Calls.get_all_calls_for_user_id(u5.id) == []
+  end
+
+  test "recorded flag is not on user_calls based on user's record_call setting at the time" do
+    u1a = user_fixture(record_calls: true)
+    u1b = user_fixture(record_calls: false)
+
+    phone_number_fixture(u1a, phone: "+13125550001", verified_at: ~N[2022-08-27 17:46:20])
+    phone_number_fixture(u1b, phone: "+13125550001", verified_at: ~N[2022-08-27 17:46:20])
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA0001",
+      "From" => "+13125550001",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    assert Repo.one(UsersCalls |> where(user_id: ^u1a.id)).recorded == true
+    assert Repo.one(UsersCalls |> where(user_id: ^u1b.id)).recorded == false
   end
 end

@@ -3,7 +3,8 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
   import Ecto.Changeset
 
   schema "phone_numbers" do
-    field :user_id, :id
+    belongs_to :user, Lenny.Accounts.User
+
     field :phone, :string
     field :channel, :string
     field :sid, :string

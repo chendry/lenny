@@ -36,14 +36,16 @@ defmodule Lenny.Calls do
         PhoneNumber
         |> where([p], is_nil(p.deleted_at))
         |> where([p], not is_nil(p.verified_at))
-        |> join(:inner, [p], c in Call,
+        |> join(:inner, [p], u in assoc(p, :user))
+        |> join(:inner, [p, u], c in Call,
           on: c.id == ^call.id and (p.phone == c.from or p.phone == c.forwarded_from)
         )
         |> select(
-          [p, c],
+          [p, u, c],
           %{
             user_id: p.user_id,
             call_id: c.id,
+            recorded: u.record_calls,
             inserted_at: c.inserted_at,
             updated_at: c.updated_at
           }

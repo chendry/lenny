@@ -5,6 +5,7 @@ defmodule Lenny.Calls.UsersCalls do
   schema "users_calls" do
     field :user_id, :id
     field :call_id, :id
+    field :recorded, :boolean
     field :deleted_at, :naive_datetime
 
     timestamps()
