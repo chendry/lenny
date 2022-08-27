@@ -4,12 +4,18 @@ defmodule LennyWeb.TwilioController do
   require Logger
 
   alias Lenny.Calls
+  alias Lenny.Twilio
   alias LennyWeb.TwiML
 
   def incoming(conn, %{"CallSid" => sid} = params) do
     Logger.info("#{__MODULE__}: incoming: #{inspect(params)}")
 
     call = Calls.create_from_twilio_params!(params)
+
+    if Calls.should_record_call?(call) do
+      Twilio.start_recording(sid)
+    end
+
     from = Calls.get_effective_from(call)
 
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})

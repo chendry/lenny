@@ -4,7 +4,9 @@ defmodule LennyWeb.TwilioControllerTest do
   alias Lenny.Repo
   alias Lenny.Calls.Call
 
+  import Lenny.AccountsFixtures
   import Lenny.CallsFixtures
+  import Lenny.PhoneNumbersFixtures
 
   test "POST /twilio/incoming", %{conn: conn} do
     params = %{
@@ -219,5 +221,21 @@ defmodule LennyWeb.TwilioControllerTest do
 
     assert response =~ "lenny_00.mp3"
     assert response =~ "/twilio/gather/0"
+  end
+
+  test "POST /twilio/incoming records call when user has recording enabled", %{conn: conn} do
+    user = user_fixture(record_calls: true)
+    phone_number_fixture(user, phone: "+13125550001", verified_at: ~N[2022-08-27 20:06:08])
+
+    params = %{
+      "CallSid" => "CAcd3d0f9f054366f89712ef4278630247",
+      "From" => "+13125550001",
+      "To" => "+19384653669",
+    }
+
+    Lenny.TwilioMock
+    |> Mox.expect(:start_recording, fn "CAcd3d0f9f054366f89712ef4278630247" -> :ok end)
+
+    post(conn, "/twilio/incoming", params)
   end
 end
