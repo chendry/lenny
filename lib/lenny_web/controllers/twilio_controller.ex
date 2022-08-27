@@ -30,30 +30,6 @@ defmodule LennyWeb.TwilioController do
     )
   end
 
-  defp stream_url do
-    base_url =
-      Routes.url(LennyWeb.Endpoint)
-      |> String.replace_leading("https", "wss")
-      |> String.replace_leading("http", "ws")
-
-    "#{base_url}/twilio/stream/websocket"
-  end
-
-  def call_status(conn, %{"CallSid" => sid} = params) do
-    Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
-
-    if params["CallStatus"] == "completed" do
-      Calls.save_and_broadcast_call(sid, ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
-    end
-
-    send_resp(conn, 200, "OK")
-  end
-
-  def recording_status(conn, %{"CallSid" => _sid} = params) do
-    Logger.info("#{__MODULE__}: recording_status: #{inspect(params)}")
-    send_resp(conn, 200, "OK")
-  end
-
   def gather(conn, %{"CallSid" => sid, "i" => i} = params) do
     Logger.info("#{__MODULE__}: gather: #{inspect(params)}")
 
@@ -85,5 +61,29 @@ defmodule LennyWeb.TwilioController do
       </Response>
       """
     )
+  end
+
+  def call_status(conn, %{"CallSid" => sid} = params) do
+    Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
+
+    if params["CallStatus"] == "completed" do
+      Calls.save_and_broadcast_call(sid, ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+    end
+
+    send_resp(conn, 200, "OK")
+  end
+
+  def recording_status(conn, %{"CallSid" => _sid} = params) do
+    Logger.info("#{__MODULE__}: recording_status: #{inspect(params)}")
+    send_resp(conn, 200, "OK")
+  end
+
+  defp stream_url do
+    base_url =
+      Routes.url(LennyWeb.Endpoint)
+      |> String.replace_leading("https", "wss")
+      |> String.replace_leading("http", "ws")
+
+    "#{base_url}/twilio/stream/websocket"
   end
 end
