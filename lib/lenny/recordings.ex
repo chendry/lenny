@@ -4,14 +4,15 @@ defmodule Lenny.Recordings do
   alias Lenny.Repo
   alias Lenny.Recordings.Recording
 
-  def create_from_twilio_params!(params) do
-    %Recording{}
+  def insert_or_update_from_twilio_params!(%{"CallSid" => sid} = params) do
+    recording = Repo.get_by(Recording, sid: sid) || %Recording{sid: sid}
+
+    recording
     |> change(
-      sid: params["CallSid"],
       status: params["RecordingStatus"],
       url: params["RecordingUrl"],
       params: params
     )
-    |> Repo.insert!()
+    |> Repo.insert_or_update!()
   end
 end
