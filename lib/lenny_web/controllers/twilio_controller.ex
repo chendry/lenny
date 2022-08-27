@@ -10,7 +10,7 @@ defmodule LennyWeb.TwilioController do
     Logger.info("#{__MODULE__}: incoming: #{inspect(params)}")
 
     call = Calls.create_from_twilio_params!(params)
-    from = Calls.get_effective_number(call)
+    from = Calls.get_effective_from(call)
 
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 

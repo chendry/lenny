@@ -81,7 +81,7 @@ defmodule Lenny.Calls do
     |> Repo.all()
   end
 
-  def get_effective_number(%Call{} = call) do
+  def get_effective_from(%Call{} = call) do
     call.forwarded_from || call.from
   end
 end

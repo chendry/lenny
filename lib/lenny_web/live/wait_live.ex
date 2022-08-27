@@ -86,7 +86,7 @@ defmodule LennyWeb.WaitLive do
               </td>
               <td class="pr-2">
                 <.link_to_call call={call}>
-                  <%= Calls.get_effective_number(call) %>
+                  <%= Calls.get_effective_from(call) %>
                 </.link_to_call>
               </td>
               <td class="pr-2">
