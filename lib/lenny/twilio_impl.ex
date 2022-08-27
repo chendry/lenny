@@ -1,6 +1,8 @@
 defmodule Lenny.TwilioImpl do
   @behaviour Lenny.Twilio
 
+  require Logger
+
   alias LennyWeb.Router.Helpers, as: Routes
 
   @impl true
@@ -91,7 +93,31 @@ defmodule Lenny.TwilioImpl do
 
   @impl true
   def start_recording(sid) do
-    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Calls/#{sid}/Recordings.json"
+    spawn(fn ->
+      [0, 100, 250, 750, 2000, 3000]
+      |> Enum.reduce_while(nil, fn delay, _acc ->
+        :timer.sleep(delay)
+
+        case try_start_recording(sid) do
+          :ok -> {:halt, :ok}
+          error -> {:cont, error}
+        end
+      end)
+      |> case do
+        :ok ->
+          Logger.info("#{__MODULE__}: recording #{sid}")
+
+        {:error, error} ->
+          Logger.error("#{__MODULE__}: error recording #{sid}: #{inspect(error)}")
+      end
+    end)
+
+    :ok
+  end
+
+  defp try_start_recording(sid) do
+    url =
+      "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Calls/#{sid}/Recordings.json"
 
     query = [
       RecordingStatusCallback: Routes.twilio_url(LennyWeb.Endpoint, :recording_status),

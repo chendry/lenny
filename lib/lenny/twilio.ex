@@ -10,7 +10,7 @@ defmodule Lenny.Twilio do
 
   @callback modify_call(sid :: String.t(), twiml :: String.t()) :: :ok
 
-  @callback start_recording(sid :: String.t()) :: :ok | :error
+  @callback start_recording(sid :: String.t()) :: :ok
 
   def verify_start(phone, channel), do: impl().verify_start(phone, channel)
   def verify_check(sid, code), do: impl().verify_check(sid, code)
