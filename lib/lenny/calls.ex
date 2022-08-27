@@ -33,23 +33,19 @@ defmodule Lenny.Calls do
       Multi.new()
       |> Multi.insert(:call, changeset)
       |> Multi.insert_all(:users_calls, UsersCalls, fn %{call: call} ->
-        PhoneNumber
-        |> where([p], is_nil(p.deleted_at))
-        |> where([p], not is_nil(p.verified_at))
-        |> join(:inner, [p], u in assoc(p, :user))
-        |> join(:inner, [p, u], c in Call,
-          on: c.id == ^call.id and (p.phone == c.from or p.phone == c.forwarded_from)
-        )
-        |> select(
-          [p, u, c],
-          %{
+        from c in Call,
+          where: c.id == ^call.id,
+          join: p in PhoneNumber,
+          on: p.phone == c.from or p.phone == c.forwarded_from,
+          join: u in assoc(p, :user),
+          where: is_nil(p.deleted_at) and not is_nil(p.verified_at),
+          select: %{
             user_id: p.user_id,
             call_id: c.id,
             recorded: u.record_calls,
             inserted_at: c.inserted_at,
             updated_at: c.updated_at
           }
-        )
       end)
       |> Repo.transaction()
 
