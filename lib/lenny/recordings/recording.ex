@@ -3,10 +3,10 @@ defmodule Lenny.Recordings.Recording do
   import Ecto.Changeset
 
   schema "recordings" do
-    field :params, :map
     field :sid, :string
     field :status, :string
     field :url, :string
+    field :params, :map
 
     timestamps()
   end

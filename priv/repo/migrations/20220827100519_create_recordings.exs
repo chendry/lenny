@@ -10,5 +10,7 @@ defmodule Lenny.Repo.Migrations.CreateRecordings do
 
       timestamps()
     end
+
+    create unique_index(:recordings, [:sid])
   end
 end
