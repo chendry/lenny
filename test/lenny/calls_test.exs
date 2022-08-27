@@ -211,4 +211,40 @@ defmodule Lenny.CallsTest do
     assert Repo.one(UsersCalls |> where(user_id: ^u1a.id)).recorded == true
     assert Repo.one(UsersCalls |> where(user_id: ^u1b.id)).recorded == false
   end
+
+  test "should_record_call? is true if any associated user is recording calls" do
+    u1a = user_fixture(record_calls: true)
+    u1b = user_fixture(record_calls: false)
+
+    phone_number_fixture(u1a, phone: "+13125550001", verified_at: ~N[2022-08-27 17:46:20])
+    phone_number_fixture(u1b, phone: "+13125550001", verified_at: ~N[2022-08-27 17:46:20])
+
+    call =
+      Calls.create_from_twilio_params!(%{
+        "CallSid" => "CA0001",
+        "From" => "+13125550001",
+        "ForwardedFrom" => nil,
+        "To" => "+1888GOLENNY"
+      })
+
+    assert Calls.should_record_call?(call)
+  end
+
+  test "should_record_call? is false if no associated user is recording calls" do
+    u1a = user_fixture(record_calls: false)
+    u1b = user_fixture(record_calls: false)
+
+    phone_number_fixture(u1a, phone: "+13125550001", verified_at: ~N[2022-08-27 17:46:20])
+    phone_number_fixture(u1b, phone: "+13125550001", verified_at: ~N[2022-08-27 17:46:20])
+
+    call =
+      Calls.create_from_twilio_params!(%{
+        "CallSid" => "CA0001",
+        "From" => "+13125550001",
+        "ForwardedFrom" => nil,
+        "To" => "+1888GOLENNY"
+      })
+
+    refute Calls.should_record_call?(call)
+  end
 end

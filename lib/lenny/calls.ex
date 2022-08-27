@@ -52,6 +52,13 @@ defmodule Lenny.Calls do
     call
   end
 
+  def should_record_call?(%Call{} = call) do
+    UsersCalls
+    |> where([uc], uc.call_id == ^call.id)
+    |> where([uc], uc.recorded == true)
+    |> Repo.exists?()
+  end
+
   def save_and_broadcast_call(sid, changes) when is_binary(sid) do
     sid
     |> get_by_sid!()
