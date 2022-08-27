@@ -29,7 +29,7 @@ defmodule LennyWeb.CallLive do
       <p class="mt-2">
         Incoming call from
         <span id="call-from" class="font-bold text-green-700 tracking-widest">
-          <%= @call.forwarded_from || @call.from %>
+          <%= Calls.get_effective_number(@call) %>
         </span>
       </p>
 
