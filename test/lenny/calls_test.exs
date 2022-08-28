@@ -4,6 +4,7 @@ defmodule Lenny.CallsTest do
   alias Lenny.Calls
   alias Lenny.Calls.Call
   alias Lenny.Calls.UsersCalls
+  alias Lenny.PhoneNumbers.PhoneNumber
 
   import Lenny.CallsFixtures
   import Lenny.AccountsFixtures
@@ -134,7 +135,7 @@ defmodule Lenny.CallsTest do
     }
   end
 
-  test "new calls are associated with users based on verified phone numbers" do
+  test "new calls are associated with users based on verified phone numbers at the time" do
     u1 = user_fixture()
     u2 = user_fixture()
     u3a = user_fixture()
@@ -145,12 +146,9 @@ defmodule Lenny.CallsTest do
     phone_number_fixture(u1, phone: "+13126180001")
     phone_number_fixture(u1, phone: "+13126180002", verified_at: nil)
     phone_number_fixture(u1, phone: "+13126180003", deleted_at: ~N[2022-08-26 21:33:16])
-
     phone_number_fixture(u2, phone: "+13126180002")
-
     phone_number_fixture(u3a, phone: "+13126180003")
     phone_number_fixture(u3b, phone: "+13126180003")
-
     phone_number_fixture(u4, phone: "+13126180004")
     phone_number_fixture(u5, phone: "+13126180005")
 
@@ -198,6 +196,58 @@ defmodule Lenny.CallsTest do
     assert call_sids_for_user.(u3b) == ["CA003"]
     assert call_sids_for_user.(u4) == ["CA004"]
     assert call_sids_for_user.(u5) == []
+
+    PhoneNumber
+    |> Repo.update_all(set: [deleted_at: ~N[2022-08-28 12:56:43]])
+
+    phone_number_fixture(u1, phone: "+13126180005")
+    phone_number_fixture(u2, phone: "+13126180004")
+    phone_number_fixture(u3a, phone: "+13126180002")
+    phone_number_fixture(u3b, phone: "+13126180002")
+    phone_number_fixture(u4, phone: "+13126180003")
+    phone_number_fixture(u5, phone: "+13126180001")
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA011",
+      "From" => "+13126180001",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA012",
+      "From" => "+13126180002",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA013",
+      "From" => "+13126180003",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA014",
+      "From" => "+13126180004",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA015",
+      "From" => "+13126180005",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    assert call_sids_for_user.(u1) == ["CA001", "CA015"]
+    assert call_sids_for_user.(u2) == ["CA002", "CA014"]
+    assert call_sids_for_user.(u3a) == ["CA003", "CA012"]
+    assert call_sids_for_user.(u3b) == ["CA003", "CA012"]
+    assert call_sids_for_user.(u4) == ["CA004", "CA013"]
+    assert call_sids_for_user.(u5) == ["CA011"]
   end
 
   test "recorded flag is not on user_calls based on user's record_call setting at the time" do
