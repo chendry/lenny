@@ -3,10 +3,12 @@ defmodule LennyWeb.TwilioControllerTest do
 
   alias Lenny.Repo
   alias Lenny.Calls.Call
+  alias Lenny.Recordings.Recording
 
   import Lenny.AccountsFixtures
   import Lenny.CallsFixtures
   import Lenny.PhoneNumbersFixtures
+  import Lenny.RecordingsFixtures
 
   test "POST /twilio/incoming", %{conn: conn} do
     params = %{
@@ -230,12 +232,64 @@ defmodule LennyWeb.TwilioControllerTest do
     params = %{
       "CallSid" => "CAcd3d0f9f054366f89712ef4278630247",
       "From" => "+13125550001",
-      "To" => "+19384653669",
+      "To" => "+19384653669"
     }
 
     Lenny.TwilioMock
     |> Mox.expect(:start_recording, fn "CAcd3d0f9f054366f89712ef4278630247" -> :ok end)
 
     post(conn, "/twilio/incoming", params)
+  end
+
+  test "POST /twilio/status/recording creates a recording", %{conn: conn} do
+    post(
+      conn,
+      "/twilio/status/recording",
+      %{
+        "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "CallSid" => "CAcfcd3db14f143b00141b45cd0ffa3d65",
+        "RecordingChannels" => "1",
+        "RecordingSid" => "REafd66b74b49551a69593c41da1d638c0",
+        "RecordingSource" => "StartCallRecordingAPI",
+        "RecordingStartTime" => "Sat, 27 Aug 2022 11:03:41 +0000",
+        "RecordingStatus" => "in-progress",
+        "RecordingTrack" => "both",
+        "RecordingUrl" =>
+          "https://api.twilio.com/2010-04-01/Accounts/ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Recordings/REafd66b74b49551a69593c41da1d638c0"
+      }
+    )
+
+    assert Repo.get_by(Recording, sid: "CAcfcd3db14f143b00141b45cd0ffa3d65")
+  end
+
+  test "POST /twilio/status/recording updates recordings", %{conn: conn} do
+    recordings_fixture(
+      sid: "CAcfcd3db14f143b00141b45cd0ffa3d65",
+      status: "in-progress",
+      url: "https://foo.bar/",
+      params: %{}
+    )
+
+    post(
+      conn,
+      "/twilio/status/recording",
+      %{
+        "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "CallSid" => "CAcfcd3db14f143b00141b45cd0ffa3d65",
+        "ErrorCode" => "0",
+        "RecordingChannels" => "1",
+        "RecordingDuration" => "10",
+        "RecordingSid" => "REafd66b74b49551a69593c41da1d638c0",
+        "RecordingSource" => "StartCallRecordingAPI",
+        "RecordingStartTime" => "Sat, 27 Aug 2022 11:03:41 +0000",
+        "RecordingStatus" => "completed",
+        "RecordingTrack" => "both",
+        "RecordingUrl" =>
+          "https://api.twilio.com/2010-04-01/Accounts/ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Recordings/REafd66b74b49551a69593c41da1d638c0"
+      }
+    )
+
+    recording = Repo.get_by(Recording, sid: "CAcfcd3db14f143b00141b45cd0ffa3d65")
+    assert recording.status == "completed"
   end
 end

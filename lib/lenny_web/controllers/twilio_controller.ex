@@ -4,6 +4,7 @@ defmodule LennyWeb.TwilioController do
   require Logger
 
   alias Lenny.Calls
+  alias Lenny.Recordings
   alias Lenny.Twilio
   alias LennyWeb.TwiML
 
@@ -79,8 +80,9 @@ defmodule LennyWeb.TwilioController do
     send_resp(conn, 200, "OK")
   end
 
-  def recording_status(conn, %{"CallSid" => _sid} = params) do
+  def recording_status(conn, params) do
     Logger.info("#{__MODULE__}: recording_status: #{inspect(params)}")
+    Recordings.insert_or_update_from_twilio_params!(params)
     send_resp(conn, 200, "OK")
   end
 

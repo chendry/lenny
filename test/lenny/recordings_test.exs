@@ -35,7 +35,15 @@ defmodule Lenny.RecordingsTest do
   end
 
   test "update a recording using twilio params" do
-    params = %{
+    recording =
+      recordings_fixture(
+        sid: "CAcfcd3db14f143b00141b45cd0ffa3d65",
+        status: "in-progress",
+        url: "https://foo.bar/",
+        params: %{}
+      )
+
+    Recordings.insert_or_update_from_twilio_params!(%{
       "AccountSid" => "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "CallSid" => "CAcfcd3db14f143b00141b45cd0ffa3d65",
       "ErrorCode" => "0",
@@ -48,17 +56,7 @@ defmodule Lenny.RecordingsTest do
       "RecordingTrack" => "both",
       "RecordingUrl" =>
         "https://api.twilio.com/2010-04-01/Accounts/ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Recordings/REafd66b74b49551a69593c41da1d638c0"
-    }
-
-    recording =
-      recordings_fixture(
-        sid: "CAcfcd3db14f143b00141b45cd0ffa3d65",
-        status: "in-progress",
-        url: "https://foo.bar/",
-        params: %{}
-      )
-
-    Recordings.insert_or_update_from_twilio_params!(params)
+    })
 
     recording = Repo.reload(recording)
 
