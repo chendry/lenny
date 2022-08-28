@@ -12,6 +12,10 @@ function buildMediaHandlerForTrack(track, callStartRefreshInterval) {
   let callStart = null
 
   return ({media}) => {
+    if (audioCtx == null) {
+      return
+    }
+
     if (audioCtx.state != "running" || media.track != track) {
       return
     }
