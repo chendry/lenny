@@ -1,10 +1,14 @@
 defmodule Lenny.RecordingsTest do
   use Lenny.DataCase
 
+  import Lenny.AccountsFixtures
   import Lenny.RecordingsFixtures
+  import Lenny.CallsFixtures
+  import Lenny.PhoneNumbersFixtures
 
   alias Lenny.Repo
   alias Lenny.Recordings
+  alias Lenny.Calls.UsersCalls
 
   test "create a recording using twilio params" do
     params = %{
@@ -64,5 +68,22 @@ defmodule Lenny.RecordingsTest do
 
     assert recording.url ==
              "https://api.twilio.com/2010-04-01/Accounts/ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Recordings/REafd66b74b49551a69593c41da1d638c0"
+  end
+
+  test "get_recording_for_user" do
+    u1 = user_fixture()
+    u2 = user_fixture()
+
+    phone_number_fixture(u1, phone: "+15554443333")
+    phone_number_fixture(u2, phone: "+15554443333")
+
+    c = call_fixture(sid: "CA001")
+    r = recordings_fixture(sid: "CA001")
+
+    %UsersCalls{user_id: u1.id, call_id: c.id, recorded: true} |> Repo.insert!()
+    %UsersCalls{user_id: u2.id, call_id: c.id, recorded: false} |> Repo.insert!()
+
+    assert Recordings.get_recording_for_user(u1.id, "CA001") == r
+    assert Recordings.get_recording_for_user(u2.id, "CA001") == nil
   end
 end
