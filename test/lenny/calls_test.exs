@@ -214,19 +214,17 @@ defmodule Lenny.CallsTest do
       "To" => "+1888GOLENNY"
     })
 
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: uc.user_id == ^u1a.id,
-               order_by: uc.id,
-               select: uc.recorded
-           ) == [true]
+    call_recorded_flags_for_user = fn user ->
+      Repo.all(
+        from uc in UsersCalls,
+          where: uc.user_id == ^user.id,
+          order_by: uc.id,
+          select: uc.recorded
+      )
+    end
 
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: uc.user_id == ^u1b.id,
-               order_by: uc.id,
-               select: uc.recorded
-           ) == [false]
+    assert call_recorded_flags_for_user.(u1a) == [true]
+    assert call_recorded_flags_for_user.(u1b) == [false]
 
     u1a
     |> change(record_calls: false)
@@ -239,19 +237,8 @@ defmodule Lenny.CallsTest do
       "To" => "+1888GOLENNY"
     })
 
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: uc.user_id == ^u1a.id,
-               order_by: uc.id,
-               select: uc.recorded
-           ) == [true, false]
-
-    assert Repo.all(
-             from uc in UsersCalls,
-               where: uc.user_id == ^u1b.id,
-               order_by: uc.id,
-               select: uc.recorded
-           ) == [false, false]
+    assert call_recorded_flags_for_user.(u1a) == [true, false]
+    assert call_recorded_flags_for_user.(u1b) == [false, false]
   end
 
   test "should_record_call? is true if any associated user is recording calls" do
