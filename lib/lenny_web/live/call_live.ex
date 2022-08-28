@@ -36,14 +36,21 @@ defmodule LennyWeb.CallLive do
         Lenny has Answered!
       </h1>
 
-      <%= inspect @recording %>
-
       <p class="mt-2">
         Incoming call from
         <span id="call-from" class="font-bold text-green-700 tracking-widest">
           <%= Calls.get_effective_from(@call) %>
         </span>
+        <%= if @recording && @recording.status == "in-progress" do %>
+            <span class="ml-2 font-bold text-red-600">Recording</span>
+        <% end %>
       </p>
+
+      <%= if @recording && @recording.status == "completed" do %>
+        <div class="mt-4">
+          <audio controls src={"#{@recording.url}.mp3"} class="w-full" />
+        </div>
+      <% end %>
 
       <%= if @call.ended_at == nil do %>
         <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
