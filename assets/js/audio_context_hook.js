@@ -1,11 +1,32 @@
-import {audioCtx} from "./start_audio_context_hook"
+let audioCtx = null
 
-export const PlayAudioHook = {
+export const AudioContextHook = {
   mounted() {
+    this.el.addEventListener("click", () => {
+      if (audioCtx == null) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext())()
+
+        audioCtx.onstatechange = () => {
+          this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+        }
+
+        audioCtx.resume()
+
+        this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+      } else {
+        if (audioCtx.state == "running") {
+          audioCtx.suspend()
+        } else {
+          audioCtx.resume()
+        }
+      }
+    })
+
     this.handleEvent("media", buildMediaHandlerForTrack("inbound", 15))
     this.handleEvent("media", buildMediaHandlerForTrack("outbound", 1))
   }
 }
+
 
 function buildMediaHandlerForTrack(track, callStartRefreshInterval) {
   let lastCallStartRefresh = null

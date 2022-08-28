@@ -39,23 +39,17 @@ defmodule LennyWeb.CallLive do
         </div>
 
         <p class="mt-4 flex flex-col">
-          <%= if @audio_ctx_state != "running" do %>
-            <button id="start-audio-context-hook" phx-hook="StartAudioContextHook" class={Buttons.audio_class()}>
-              <span class="ml-2">
+          <button id="audio-context-hook" phx-hook="AudioContextHook" class={Buttons.audio_class()}>
+            <span class="ml-2">
+              <%= if @audio_ctx_state != "running" do %>
                 Start Audio
-              </span>
-            </button>
-          <% else %>
-            <button id="stop-audio-context-hook" phx-hook="StopAudioContextHook" class={Buttons.audio_class()}>
-              <span class="ml-2">
+              <% else %>
                 Stop Audio
-              </span>
-            </button>
-          <% end %>
+              <% end %>
+            </span>
+          </button>
         </p>
       <% end %>
-
-      <div id="play-audio-hook" phx-hook="PlayAudioHook" />
 
       <%= if @call.ended_at do %>
         <div class="mt-4 font-bold text-green-700">
