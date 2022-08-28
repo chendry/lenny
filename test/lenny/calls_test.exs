@@ -208,8 +208,44 @@ defmodule Lenny.CallsTest do
       "To" => "+1888GOLENNY"
     })
 
-    assert Repo.one(UsersCalls |> where(user_id: ^u1a.id)).recorded == true
-    assert Repo.one(UsersCalls |> where(user_id: ^u1b.id)).recorded == false
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: uc.user_id == ^u1a.id,
+               order_by: uc.id,
+               select: uc.recorded
+           ) == [true]
+
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: uc.user_id == ^u1b.id,
+               order_by: uc.id,
+               select: uc.recorded
+           ) == [false]
+
+    u1a
+    |> change(record_calls: false)
+    |> Repo.update!()
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA0002",
+      "From" => "+13125550001",
+      "ForwardedFrom" => nil,
+      "To" => "+1888GOLENNY"
+    })
+
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: uc.user_id == ^u1a.id,
+               order_by: uc.id,
+               select: uc.recorded
+           ) == [true, false]
+
+    assert Repo.all(
+             from uc in UsersCalls,
+               where: uc.user_id == ^u1b.id,
+               order_by: uc.id,
+               select: uc.recorded
+           ) == [false, false]
   end
 
   test "should_record_call? is true if any associated user is recording calls" do
