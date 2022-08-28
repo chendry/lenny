@@ -5,14 +5,8 @@ export const AudioContextHook = {
     this.el.addEventListener("click", () => {
       if (audioCtx == null) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext())()
-
-        audioCtx.onstatechange = () => {
-          this.pushEvent("audio_ctx_state", {state: audioCtx.state})
-        }
-
+        initializeAudioCtx()
         audioCtx.resume()
-
-        this.pushEvent("audio_ctx_state", {state: audioCtx.state})
       } else {
         if (audioCtx.state == "running") {
           audioCtx.suspend()
@@ -23,15 +17,19 @@ export const AudioContextHook = {
     })
 
     if (audioCtx != null) {
-      this.pushEvent("audio_ctx_state", {state: audioCtx.state})
-
-      audioCtx.onstatechange = () => {
-        this.pushEvent("audio_ctx_state", {state: audioCtx.state})
-      }
+      initializeAudioCtx()
     }
 
     this.handleEvent("media", buildMediaHandlerForTrack("inbound", 15))
     this.handleEvent("media", buildMediaHandlerForTrack("outbound", 1))
+  }
+}
+
+function initializeAudioCtx() {
+  this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+
+  audioCtx.onstatechange = () => {
+    this.pushEvent("audio_ctx_state", {state: audioCtx.state})
   }
 }
 
