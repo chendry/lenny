@@ -80,9 +80,10 @@ defmodule LennyWeb.TwilioController do
     send_resp(conn, 200, "OK")
   end
 
-  def recording_status(conn, params) do
+  def recording_status(conn, %{"CallSid" => sid} = params) do
     Logger.info("#{__MODULE__}: recording_status: #{inspect(params)}")
     Recordings.insert_or_update_from_twilio_params!(params)
+    Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{sid}", :recording)
     send_resp(conn, 200, "OK")
   end
 

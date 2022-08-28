@@ -3,6 +3,7 @@ defmodule LennyWeb.CallLive do
 
   alias Lenny.Accounts
   alias Lenny.Calls
+  alias Lenny.Recordings
   alias Lenny.Twilio
   alias LennyWeb.TwiML
   alias LennyWeb.CallLive.Buttons
@@ -23,6 +24,7 @@ defmodule LennyWeb.CallLive do
      socket
      |> assign(:user, user)
      |> assign(:call, Calls.get_by_sid!(sid))
+     |> assign(:recording, Recordings.get_recording_for_user(user.id, sid))
      |> assign(:audio_ctx_state, nil)}
   end
 
@@ -33,6 +35,8 @@ defmodule LennyWeb.CallLive do
       <h1 class="text-3xl font-bold" data-sid={@call.sid}>
         Lenny has Answered!
       </h1>
+
+      <%= inspect @recording %>
 
       <p class="mt-2">
         Incoming call from
@@ -146,6 +150,17 @@ defmodule LennyWeb.CallLive do
     else
       {:noreply, assign(socket, :call, call)}
     end
+  end
+
+  @impl true
+  def handle_info(:recording, socket) do
+    recording =
+      Recordings.get_recording_for_user(
+        socket.assigns.user.id,
+        socket.assigns.call.sid
+      )
+
+    {:noreply, assign(socket, :recording, recording)}
   end
 
   @impl true
