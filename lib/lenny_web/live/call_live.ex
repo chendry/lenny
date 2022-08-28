@@ -142,14 +142,7 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_info({:call, call}, socket) do
-    if call.ended_at do
-      {:noreply,
-       socket
-       |> put_flash(:info, "Call ended.")
-       |> push_redirect(to: "/wait")}
-    else
-      {:noreply, assign(socket, :call, call)}
-    end
+    {:noreply, assign(socket, :call, call)}
   end
 
   @impl true

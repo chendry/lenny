@@ -19,8 +19,7 @@ defmodule LennyWeb.CallLiveTest do
     Phoenix.ConnTest.build_conn()
     |> post("/twilio/status/call", %{"CallSid" => "CAXXX", "CallStatus" => "completed"})
 
-    flash = assert_redirect(live_view, "/wait")
-    assert flash["info"] == "Call ended."
+    assert render(live_view) =~ "Call ended."
 
     assert Repo.get(Call, call.id).ended_at != nil
   end
