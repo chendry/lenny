@@ -1,19 +1,27 @@
 defmodule LennyWeb.CallLive do
   use LennyWeb, :live_view
 
+  alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.Twilio
   alias LennyWeb.TwiML
   alias LennyWeb.CallLive.Buttons
 
   @impl true
-  def mount(%{"sid" => sid}, _session, socket) do
+  def mount(%{"sid" => sid}, session, socket) do
+    user =
+      case session do
+        %{"user_token" => t} -> Accounts.get_user_by_session_token(t)
+        _ -> nil
+      end
+
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
     end
 
     {:ok,
      socket
+     |> assign(:user, user)
      |> assign(:call, Calls.get_by_sid!(sid))
      |> assign(:audio_ctx_state, nil)}
   end

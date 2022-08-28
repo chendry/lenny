@@ -6,7 +6,7 @@ defmodule LennyWeb.WaitLive do
   alias Lenny.PhoneNumbers
 
   @impl true
-  def mount(_params, %{"user_token" => user_token}, socket) do
+  def mount(_params, %{"user_token" => user_token} = _session, socket) do
     user = Accounts.get_user_by_session_token(user_token)
     phone_number = PhoneNumbers.get_approved_phone_number(user)
 
