@@ -25,7 +25,7 @@ defmodule LennyWeb.WaitLive do
         {:ok,
          socket
          |> assign(:phone_number, phone_number)
-         |> assign(:calls, Calls.get_all_calls_for_user_id(user.id))}
+         |> assign(:call_history_report, Calls.call_history_report(user.id))}
     end
   end
 
@@ -64,19 +64,20 @@ defmodule LennyWeb.WaitLive do
             <th class="pr-2 text-left">Status</th>
             <th class="pr-2 text-left">From</th>
             <th class="pr-2 text-left">To</th>
+            <th class="pr-2 text-left">Recorded</th>
           </tr>
         </thead>
         <tbody>
-          <%= for call <- @calls do %>
+          <%= for row <- @call_history_report do %>
             <tr>
               <td class="pr-2">
-                <.link_to_call call={call}>
-                  <%= Calendar.strftime(call.inserted_at, "%c") %>
+                <.link_to_call row={row}>
+                  <%= Calendar.strftime(row.started_at, "%c") %>
                 </.link_to_call>
               </td>
               <td>
-                <.link_to_call call={call}>
-                  <%= if call.ended_at == nil do %>
+                <.link_to_call row={row}>
+                  <%= if row.ended_at == nil do %>
                     <span class="text-green-700">Connected</span>
                   <% else %>
                     <span class="text-red-700">Ended</span>
@@ -85,13 +86,18 @@ defmodule LennyWeb.WaitLive do
               
               </td>
               <td class="pr-2">
-                <.link_to_call call={call}>
-                  <%= Calls.get_effective_from(call) %>
+                <.link_to_call row={row}>
+                  <%= row.from %>
                 </.link_to_call>
               </td>
               <td class="pr-2">
-                <.link_to_call call={call}>
-                  <%= call.to %>
+                <.link_to_call row={row}>
+                  <%= row.to %>
+                </.link_to_call>
+              </td>
+              <td class="pr-2">
+                <.link_to_call row={row}>
+                  <%= inspect row.recorded %>
                 </.link_to_call>
               </td>
             </tr>
@@ -104,7 +110,7 @@ defmodule LennyWeb.WaitLive do
 
   def link_to_call(assigns) do
     ~H"""
-    <%= live_redirect to: "/calls/#{@call.sid}" do %>
+    <%= live_redirect to: "/calls/#{@row.sid}" do %>
       <%= render_slot(@inner_block) %>
     <% end %>
     """

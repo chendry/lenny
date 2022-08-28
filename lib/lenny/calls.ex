@@ -78,12 +78,21 @@ defmodule Lenny.Calls do
     )
   end
 
-  def get_all_calls_for_user_id(user_id) do
-    Call
-    |> join(:inner, [c], u in assoc(c, :users))
-    |> where([c, u], u.id == ^user_id)
-    |> select([c, u], c)
-    |> Repo.all()
+  def call_history_report(user_id) do
+    Repo.all(
+      from uc in UsersCalls,
+        join: c in assoc(uc, :call),
+        order_by: [desc: uc.id],
+        where: uc.user_id == ^user_id,
+        select: %{
+          sid: c.sid,
+          from: coalesce(c.forwarded_from, c.from),
+          to: c.to,
+          started_at: c.inserted_at,
+          ended_at: c.ended_at,
+          recorded: uc.recorded
+        }
+    )
   end
 
   def get_effective_from(%Call{} = call) do
