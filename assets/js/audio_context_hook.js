@@ -5,7 +5,7 @@ export const AudioContextHook = {
     this.el.addEventListener("click", () => {
       if (audioCtx == null) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext())()
-        initializeAudioCtx()
+        this._initializeAudioCtx()
         audioCtx.resume()
       } else {
         if (audioCtx.state == "running") {
@@ -17,22 +17,21 @@ export const AudioContextHook = {
     })
 
     if (audioCtx != null) {
-      initializeAudioCtx()
+      this._initializeAudioCtx()
     }
 
     this.handleEvent("media", buildMediaHandlerForTrack("inbound", 15))
     this.handleEvent("media", buildMediaHandlerForTrack("outbound", 1))
-  }
-}
+  },
 
-function initializeAudioCtx() {
-  this.pushEvent("audio_ctx_state", {state: audioCtx.state})
-
-  audioCtx.onstatechange = () => {
+  _initializeAudioCtx() {
     this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+
+    audioCtx.onstatechange = () => {
+      this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+    }
   }
 }
-
 
 function buildMediaHandlerForTrack(track, callStartRefreshInterval) {
   let lastCallStartRefresh = null
