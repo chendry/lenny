@@ -24,6 +24,10 @@ export const AudioContextHook = {
 
     if (audioCtx != null) {
       this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+
+      audioCtx.onstatechange = () => {
+        this.pushEvent("audio_ctx_state", {state: audioCtx.state})
+      }
     }
 
     this.handleEvent("media", buildMediaHandlerForTrack("inbound", 15))
