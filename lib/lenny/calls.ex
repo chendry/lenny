@@ -136,4 +136,18 @@ defmodule Lenny.Calls do
       |> Repo.update!()
     end
   end
+
+  def get_sole_unseen_active_call_for_user(user_id) do
+    Repo.all(
+      from uc in UsersCalls,
+        join: c in assoc(uc, :call),
+        where: uc.user_id == ^user_id,
+        where: is_nil(uc.seen_at) and is_nil(c.ended_at),
+        select: c.sid
+    )
+    |> case do
+      [sid] -> sid
+      _ -> nil
+    end
+  end
 end

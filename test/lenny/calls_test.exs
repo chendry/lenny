@@ -9,6 +9,7 @@ defmodule Lenny.CallsTest do
   import Lenny.CallsFixtures
   import Lenny.AccountsFixtures
   import Lenny.PhoneNumbersFixtures
+  import Lenny.UsersCallsFixtures
 
   test "create a call using twilio params for a forwarded call" do
     params = %{
@@ -325,5 +326,32 @@ defmodule Lenny.CallsTest do
       })
 
     refute Calls.should_record_call?(call)
+  end
+
+  test "get_sole_unseen_active_call_for_user" do
+    u1 = user_fixture()
+    u2 = user_fixture()
+
+    c1 = call_fixture(ended_at: nil)
+    uc1 = users_calls_fixture(u1, c1, seen_at: nil)
+
+    assert Calls.get_sole_unseen_active_call_for_user(u1.id) == c1.sid
+    assert Calls.get_sole_unseen_active_call_for_user(u2.id) == nil
+
+    Repo.update!(change(uc1, seen_at: ~N[2022-08-29 14:47:20]))
+
+    assert Calls.get_sole_unseen_active_call_for_user(u1.id) == nil
+
+    c2 = call_fixture(ended_at: ~N[2022-08-29 14:48:55])
+    users_calls_fixture(u1, c2, seen_at: nil)
+
+    assert Calls.get_sole_unseen_active_call_for_user(u1.id) == nil
+
+    c3 = call_fixture(ended_at: nil)
+    c4 = call_fixture(ended_at: nil)
+    users_calls_fixture(u1, c3)
+    users_calls_fixture(u1, c4)
+
+    assert Calls.get_sole_unseen_active_call_for_user(u1.id) == nil
   end
 end

@@ -16,6 +16,9 @@ defmodule LennyWeb.WaitLive do
 
       PhoneNumbers.get_pending_phone_number(user) ->
         {:ok, push_redirect(socket, to: "/phone_numbers/verify")}
+
+      sid = Calls.get_sole_unseen_active_call_for_user(user.id) ->
+        {:ok, push_redirect(socket, to: "/calls/#{sid}")}
         
       true ->
         if connected?(socket) do
