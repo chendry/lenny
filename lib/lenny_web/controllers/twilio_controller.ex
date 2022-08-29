@@ -19,7 +19,7 @@ defmodule LennyWeb.TwilioController do
 
     from = Calls.get_effective_from(call)
 
-    Twilio.send_sms(from, Routes.live_url(LennyWeb.Endpoint, LennyWeb.CallLive, sid))
+    Twilio.send_sms(from, sms_body(sid))
 
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 
@@ -37,6 +37,15 @@ defmodule LennyWeb.TwilioController do
       </Response>
       """
     )
+  end
+
+  defp sms_body(sid) do
+    """
+    Lenny answered your phone call.
+    Listen in and control Lenny using this link:
+
+    #{Routes.live_url(LennyWeb.Endpoint, LennyWeb.CallLive, sid)}
+    """
   end
 
   def gather(conn, %{"CallSid" => sid, "i" => i} = params) do
