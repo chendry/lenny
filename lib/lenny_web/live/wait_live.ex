@@ -94,14 +94,6 @@ defmodule LennyWeb.WaitLive do
     """
   end
 
-  def link_to_call(assigns) do
-    ~H"""
-    <%= live_redirect to: "/calls/#{@row.sid}" do %>
-      <%= render_slot(@inner_block) %>
-    <% end %>
-    """
-  end
-
   @impl true
   def handle_info({:call_started, sid}, socket) do
     {:noreply, push_redirect(socket, to: "/calls/#{sid}")}
