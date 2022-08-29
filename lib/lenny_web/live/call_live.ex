@@ -46,7 +46,7 @@ defmodule LennyWeb.CallLive do
     <div class="container mx-auto pt-4 pb-12 px-6">
       <div class="flex flex-row space-x-2">
         <span class="text-blue-800">
-          <%= live_redirect "Call History", to: "/wait" %>
+          <%= live_redirect "Calls", to: "/wait" %>
         </span>
         <span class="text-gray-400">&gt;</span>
         <span class="text-blue-800">
@@ -57,13 +57,20 @@ defmodule LennyWeb.CallLive do
         </span>
       </div>
 
-      <h1 class="mt-4 text-lg sm:text-3xl font-bold" data-sid={@call.sid}>
-        Call From
-        <span id="call-from" class="font-bold text-green-700 tracking-widest">
-          <%= Calls.get_effective_from(@call) %>
-        </span>
+      <h1 class="mt-4 flex flex-row items-center justify-between" data-sid={@call.sid}>
+        <div class="text-lg sm:text-3xl font-bold">
+          Call From
+          <span id="call-from" class="font-bold text-green-700 tracking-widest">
+            <%= Calls.get_effective_from(@call) %>
+          </span>
+        </div>
         <%= if @recording && @recording.status == "in-progress" do %>
-          <span class="ml-2 font-bold text-red-600">Recording</span>
+          <span class="text-red-600">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <circle cx="10" cy="10" r="10" />
+            </svg>
+          </span>
+          <!-- Recording -->
         <% end %>
       </h1>
 
