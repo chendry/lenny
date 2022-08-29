@@ -5,10 +5,10 @@ defmodule LennyWeb.CallLiveTest do
   import Lenny.AccountsFixtures
   import Lenny.PhoneNumbersFixtures
   import Lenny.CallsFixtures
+  import Lenny.UsersCallsFixtures
 
   alias Lenny.Repo
   alias Lenny.Calls.Call
-  alias Lenny.Calls.UsersCalls
 
   setup [:register_and_log_in_user]
 
@@ -374,11 +374,8 @@ defmodule LennyWeb.CallLiveTest do
 
     u2 = user_fixture()
 
-    uc1 = %UsersCalls{user_id: u1.id, call_id: call.id, recorded: true} |> Repo.insert!()
-    uc2 = %UsersCalls{user_id: u2.id, call_id: call.id, recorded: true} |> Repo.insert!()
-
-    assert uc1.seen_at == nil
-    assert uc2.seen_at == nil
+    uc1 = users_calls_fixture(u1, call, seen_at: nil)
+    uc2 = users_calls_fixture(u2, call, seen_at: nil)
 
     {:ok, _live_view, _html} = live(conn, "/calls/CA0001")
 

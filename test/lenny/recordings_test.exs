@@ -5,10 +5,10 @@ defmodule Lenny.RecordingsTest do
   import Lenny.RecordingsFixtures
   import Lenny.CallsFixtures
   import Lenny.PhoneNumbersFixtures
+  import Lenny.UsersCallsFixtures
 
   alias Lenny.Repo
   alias Lenny.Recordings
-  alias Lenny.Calls.UsersCalls
 
   test "create a recording using twilio params" do
     params = %{
@@ -80,8 +80,8 @@ defmodule Lenny.RecordingsTest do
     c = call_fixture(sid: "CA001")
     r = recordings_fixture(sid: "CA001")
 
-    %UsersCalls{user_id: u1.id, call_id: c.id, recorded: true} |> Repo.insert!()
-    %UsersCalls{user_id: u2.id, call_id: c.id, recorded: false} |> Repo.insert!()
+    users_calls_fixture(u1, c, recorded: true)
+    users_calls_fixture(u2, c, recorded: false)
 
     assert Recordings.get_recording_for_user(u1.id, "CA001") == r
     assert Recordings.get_recording_for_user(u2.id, "CA001") == nil

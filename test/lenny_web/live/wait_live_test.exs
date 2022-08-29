@@ -1,12 +1,10 @@
 defmodule LennyWeb.WaitLiveTest do
   use LennyWeb.ConnCase
 
-  alias Lenny.Repo
-  alias Lenny.Calls.UsersCalls
-
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures
   import Lenny.CallsFixtures
+  import Lenny.UsersCallsFixtures
 
   setup [:register_and_log_in_user]
 
@@ -67,8 +65,8 @@ defmodule LennyWeb.WaitLiveTest do
     c1 = call_fixture(sid: "CA0001", from: "+15552220001", ended_at: ~N[2022-08-29 13:31:38])
     c2 = call_fixture(sid: "CA0002", from: "+15552220002", ended_at: ~N[2022-08-29 13:31:57])
 
-    %UsersCalls{user_id: user.id, call_id: c1.id, recorded: true} |> Repo.insert!()
-    %UsersCalls{user_id: user.id, call_id: c2.id, recorded: true} |> Repo.insert!()
+    users_calls_fixture(user, c1)
+    users_calls_fixture(user, c2)
 
     {:ok, live_view, html} = live(conn, "/wait")
 
