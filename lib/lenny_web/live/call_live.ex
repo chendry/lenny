@@ -32,7 +32,7 @@ defmodule LennyWeb.CallLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto pt-4 pb-12 px-2">
+    <div class="container mx-auto pt-4 pb-12 px-6">
       <div class="flex flex-row space-x-2">
         <span class="text-blue-800">
           <%= live_redirect "Call History", to: "/wait" %>

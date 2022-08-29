@@ -1,8 +1,12 @@
 defmodule LennyWeb.WaitLiveTest do
   use LennyWeb.ConnCase
 
+  alias Lenny.Repo
+  alias Lenny.Calls.UsersCalls
+
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures
+  import Lenny.CallsFixtures
 
   setup [:register_and_log_in_user]
 
@@ -55,5 +59,40 @@ defmodule LennyWeb.WaitLiveTest do
     {:ok, _live_view, _html} =
       live(conn, "/wait")
       |> follow_redirect(conn, "/phone_numbers/verify")
+  end
+
+  test "delete a call", %{conn: conn, user: user} do
+    phone_number_fixture(user, phone: "+15552223333", verified_at: ~N[2022-08-29 12:14:59])
+
+    c1 = call_fixture(sid: "CA0001", from: "+15552220001", ended_at: ~N[2022-08-29 13:31:38])
+    c2 = call_fixture(sid: "CA0002", from: "+15552220002", ended_at: ~N[2022-08-29 13:31:57])
+
+    %UsersCalls{user_id: user.id, call_id: c1.id, recorded: true} |> Repo.insert!()
+    %UsersCalls{user_id: user.id, call_id: c2.id, recorded: true} |> Repo.insert!()
+
+    {:ok, live_view, html} = live(conn, "/wait")
+
+    assert html =~ "+15552220001"
+    assert html =~ "+15552220002"
+
+    {:ok, live_view, _html} =
+      live_view
+      |> element("a", "+15552220001")
+      |> render_click()
+      |> follow_redirect(conn, "/calls/CA0001")
+
+    _html =
+      live_view
+      |> element("button", "Delete")
+      |> render_click()
+
+    {:ok, _live_view, html} =
+      live_view
+      |> element("button", "Yes")
+      |> render_click()
+      |> follow_redirect(conn, "/wait")
+
+    refute html =~ "+15552220001"
+    assert html =~ "+15552220002"
   end
 end
