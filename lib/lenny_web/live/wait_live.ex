@@ -66,10 +66,13 @@ defmodule LennyWeb.WaitLive do
         Call History
       </h1>
 
-      <div class="flex flex-col mt-2 border-t sm:border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
+      <div class="flex flex-col mt-2 border-b sm:border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
         <%= for row <- @call_history_report do %>
           <%= live_redirect to: "/calls/#{row.sid}" do %>
-            <div class="bg-gray-100 py-2 px-6 border-b border-gray-400" id={"call-#{row.sid}"}>
+            <%= if row != List.first(@call_history_report) do %>
+              <div class="border-t border-gray-400" />
+            <% end %>
+            <div class="bg-gray-100 py-2 px-6" id={"call-#{row.sid}"}>
               <div class="flex flex-row justify-between">
                 <span>
                   <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
