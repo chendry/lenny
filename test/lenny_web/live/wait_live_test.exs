@@ -93,4 +93,22 @@ defmodule LennyWeb.WaitLiveTest do
     refute html =~ "+15552220001"
     assert html =~ "+15552220002"
   end
+
+  test "loading the wait page redirects to the single active call", %{conn: conn, user: user} do
+    phone_number_fixture(user, phone: "+15555551234", verified_at: ~N[2022-08-29 15:00:41])
+
+    c = call_fixture(sid: "CA0001", ended_at: nil)
+    uc = users_calls_fixture(user, c, seen_at: nil)
+
+    {:ok, _live_view, _html} =
+      live(conn, "/wait")
+      |> follow_redirect(conn, "/calls/CA0001")
+
+    assert Repo.reload!(uc).seen_at != nil
+
+    {:ok, _live_view, html} =
+      live(conn, "/wait")
+
+    assert html =~ "Your Verified Phone Number"
+  end
 end
