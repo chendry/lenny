@@ -98,4 +98,22 @@ defmodule Lenny.Calls do
   def get_effective_from(%Call{} = call) do
     call.forwarded_from || call.from
   end
+
+  def format_duration(started_at, ended_at) do
+    seconds = NaiveDateTime.diff(ended_at, started_at)
+
+    if seconds < 60 do
+      "#{seconds}s"
+    else
+      "#{div(seconds, 60)}m #{rem(seconds, 60)}s"
+    end
+  end
+
+  def format_timestamp_date(%NaiveDateTime{} = timestamp) do
+    Calendar.strftime(timestamp, "%b %d %Y")
+  end
+
+  def format_timestamp_time(%NaiveDateTime{} = timestamp) do
+    Calendar.strftime(timestamp, "%I:%M%P")
+  end
 end

@@ -32,25 +32,28 @@ defmodule LennyWeb.CallLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto pt-4 pb-12 px-2">
-      <h1 class="text-3xl font-bold" data-sid={@call.sid}>
-        Lenny has Answered!
-      </h1>
+      <div class="flex flex-row space-x-2">
+        <span class="text-blue-800">
+          <%= live_redirect "Call History", to: "/wait" %>
+        </span>
+        <span class="text-gray-400">&gt;</span>
+        <span class="text-blue-800">
+          <%= live_redirect to: "/calls/#{@call.sid}" do %>
+            <%= Calls.format_timestamp_date(@call.inserted_at) %>
+            <%= Calls.format_timestamp_time(@call.inserted_at) %>
+          <% end %>
+        </span>
+      </div>
 
-      <p class="mt-2">
-        Incoming call from
+      <h1 class="mt-4 text-lg sm:text-3xl font-bold" data-sid={@call.sid}>
+        Call From
         <span id="call-from" class="font-bold text-green-700 tracking-widest">
           <%= Calls.get_effective_from(@call) %>
         </span>
         <%= if @recording && @recording.status == "in-progress" do %>
-            <span class="ml-2 font-bold text-red-600">Recording</span>
+          <span class="ml-2 font-bold text-red-600">Recording</span>
         <% end %>
-      </p>
-
-      <%= if @recording && @recording.status == "completed" do %>
-        <div class="mt-4">
-          <audio controls src={"#{@recording.url}.mp3"} class="w-full" />
-        </div>
-      <% end %>
+      </h1>
 
       <%= if @call.ended_at == nil do %>
         <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
@@ -71,14 +74,9 @@ defmodule LennyWeb.CallLive do
       <% end %>
 
       <%= if @call.ended_at do %>
-        <div class="mt-4 font-bold text-green-700">
-          Call ended.
-        </div>
-
         <div class="mt-4">
-          <%= live_redirect to: "/wait", class: Buttons.wait_for_another_call_class() do %>
-            Back
-          <% end %>
+        Call ended after
+        <span class="font-bold"><%= Calls.format_duration(@call.inserted_at, @call.ended_at) %></span>.
         </div>
       <% else %>
 
@@ -136,6 +134,12 @@ defmodule LennyWeb.CallLive do
 
         <div class="mt-8 flex flex-col">
           <button id="hangup" class={Buttons.hangup_class()} phx-click="hangup">Hang Up</button>
+        </div>
+      <% end %>
+
+      <%= if @recording && @recording.status == "completed" do %>
+        <div class="mt-6">
+          <audio controls src={"#{@recording.url}.mp3"} class="w-full" />
         </div>
       <% end %>
     </div>

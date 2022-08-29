@@ -32,78 +32,64 @@ defmodule LennyWeb.WaitLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto pt-4 pb-12 px-2">
-      <h1 class="text-3xl font-bold">
-        Waiting For Call
-      </h1>
-
-      <p class="mt-4">
-        This page will automatically refresh when we receive a call from your phone number:
-      </p>
-
-      <div class="mt-8 bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
-        <h1 class="text-xl font-bold">
-          Your Verified Phone Number
-        </h1>
-        <div class="mt-2 text-green-600 text-xl font-bold tracking-[0.25rem]">
-          <span id="approved-number"><%= @phone_number.phone %></span>
+    <div class="container mx-auto mt-6 pb-12 px-2">
+      <div class="mx-6 sm:mx-0">
+        <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
+          <h1 class="text-xl font-bold">
+            Your Verified Phone Number
+          </h1>
+          <div class="text-green-800 text-xl font-bold tracking-[0.25rem]">
+            <span id="approved-number"><%= @phone_number.phone %></span>
+          </div>
+          <div class="mt-1">
+            <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-800 text-sm font-bold" %>
+          </div>
         </div>
-        <div class="mt-2">
-          <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-600 text-sm font-bold" %>
-        </div>
+
+        <p class="mt-6 text-sm sm:text-base">
+          This page automatically refreshes when you call
+          <span class="font-bold whitespace-nowrap">938-4GO-LENNY</span>
+          from your verified phone number.
+        </p>
       </div>
 
-      <h1 class="mt-8 text-3xl font-bold">
+      <h1 class="mt-6 text-center auto text-lg font-bold">
         Call History
       </h1>
 
-      <table class="mt-4 w-full">
-        <thead>
-          <tr>
-            <th class="pr-2 text-left">Time</th>
-            <th class="pr-2 text-left">Status</th>
-            <th class="pr-2 text-left">From</th>
-            <th class="pr-2 text-left">To</th>
-            <th class="pr-2 text-left">Recorded</th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= for row <- @call_history_report do %>
-            <tr>
-              <td class="pr-2">
-                <.link_to_call row={row}>
-                  <%= Calendar.strftime(row.started_at, "%c") %>
-                </.link_to_call>
-              </td>
-              <td>
-                <.link_to_call row={row}>
+      <div class="flex flex-col mt-2 border-t sm:border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
+        <%= for row <- @call_history_report do %>
+          <%= live_redirect to: "/calls/#{row.sid}" do %>
+            <div class="bg-gray-100 py-2 px-6 border-b border-gray-400">
+              <div class="flex flex-row justify-between">
+                <span>
+                  <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
+                  <span class="ml-2"><%= Calls.format_timestamp_time(row.started_at) %></span>
+                </span>
+
+                <span class="font-bold">
                   <%= if row.ended_at == nil do %>
                     <span class="text-green-700">Connected</span>
                   <% else %>
-                    <span class="text-red-700">Ended</span>
+                    <span class="text-gray-600">
+                      <%= Calls.format_duration(row.started_at, row.ended_at) %>
+                    </span>
                   <% end %>
-                </.link_to_call>
-              
-              </td>
-              <td class="pr-2">
-                <.link_to_call row={row}>
+              </span>
+              </div>
+
+              <div class="flex flex-row justify-between">
+                <span class="tracking-widest">
                   <%= row.from %>
-                </.link_to_call>
-              </td>
-              <td class="pr-2">
-                <.link_to_call row={row}>
-                  <%= row.to %>
-                </.link_to_call>
-              </td>
-              <td class="pr-2">
-                <.link_to_call row={row}>
-                  <%= inspect row.recorded %>
-                </.link_to_call>
-              </td>
-            </tr>
+                </span>
+                <%= if row.recorded do %>
+                  <span class="font-bold text-red-800">Recorded</span>
+                <% end %>
+              </div>
+            </div>
           <% end %>
-        </tbody>
-      </table>
+        <% end %>
+      </div>
     </div>
     """
   end
