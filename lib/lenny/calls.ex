@@ -116,4 +116,10 @@ defmodule Lenny.Calls do
   def format_timestamp_time(%NaiveDateTime{} = timestamp) do
     Calendar.strftime(timestamp, "%I:%M%P")
   end
+
+  def delete_call(user_id, call_id) do
+    UsersCalls
+    |> Repo.get_by(user_id: user_id, call_id: call_id)
+    |> Repo.delete!()
+  end
 end

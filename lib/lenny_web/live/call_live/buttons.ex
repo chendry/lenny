@@ -36,6 +36,14 @@ defmodule LennyWeb.CallLive.Buttons do
     shared() ++ ~w{border-gray-600 from-slate-100 to-slate-200 text-gray-700}
   end
 
+  def confirm_delete_yes_class do
+    shared() ++ ~w{px-8 border-red-500 from-red-400 to-red-600 text-white font-extrabold}
+  end
+
+  def confirm_delete_no_class do
+    shared() ++ ~w{px-8 border-blue-500 from-blue-400 to-blue-600 text-white font-extrabold}
+  end
+
   defp shared() do
     ~w{rounded-lg border-2 px-2 py-1 font-bold bg-gradient-to-b}
   end

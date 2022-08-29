@@ -25,7 +25,8 @@ defmodule LennyWeb.CallLive do
      |> assign(:user, user)
      |> assign(:call, Calls.get_by_sid!(sid))
      |> assign(:recording, Recordings.get_recording_for_user(user.id, sid))
-     |> assign(:audio_ctx_state, nil)}
+     |> assign(:audio_ctx_state, nil)
+     |> assign(:confirm_delete, false)}
   end
 
   @impl true
@@ -142,6 +143,22 @@ defmodule LennyWeb.CallLive do
           <audio controls src={"#{@recording.url}.mp3"} class="w-full" />
         </div>
       <% end %>
+
+      <%= if @call.ended_at do %>
+        <div class="mt-16">
+          <%= if @confirm_delete == false do %>
+            <button phx-click="confirm_delete" class="text-red-800">Delete call</button>
+          <% else %>
+            <p>
+              Are you sure you want to delete this call?
+            </p>
+            <div class="mt-4 flex flex-row justify-center space-x-4">
+              <button phx-click="delete" value="1" class={Buttons.confirm_delete_yes_class()}>Yes</button>
+              <button phx-click="delete" value="0" class={Buttons.confirm_delete_no_class()}>No</button>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -231,5 +248,28 @@ defmodule LennyWeb.CallLive do
     )
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("confirm_delete", _params, socket) do
+    {:noreply, assign(socket, :confirm_delete, true)}
+  end
+
+  @impl true
+  def handle_event("delete", %{"value" => "0"} = _params, socket) do
+    {:noreply, assign(socket, :confirm_delete, false)}
+  end
+
+  @impl true
+  def handle_event("delete", %{"value" => "1"} = _params, socket) do
+    Calls.delete_call(
+      socket.assigns.user.id,
+      socket.assigns.call.id
+    )
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Call has been deleted.")
+     |> push_redirect(to: "/wait")}
   end
 end
