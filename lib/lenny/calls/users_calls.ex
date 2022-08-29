@@ -7,6 +7,7 @@ defmodule Lenny.Calls.UsersCalls do
     belongs_to :call, Lenny.Calls.Call
 
     field :recorded, :boolean
+    field :seen_at, :naive_datetime
     field :deleted_at, :naive_datetime
 
     timestamps()

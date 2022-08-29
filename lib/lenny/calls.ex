@@ -122,4 +122,18 @@ defmodule Lenny.Calls do
     |> Repo.get_by(user_id: user_id, call_id: call_id)
     |> Repo.delete!()
   end
+
+  def mark_as_seen(user_id, call_id) do
+    uc =
+      UsersCalls
+      |> where([uc], uc.user_id == ^user_id)
+      |> where([uc], uc.call_id == ^call_id)
+      |> Repo.one()
+
+    if uc do
+      uc
+      |> change(seen_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+      |> Repo.update!()
+    end
+  end
 end

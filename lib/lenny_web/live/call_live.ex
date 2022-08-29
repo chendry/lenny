@@ -16,6 +16,12 @@ defmodule LennyWeb.CallLive do
         _ -> nil
       end
 
+    call = Calls.get_by_sid!(sid)
+
+    if user do
+      Calls.mark_as_seen(user.id, call.id)
+    end
+
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
     end

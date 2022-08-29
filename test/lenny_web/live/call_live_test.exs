@@ -2,11 +2,13 @@ defmodule LennyWeb.CallLiveTest do
   use LennyWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Lenny.AccountsFixtures
   import Lenny.PhoneNumbersFixtures
   import Lenny.CallsFixtures
 
   alias Lenny.Repo
   alias Lenny.Calls.Call
+  alias Lenny.Calls.UsersCalls
 
   setup [:register_and_log_in_user]
 
@@ -365,5 +367,22 @@ defmodule LennyWeb.CallLiveTest do
       |> render()
 
     assert html =~ "Hello, this is Lenny."
+  end
+
+  test "viewing a call marks it as seen for that user", %{user: u1, conn: conn} do
+    call = call_fixture(sid: "CA0001")
+
+    u2 = user_fixture()
+
+    uc1 = %UsersCalls{user_id: u1.id, call_id: call.id, recorded: true} |> Repo.insert!()
+    uc2 = %UsersCalls{user_id: u2.id, call_id: call.id, recorded: true} |> Repo.insert!()
+
+    assert uc1.seen_at == nil
+    assert uc2.seen_at == nil
+
+    {:ok, _live_view, _html} = live(conn, "/calls/CA0001")
+
+    assert Repo.reload!(uc1).seen_at != nil
+    assert Repo.reload!(uc2).seen_at == nil
   end
 end

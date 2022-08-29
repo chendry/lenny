@@ -6,6 +6,7 @@ defmodule Lenny.Repo.Migrations.CreateUsersCalls do
       add :user_id, references(:users, on_delete: :nothing)
       add :call_id, references(:calls, on_delete: :nothing)
       add :recorded, :boolean, null: false
+      add :seen_at, :naive_datetime
       add :deleted_at, :naive_datetime
 
       timestamps()
