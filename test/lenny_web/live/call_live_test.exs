@@ -417,6 +417,12 @@ defmodule LennyWeb.CallLiveTest do
       {:ok, live_view, _html} = live(conn, "/calls/CA001")
       refute live_view |> element("#breadcrumbs") |> has_element?()
     end
+
+    test "the delete button is not visible", %{conn: conn} do
+      call_fixture(sid: "CA001", ended_at: ~N[2022-08-29 20:11:17])
+      {:ok, live_view, _html} = live(conn, "/calls/CA001")
+      refute live_view |> element("button", "Delete") |> has_element?()
+    end
   end
 end
 
