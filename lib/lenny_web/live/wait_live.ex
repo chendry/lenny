@@ -23,12 +23,18 @@ defmodule LennyWeb.WaitLive do
       true ->
         if connected?(socket) do
           Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
+
+          Calls.get_active_calls_for_user(user.id)
+          |> Enum.each(fn call ->
+            Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{call.sid}")
+          end)
         end
 
         {:ok,
          socket
+         |> assign(:user, user)
          |> assign(:phone_number, phone_number)
-         |> assign(:call_history_report, Calls.call_history_report(user.id))}
+         |> assign_call_history_report()}
     end
   end
 
@@ -63,7 +69,7 @@ defmodule LennyWeb.WaitLive do
       <div class="flex flex-col mt-2 border-t sm:border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
         <%= for row <- @call_history_report do %>
           <%= live_redirect to: "/calls/#{row.sid}" do %>
-            <div class="bg-gray-100 py-2 px-6 border-b border-gray-400">
+            <div class="bg-gray-100 py-2 px-6 border-b border-gray-400" id={"call-#{row.sid}"}>
               <div class="flex flex-row justify-between">
                 <span>
                   <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
@@ -100,5 +106,15 @@ defmodule LennyWeb.WaitLive do
   @impl true
   def handle_info({:call_started, sid}, socket) do
     {:noreply, push_redirect(socket, to: "/calls/#{sid}")}
+  end
+
+  @impl true
+  def handle_info({:call, _sid}, socket) do
+    {:noreply, assign_call_history_report(socket)}
+  end
+
+  defp assign_call_history_report(socket) do
+    report = Calls.call_history_report(socket.assigns.user.id)
+    assign(socket, :call_history_report, report)
   end
 end

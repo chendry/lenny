@@ -24,6 +24,7 @@ defmodule LennyWeb.CallLive do
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
+      Phoenix.PubSub.subscribe(Lenny.PubSub, "media:#{sid}")
     end
 
     {:ok,

@@ -150,4 +150,13 @@ defmodule Lenny.Calls do
       _ -> nil
     end
   end
+
+  def get_active_calls_for_user(user_id) do
+    Repo.all(
+      from uc in UsersCalls,
+        join: c in assoc(uc, :call),
+        where: uc.user_id == ^user_id,
+        select: c
+    )
+  end
 end

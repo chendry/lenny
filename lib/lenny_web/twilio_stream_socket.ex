@@ -22,7 +22,7 @@ defmodule LennyWeb.TwilioStreamSocket do
         {:ok, Map.put(state, :call_sid, call_sid)}
 
       %{"media" => media} ->
-        Phoenix.PubSub.broadcast(Lenny.PubSub, "call:#{state.call_sid}", {:media, media})
+        Phoenix.PubSub.broadcast(Lenny.PubSub, "media:#{state.call_sid}", {:media, media})
         {:ok, state}
 
       _ ->

@@ -4,7 +4,10 @@ defmodule LennyWeb.WaitLiveTest do
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures
   import Lenny.CallsFixtures
+  import Lenny.PhoneNumbersFixtures
   import Lenny.UsersCallsFixtures
+
+  alias Lenny.Repo
 
   setup [:register_and_log_in_user]
 
@@ -110,5 +113,25 @@ defmodule LennyWeb.WaitLiveTest do
       live(conn, "/wait")
 
     assert html =~ "Your Verified Phone Number"
+  end
+
+  test "/wait automatically updates active calls", %{conn: conn, user: user} do
+    phone_number_fixture(user, phone: "+15551231234")
+
+    c1 = call_fixture(from: "+12223330001", ended_at: ~N[2022-08-29 15:12:24])
+    c2 = call_fixture(from: "+12223330002", ended_at: nil)
+
+    users_calls_fixture(user, c1, seen_at: ~N[2022-08-29 15:14:00])
+    users_calls_fixture(user, c2, seen_at: ~N[2022-08-29 15:14:30])
+
+    {:ok, live_view, _html} = live(conn, "/wait")
+    refute live_view |> element("#call-#{c1.sid}") |> render() =~ "Connected"
+    assert live_view |> element("#call-#{c2.sid}") |> render() =~ "Connected"
+
+    Phoenix.ConnTest.build_conn()
+    |> post("/twilio/status/call", %{"CallSid" => c2.sid, "CallStatus" => "completed"})
+
+    refute live_view |> element("#call-#{c1.sid}") |> render() =~ "Connected"
+    refute live_view |> element("#call-#{c2.sid}") |> render() =~ "Connected"
   end
 end
