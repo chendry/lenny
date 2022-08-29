@@ -12,6 +12,8 @@ defmodule LennyWeb.WaitLiveTest do
   setup [:register_and_log_in_user]
 
   test "incoming calls trigger redirect to call", %{conn: conn, user: user} do
+    Mox.expect(Lenny.TwilioMock, :send_sms, fn _, _ -> :ok end)
+
     phone_number_fixture(user, phone: "+13126180256")
 
     {:ok, live_view, _html} = live(conn, "/wait")

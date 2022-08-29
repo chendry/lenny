@@ -136,6 +136,26 @@ defmodule Lenny.TwilioImpl do
     end
   end
 
+  @impl true
+  def send_sms(to, body) do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Messages.json"
+
+    query = [
+      From: "+19384653669",
+      To: to,
+      Body: body
+    ]
+
+    {:ok, %{status_code: 201}} =
+      HTTPoison.post(
+        url,
+        URI.encode_query(query),
+        headers()
+      )
+
+    :ok
+  end
+
   defp headers do
     credentials = Base.encode64("#{account_sid()}:#{auth_token()}")
 

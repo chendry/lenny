@@ -354,4 +354,39 @@ defmodule Lenny.CallsTest do
 
     assert Calls.get_sole_unseen_active_call_for_user(u1.id) == nil
   end
+
+  test "anonyomus users can access calls not registered to any user" do
+    call = call_fixture(sid: "CA0001", from: "+3125551234")
+    assert Calls.get_call_for_user!(nil, "CA0001") == call
+  end
+
+  test "anonyomus users can't access calls registered a user" do
+    call = call_fixture(sid: "CA0001", from: "+3125551234")
+    user = user_fixture()
+    users_calls_fixture(user, call)
+
+    assert catch_error(Calls.get_call_for_user!(nil, "CA0001"))
+  end
+
+  test "users can access calls associated with them" do
+    call = call_fixture(sid: "CA0001", from: "+3125551234")
+    user = user_fixture()
+    users_calls_fixture(user, call)
+    assert Calls.get_call_for_user!(user, "CA0001") == call
+  end
+
+  test "users can't access deleted calls associated with them" do
+    call = call_fixture(sid: "CA0001", from: "+3125551234")
+    user = user_fixture()
+    users_calls_fixture(user, call, deleted_at: ~N[2022-08-29 16:57:03])
+    assert catch_error(Calls.get_call_for_user!(user, "CA0001"))
+  end
+
+  test "users can't access calls associated to uther users but not them" do
+    call = call_fixture(sid: "CA0001", from: "+3125551234")
+    other_user = user_fixture()
+    users_calls_fixture(other_user, call, deleted_at: ~N[2022-08-29 16:57:03])
+    user = user_fixture()
+    assert catch_error(Calls.get_call_for_user!(user, "CA0001"))
+  end
 end

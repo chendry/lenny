@@ -19,6 +19,8 @@ defmodule LennyWeb.TwilioController do
 
     from = Calls.get_effective_from(call)
 
+    Twilio.send_sms(from, Routes.live_url(LennyWeb.Endpoint, LennyWeb.CallLive, sid))
+
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 
     conn

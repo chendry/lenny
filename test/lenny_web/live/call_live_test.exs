@@ -12,8 +12,9 @@ defmodule LennyWeb.CallLiveTest do
 
   setup [:register_and_log_in_user]
 
-  test "call status webhook with CallStatus=completed ends the call", %{conn: conn} do
+  test "call status webhook with CallStatus=completed ends the call", %{conn: conn, user: user} do
     call = call_fixture(sid: "CAXXX")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, html} = live(conn, "/calls/CAXXX")
     assert html =~ ~S(data-sid="CAXXX")
@@ -28,7 +29,8 @@ defmodule LennyWeb.CallLiveTest do
 
   test "push the say buttons during a call", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
-    call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
@@ -55,7 +57,8 @@ defmodule LennyWeb.CallLiveTest do
 
   test "push the say buttons with autopilot off during a call", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
-    call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
@@ -80,7 +83,8 @@ defmodule LennyWeb.CallLiveTest do
 
   test "push the DTMF buttons", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
-    call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
@@ -106,6 +110,7 @@ defmodule LennyWeb.CallLiveTest do
   test "hang up", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
     call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
 
@@ -124,16 +129,18 @@ defmodule LennyWeb.CallLiveTest do
     assert Repo.get(Call, call.id).ended_at != nil
   end
 
-  test "visit a call that has ended", %{conn: conn} do
-    call_fixture(sid: "CA007", ended_at: ~N[2022-08-26 18:07:43])
+  test "visit a call that has ended", %{conn: conn, user: user} do
+    call = call_fixture(sid: "CA007", ended_at: ~N[2022-08-26 18:07:43])
+    users_calls_fixture(user, call)
 
     {:ok, _live_view, html} = live(conn, "/calls/CA007")
     assert html =~ "Call ended"
     refute html =~ "Start Audio"
   end
 
-  test "show what the person says during autopilot", %{conn: conn} do
-    call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c")
+  test "show what the person says during autopilot", %{conn: conn, user: user} do
+    call = call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, html} = live(conn, "/calls/CA165c28bffa7817b0ccd857fa1adc124c")
 
@@ -182,8 +189,9 @@ defmodule LennyWeb.CallLiveTest do
     assert html =~ "I&#39;m a banana."
   end
 
-  test "show what the person says without autopilot", %{conn: conn} do
-    call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c", autopilot: true)
+  test "show what the person says without autopilot", %{conn: conn, user: user} do
+    call = call_fixture(sid: "CA165c28bffa7817b0ccd857fa1adc124c", autopilot: true)
+    users_calls_fixture(user, call)
 
     {:ok, live_view, html} = live(conn, "/calls/CA165c28bffa7817b0ccd857fa1adc124c")
 
@@ -232,8 +240,9 @@ defmodule LennyWeb.CallLiveTest do
     assert html =~ "We only have yardsticks."
   end
 
-  test "the active button changes in response to say buttons", %{conn: conn} do
-    call_fixture(sid: "CA8aa913b958d95117e0571810014050ec")
+  test "the active button changes in response to say buttons", %{conn: conn, user: user} do
+    call = call_fixture(sid: "CA8aa913b958d95117e0571810014050ec")
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
 
@@ -259,8 +268,9 @@ defmodule LennyWeb.CallLiveTest do
     assert html =~ "Oh good! Yes yes yes yes"
   end
 
-  test "the active button changes in response to autopilot", %{conn: conn} do
-    call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true)
+  test "the active button changes in response to autopilot", %{conn: conn, user: user} do
+    call = call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true)
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
 
@@ -314,8 +324,9 @@ defmodule LennyWeb.CallLiveTest do
     assert html =~ "Sorry, I can barely hear &#39;ya there."
   end
 
-  test "autopilot causes the first sound to play after the last sound", %{conn: conn} do
-    call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true, iteration: 18)
+  test "autopilot causes the first sound to play after the last sound", %{conn: conn, user: user} do
+    call = call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true, iteration: 18)
+    users_calls_fixture(user, call)
 
     {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
 
@@ -381,5 +392,13 @@ defmodule LennyWeb.CallLiveTest do
 
     assert Repo.reload!(uc1).seen_at != nil
     assert Repo.reload!(uc2).seen_at == nil
+  end
+
+  test "attempt to view a call that the user doesn't have access to", %{conn: conn} do
+    call = call_fixture(sid: "CA0001")
+    other_user = user_fixture()
+    users_calls_fixture(other_user, call)
+
+    assert catch_error(live(conn, "/calls/CA0001"))
   end
 end

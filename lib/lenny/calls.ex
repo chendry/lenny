@@ -3,6 +3,7 @@ defmodule Lenny.Calls do
   import Ecto.Changeset
 
   alias Ecto.Multi
+  alias Lenny.Accounts.User
   alias Lenny.Calls.Call
   alias Lenny.Calls.UsersCalls
   alias Lenny.PhoneNumbers.PhoneNumber
@@ -158,5 +159,28 @@ defmodule Lenny.Calls do
         where: uc.user_id == ^user_id,
         select: c
     )
+  end
+
+  def get_call_for_user!(user_or_nil, sid) do
+    case user_or_nil do
+      nil ->
+        Repo.one!(
+          from c in Call,
+            as: :call,
+            where: c.sid == ^sid,
+            where: not exists(from uc in UsersCalls, where: uc.call_id == parent_as(:call).id),
+            select: c
+        )
+
+      %User{id: user_id} ->
+        Repo.one!(
+          from uc in UsersCalls,
+            join: c in assoc(uc, :call),
+            where: c.sid == ^sid,
+            where: uc.user_id == ^user_id,
+            where: is_nil(uc.deleted_at),
+            select: c
+        )
+    end
   end
 end
