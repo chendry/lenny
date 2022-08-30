@@ -1,6 +1,8 @@
 defmodule LennyWeb.PhoneNumberLive do
   use LennyWeb, :live_view
 
+  import LennyWeb.BreadcrumbsComponent
+
   alias Lenny.Accounts
   alias Lenny.Twilio
   alias Lenny.PhoneNumbers
@@ -41,15 +43,14 @@ defmodule LennyWeb.PhoneNumberLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="breadcrumbs" class="bg-gray-100 border-b border-gray-400 font-bold py-1 px-6 flex flex-row space-x-2">
-      <span class="text-blue-800">
+    <.breadcrumbs>
+      <.breadcrumb_link>
         <%= live_redirect "Calls", to: "/calls" %>
-      </span>
-      <span class="text-gray-400">&gt;</span>
-      <span>
-        Phone Number
-      </span>
-    </div>
+      </.breadcrumb_link>
+      <.breadcrumb_separator />
+      <span>Phone Number</span>
+    </.breadcrumbs>
+
     <div class="container mx-auto p-4 px-6">
       <%= if @live_action == :new do %>
         <h1 class="text-3xl font-bold mb-4">

@@ -1,6 +1,8 @@
 defmodule LennyWeb.UserSettingsView do
   use LennyWeb, :view
 
+  import LennyWeb.BreadcrumbsComponent
+
   def settings_section(assigns) do
     ~H"""
     <div class="mt-8 bg-gray-100 border border-gray-600 rounded-lg p-6 pt-4">
