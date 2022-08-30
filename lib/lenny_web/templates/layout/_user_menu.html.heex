@@ -1,10 +1,10 @@
-<div class="flex flex-row px-4 py-3 text-sm sm:text-base justify-between items-center bg-gray-200 border-b border-gray-400">
-  <a href="/" class="text-green-800 text-bold font-bold">
+<div class="flex flex-row px-4 py-3 text-sm sm:text-base justify-between items-center bg-blue-600 text-white">
+  <a href="/" class="font-extrabold">
     938-GOLENNY
   </a>
-  <ul class="flex flex-row justify-end space-x-4 font-bold text-blue-800">
+  <ul class="flex flex-row justify-end space-x-4 font-bold">
     <%= if @current_user do %>
-      <li class="text-black font-normal hidden sm:inline"><%= @current_user.email %></li>
+      <li class="text-white font-normal hidden sm:inline"><%= @current_user.email %></li>
       <li><%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %></li>
       <li><%= link "Log Out", to: Routes.user_session_path(@conn, :delete), method: :delete %></li>
     <% else %>
