@@ -51,7 +51,8 @@ defmodule Lenny.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 1.8"},
-      {:mox, "~> 1.0"}
+      {:mox, "~> 1.0"},
+      {:tzdata, "~> 1.1"}
     ]
   end
 
