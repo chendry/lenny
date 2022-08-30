@@ -73,7 +73,7 @@ defmodule LennyWeb.CallsLive do
           Call History
         </h1>
 
-        <div class="flex flex-col mt-2 border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
+        <div class="flex flex-col mt-2 border-y sm:border sm:rounded-lg sm:overflow-hidden border-gray-400">
           <%= for row <- @call_history do %>
             <%= live_redirect to: "/calls/#{row.sid}" do %>
               <%= if row != List.first(@call_history) do %>
