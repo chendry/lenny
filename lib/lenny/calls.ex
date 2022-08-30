@@ -111,11 +111,21 @@ defmodule Lenny.Calls do
   end
 
   def format_timestamp_date(%NaiveDateTime{} = timestamp) do
-    Calendar.strftime(timestamp, "%b %d %Y")
+    timestamp
+    |> chicago_time()
+    |> Calendar.strftime("%b %d %Y")
   end
 
   def format_timestamp_time(%NaiveDateTime{} = timestamp) do
-    Calendar.strftime(timestamp, "%I:%M%P")
+    timestamp
+    |> chicago_time()
+    |> Calendar.strftime("%I:%M%P")
+  end
+
+  defp chicago_time(%NaiveDateTime{} = timestamp) do
+    timestamp
+    |> DateTime.from_naive!("Etc/UTC")
+    |> DateTime.shift_zone!("America/Chicago")
   end
 
   def delete_call(user_id, call_id) do
