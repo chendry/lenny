@@ -17,7 +17,7 @@ defmodule LennyWeb.BreadcrumbsComponent do
 
   def breadcrumb_link(assigns) do
     ~H"""
-    <span class="text-blue-800">
+    <span class="text-blue-600">
       <%= render_slot @inner_block %>
     </span>
     """

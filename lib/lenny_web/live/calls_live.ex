@@ -53,11 +53,11 @@ defmodule LennyWeb.CallsLive do
           <h1 class="text-xl font-bold">
             Your Verified Phone Number
           </h1>
-          <div class="text-green-800 text-xl font-bold tracking-[0.25rem]">
+          <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
             <span id="approved-number"><%= @phone_number.phone %></span>
           </div>
           <div class="mt-1">
-            <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-800 text-sm font-bold" %>
+            <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-600 text-sm font-bold" %>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ defmodule LennyWeb.CallsLive do
                     <%= row.from %>
                   </span>
                   <%= if row.recorded do %>
-                    <span class="font-bold text-red-800">Recorded</span>
+                    <span class="font-bold text-red-600">Recorded</span>
                   <% end %>
                 </div>
               </div>

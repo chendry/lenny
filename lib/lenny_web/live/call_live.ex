@@ -177,7 +177,7 @@ defmodule LennyWeb.CallLive do
         <div class="text-center mt-8">
           <%= if @confirm_delete == false do %>
             <div class="text-right">
-              <button phx-click="confirm_delete" class="font-bold text-red-800">Delete call</button>
+              <button phx-click="confirm_delete" class="font-bold text-red-600">Delete call</button>
             </div>
           <% else %>
             <p>
