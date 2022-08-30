@@ -68,46 +68,48 @@ defmodule LennyWeb.CallsLive do
         </p>
       </div>
 
-      <h1 class="mt-6 text-center auto text-lg font-bold">
-        Call History
-      </h1>
+      <%= if not Enum.empty?(@call_history) do %>
+        <h1 class="mt-6 text-center auto text-lg font-bold">
+          Call History
+        </h1>
 
-      <div class="flex flex-col mt-2 border-b sm:border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
-        <%= for row <- @call_history do %>
-          <%= live_redirect to: "/calls/#{row.sid}" do %>
-            <%= if row != List.first(@call_history) do %>
-              <div class="border-t border-gray-400" />
-            <% end %>
-            <div class="bg-gray-100 py-2 px-6" id={"call-#{row.sid}"}>
-              <div class="flex flex-row justify-between">
-                <span>
-                  <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
-                  <span class="ml-2"><%= Calls.format_timestamp_time(row.started_at) %></span>
+        <div class="flex flex-col mt-2 border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
+          <%= for row <- @call_history do %>
+            <%= live_redirect to: "/calls/#{row.sid}" do %>
+              <%= if row != List.first(@call_history) do %>
+                <div class="border-t border-gray-400" />
+              <% end %>
+              <div class="bg-gray-100 py-2 px-6" id={"call-#{row.sid}"}>
+                <div class="flex flex-row justify-between">
+                  <span>
+                    <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
+                    <span class="ml-2"><%= Calls.format_timestamp_time(row.started_at) %></span>
+                  </span>
+
+                  <span class="font-bold">
+                    <%= if row.ended_at == nil do %>
+                      <span class="text-green-700">Connected</span>
+                    <% else %>
+                      <span class="text-gray-600">
+                        <%= Calls.format_duration(row.started_at, row.ended_at) %>
+                      </span>
+                    <% end %>
                 </span>
+                </div>
 
-                <span class="font-bold">
-                  <%= if row.ended_at == nil do %>
-                    <span class="text-green-700">Connected</span>
-                  <% else %>
-                    <span class="text-gray-600">
-                      <%= Calls.format_duration(row.started_at, row.ended_at) %>
-                    </span>
+                <div class="flex flex-row justify-between">
+                  <span class="tracking-widest">
+                    <%= row.from %>
+                  </span>
+                  <%= if row.recorded do %>
+                    <span class="font-bold text-red-800">Recorded</span>
                   <% end %>
-              </span>
+                </div>
               </div>
-
-              <div class="flex flex-row justify-between">
-                <span class="tracking-widest">
-                  <%= row.from %>
-                </span>
-                <%= if row.recorded do %>
-                  <span class="font-bold text-red-800">Recorded</span>
-                <% end %>
-              </div>
-            </div>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
     """
   end
