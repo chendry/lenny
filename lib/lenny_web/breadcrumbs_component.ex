@@ -3,7 +3,7 @@ defmodule LennyWeb.BreadcrumbsComponent do
 
   def breadcrumbs(assigns) do
     ~H"""
-    <div id="breadcrumbs" class="bg-gray-100 border-b border-gray-400 font-bold py-1 px-6 flex flex-row space-x-2">
+    <div id="breadcrumbs" class="bg-gray-100 border-b border-gray-400 font-bold py-2 px-4 flex flex-row space-x-2">
       <%= render_slot @inner_block %>
     </div>
     """
