@@ -43,23 +43,19 @@ defmodule LennyWeb.CallLive do
   @impl true
   def render(assigns) do
     ~H"""
+    <%= if @user do %>
+      <div id="breadcrumbs" class="font-bold mt-2 mx-6 flex flex-row space-x-2">
+        <span class="text-blue-800">
+          <%= live_redirect "Calls", to: "/calls" %>
+        </span>
+        <span class="text-gray-400">&gt;</span>
+        <span>
+          <%= Calls.format_timestamp_date(@call.inserted_at) %>
+          <%= Calls.format_timestamp_time(@call.inserted_at) %>
+        </span>
+      </div>
+    <% end %>
     <div class="container mx-auto pt-4 pb-12 px-6">
-
-      <%= if @user do %>
-        <div id="breadcrumbs" class="flex flex-row space-x-2">
-          <span class="text-blue-800">
-            <%= live_redirect "Calls", to: "/calls" %>
-          </span>
-          <span class="text-gray-400">&gt;</span>
-          <span class="text-blue-800">
-            <%= live_redirect to: "/calls/#{@call.sid}" do %>
-              <%= Calls.format_timestamp_date(@call.inserted_at) %>
-              <%= Calls.format_timestamp_time(@call.inserted_at) %>
-            <% end %>
-          </span>
-        </div>
-      <% end %>
-
       <h1 class="mt-4 flex flex-row items-center justify-between" data-sid={@call.sid}>
         <div class="text-lg sm:text-3xl font-bold">
           Call From

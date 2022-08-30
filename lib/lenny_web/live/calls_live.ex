@@ -41,8 +41,13 @@ defmodule LennyWeb.CallsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto mt-6 pb-12 px-2">
-      <div class="mx-6 sm:mx-0">
+    <div id="breadcrumbs" class="font-bold mt-2 px-6 flex flex-row space-x-2">
+      <span>
+        Calls
+      </span>
+    </div>
+    <div class="container mx-auto mt-6 pb-12">
+      <div class="px-6 sm:px-0">
         <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
           <h1 class="text-xl font-bold">
             Your Verified Phone Number

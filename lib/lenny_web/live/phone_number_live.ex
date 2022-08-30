@@ -41,7 +41,16 @@ defmodule LennyWeb.PhoneNumberLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto p-4 px-2">
+    <div id="breadcrumbs" class="font-bold mt-2 mx-6 flex flex-row space-x-2">
+      <span class="text-blue-800">
+        <%= live_redirect "Calls", to: "/calls" %>
+      </span>
+      <span class="text-gray-400">&gt;</span>
+      <span>
+        Phone Number
+      </span>
+    </div>
+    <div class="container mx-auto p-4 px-6">
       <%= if @live_action == :new do %>
         <h1 class="text-3xl font-bold mb-4">
           <%= if @approved_phone_number == nil do %>
