@@ -39,7 +39,7 @@ defmodule LennyWeb.UserRegistrationControllerTest do
       response = html_response(conn, 200)
       assert response =~ email
       assert response =~ ~r{<a.*>\s*Settings}
-      assert response =~ ~r{<a.*>\s*Log out}
+      assert response =~ ~r{<a.*>\s*Log Out}
     end
 
     test "render errors for invalid data", %{conn: conn} do

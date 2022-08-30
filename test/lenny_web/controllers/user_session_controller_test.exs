@@ -41,7 +41,7 @@ defmodule LennyWeb.UserSessionControllerTest do
 
       assert response =~ user.email
       assert response =~ ~r{<a.*>\s*Settings}
-      assert response =~ ~r{<a.*>\s*Log out}
+      assert response =~ ~r{<a.*>\s*Log Out}
     end
 
     test "logs the user in with remember me", %{conn: conn, user: user} do
