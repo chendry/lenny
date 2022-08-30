@@ -5,8 +5,8 @@ defmodule LennyWeb.UserSettingsView do
 
   def settings_section(assigns) do
     ~H"""
-    <div class="mt-8 bg-gray-100 border border-gray-600 rounded-lg p-6 pt-4">
-      <h3 class="text-lg font-bold mb-4"><%= @title %></h3>
+    <h3 class="text-lg font-bold"><%= @title %></h3>
+    <div class="mt-2 bg-gray-100 border border-gray-600 rounded-lg p-6 pt-4">
       <%= render_slot(@inner_block) %>
     </div>
     """

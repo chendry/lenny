@@ -59,7 +59,7 @@ defmodule LennyWeb.CallLive do
     <% end %>
 
     <div class="container mx-auto pt-4 pb-12 px-6">
-      <h1 class="mt-4 flex flex-row items-center justify-between" data-sid={@call.sid}>
+      <h1 class="flex flex-row items-center justify-between" data-sid={@call.sid}>
         <div class="text-lg sm:text-xl font-bold">
           Call From
           <span id="call-from" class="font-bold text-green-700 tracking-widest">
