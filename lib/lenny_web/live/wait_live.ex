@@ -57,7 +57,7 @@ defmodule LennyWeb.WaitLive do
 
         <p class="mt-6 text-sm sm:text-base">
           This page automatically refreshes when you call
-          <span class="font-bold whitespace-nowrap">938-4GO-LENNY</span>
+          <span class="font-bold whitespace-nowrap">938-GOLENNY</span>
           from your verified phone number.
         </p>
       </div>
