@@ -1,4 +1,4 @@
-defmodule LennyWeb.WaitLiveTest do
+defmodule LennyWeb.CallsLiveTest do
   use LennyWeb.ConnCase
 
   import Phoenix.LiveViewTest
@@ -16,7 +16,7 @@ defmodule LennyWeb.WaitLiveTest do
 
     phone_number_fixture(user, phone: "+13126180256")
 
-    {:ok, live_view, _html} = live(conn, "/wait")
+    {:ok, live_view, _html} = live(conn, "/calls")
 
     Phoenix.ConnTest.build_conn()
     |> post(
@@ -55,12 +55,12 @@ defmodule LennyWeb.WaitLiveTest do
     assert_redirect(live_view, "/calls/CAcd3d0f9f054366f89712ef4278630247")
   end
 
-  test "/wait redirects if there is a pending phone number", %{conn: conn, user: user} do
+  test "/calls redirects if there is a pending phone number", %{conn: conn, user: user} do
     phone_number_fixture(user)
     phone_number_fixture(user, verified_at: nil)
 
     {:ok, _live_view, _html} =
-      live(conn, "/wait")
+      live(conn, "/calls")
       |> follow_redirect(conn, "/phone_numbers/verify")
   end
 
@@ -73,7 +73,7 @@ defmodule LennyWeb.WaitLiveTest do
     users_calls_fixture(user, c1)
     users_calls_fixture(user, c2)
 
-    {:ok, live_view, html} = live(conn, "/wait")
+    {:ok, live_view, html} = live(conn, "/calls")
 
     assert html =~ "+15552220001"
     assert html =~ "+15552220002"
@@ -93,7 +93,7 @@ defmodule LennyWeb.WaitLiveTest do
       live_view
       |> element("button", "Yes")
       |> render_click()
-      |> follow_redirect(conn, "/wait")
+      |> follow_redirect(conn, "/calls")
 
     refute html =~ "+15552220001"
     assert html =~ "+15552220002"
@@ -106,18 +106,18 @@ defmodule LennyWeb.WaitLiveTest do
     uc = users_calls_fixture(user, c, seen_at: nil)
 
     {:ok, _live_view, _html} =
-      live(conn, "/wait")
+      live(conn, "/calls")
       |> follow_redirect(conn, "/calls/CA0001")
 
     assert Repo.reload!(uc).seen_at != nil
 
     {:ok, _live_view, html} =
-      live(conn, "/wait")
+      live(conn, "/calls")
 
     assert html =~ "Your Verified Phone Number"
   end
 
-  test "/wait automatically updates active calls", %{conn: conn, user: user} do
+  test "/calls automatically updates active calls", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+15551231234")
 
     c1 = call_fixture(from: "+12223330001", ended_at: ~N[2022-08-29 15:12:24])
@@ -126,7 +126,7 @@ defmodule LennyWeb.WaitLiveTest do
     users_calls_fixture(user, c1, seen_at: ~N[2022-08-29 15:14:00])
     users_calls_fixture(user, c2, seen_at: ~N[2022-08-29 15:14:30])
 
-    {:ok, live_view, _html} = live(conn, "/wait")
+    {:ok, live_view, _html} = live(conn, "/calls")
     refute live_view |> element("#call-#{c1.sid}") |> render() =~ "Connected"
     assert live_view |> element("#call-#{c2.sid}") |> render() =~ "Connected"
 

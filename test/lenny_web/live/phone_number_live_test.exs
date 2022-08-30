@@ -45,7 +45,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> form("form", %{"verification_form[code]" => "5678"})
       |> render_submit()
-      |> follow_redirect(conn, "/wait")
+      |> follow_redirect(conn, "/calls")
 
     assert html =~ ~S{<span id="approved-number">+13126180256</span>}
   end
@@ -53,7 +53,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "change a number", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+13126180256")
 
-    {:ok, live_view, html} = live(conn, "/wait")
+    {:ok, live_view, html} = live(conn, "/calls")
 
     assert html =~ "+13126180256"
 
@@ -78,7 +78,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> form("form", %{"verification_form[code]" => "9999"})
       |> render_submit()
-      |> follow_redirect(conn, "/wait")
+      |> follow_redirect(conn, "/calls")
 
     refute html =~ "Pending: +13125551234"
     assert html =~ "+13125551234"
@@ -87,7 +87,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "cancel changing a number", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+15551112222")
 
-    {:ok, live_view, html} = live(conn, "/wait")
+    {:ok, live_view, html} = live(conn, "/calls")
 
     assert html =~ ~S{<span id="approved-number">+15551112222</span>}
 
@@ -114,7 +114,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       live_view
       |> element("a", "Cancel")
       |> render_click()
-      |> follow_redirect(conn, "/wait")
+      |> follow_redirect(conn, "/calls")
 
     assert html =~ ~S{<span id="approved-number">+15551112222</span>}
     refute html =~ "+15551113333"

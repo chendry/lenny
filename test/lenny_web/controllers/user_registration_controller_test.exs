@@ -14,7 +14,7 @@ defmodule LennyWeb.UserRegistrationControllerTest do
 
     test "redirects if already logged in", %{conn: conn} do
       conn = conn |> log_in_user(user_fixture()) |> get(Routes.user_registration_path(conn, :new))
-      assert redirected_to(conn) == "/wait"
+      assert redirected_to(conn) == "/calls"
     end
   end
 
@@ -29,10 +29,10 @@ defmodule LennyWeb.UserRegistrationControllerTest do
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == "/wait"
+      assert redirected_to(conn) == "/calls"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/wait")
+      conn = get(conn, "/calls")
       assert "/phone_numbers/new" = redir_path = redirected_to(conn, 302)
 
       conn = get(recycle(conn), redir_path)

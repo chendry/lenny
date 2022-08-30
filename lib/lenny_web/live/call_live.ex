@@ -48,7 +48,7 @@ defmodule LennyWeb.CallLive do
       <%= if @user do %>
         <div id="breadcrumbs" class="flex flex-row space-x-2">
           <span class="text-blue-800">
-            <%= live_redirect "Calls", to: "/wait" %>
+            <%= live_redirect "Calls", to: "/calls" %>
           </span>
           <span class="text-gray-400">&gt;</span>
           <span class="text-blue-800">
@@ -291,6 +291,6 @@ defmodule LennyWeb.CallLive do
     {:noreply,
      socket
      |> put_flash(:info, "Call has been deleted.")
-     |> push_redirect(to: "/wait")}
+     |> push_redirect(to: "/calls")}
   end
 end

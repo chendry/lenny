@@ -1,4 +1,4 @@
-defmodule LennyWeb.WaitLive do
+defmodule LennyWeb.CallsLive do
   use LennyWeb, :live_view
 
   alias Lenny.Accounts
