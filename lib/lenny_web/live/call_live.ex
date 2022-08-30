@@ -40,8 +40,7 @@ defmodule LennyWeb.CallLive do
      |> assign(:confirm_delete, false)}
   end
 
-  @impl true
-  def render(assigns) do
+  def breadcrumbs(assigns) do
     ~H"""
     <%= if @user do %>
       <div id="breadcrumbs">
@@ -53,7 +52,12 @@ defmodule LennyWeb.CallLive do
         </span>
       </div>
     <% end %>
+    """
+  end
 
+  @impl true
+  def render(assigns) do
+    ~H"""
     <div class="container mx-auto pt-4 pb-12 px-6">
       <h1 class="flex flex-row items-center justify-between" data-sid={@call.sid}>
         <div class="text-lg sm:text-xl font-bold">

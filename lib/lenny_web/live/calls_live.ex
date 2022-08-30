@@ -38,12 +38,17 @@ defmodule LennyWeb.CallsLive do
     end
   end
 
-  @impl true
-  def render(assigns) do
+  def breadcrumbs(assigns) do
     ~H"""
     <div id="breadcrumbs">
       <span>Calls</span>
     </div>
+    """
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
     <div class="container mx-auto mt-6 pb-12">
       <div class="px-6 sm:px-0">
         <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">

@@ -38,15 +38,19 @@ defmodule LennyWeb.PhoneNumberLive do
     |> assign(:changeset, VerificationForm.changeset())
   end
 
-  @impl true
-  def render(assigns) do
-    ~H"""
+  def breadcrumbs(assigns) do
+   ~H"""
     <div id="breadcrumbs">
       <%= live_redirect "Calls", to: "/calls" %>
       <span class="breadcrumb-separator" />
       <span>Phone Number</span>
     </div>
+    """
+  end
 
+  @impl true
+  def render(assigns) do
+    ~H"""
     <div class="container mx-auto p-4 px-6">
       <%= if @live_action == :new do %>
         <h1 class="text-xl font-bold mb-4">

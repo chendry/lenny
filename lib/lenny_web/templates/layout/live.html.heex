@@ -1,3 +1,7 @@
+<%= if function_exported?(@socket.view, :breadcrumbs, 1) do %>
+  <%= @socket.view.breadcrumbs(assigns) %>
+<% end %>
+
 <p class="alert alert-info" role="alert"
   phx-click="lv:clear-flash"
   phx-value-key="info"><%= live_flash(@flash, :info) %></p>
