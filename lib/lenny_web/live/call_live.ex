@@ -158,16 +158,20 @@ defmodule LennyWeb.CallLive do
         </div>
       <% end %>
 
-      <%= if @recording && @recording.status == "completed" do %>
-        <div class="mt-6">
-          <audio controls src={"#{@recording.url}.mp3"} class="w-full" />
-        </div>
+      <%= if @recording && @call.ended_at do %>
+        <%= if @recording.status == "completed" do %>
+          <div class="mt-6">
+            <audio controls src={"#{@recording.url}.mp3"} class="w-full" />
+          </div>
+        <% end %>
       <% end %>
 
       <%= if @call.ended_at && @user do %>
-        <div class="mt-16">
+        <div class="text-center mt-8">
           <%= if @confirm_delete == false do %>
-            <button phx-click="confirm_delete" class="text-red-800">Delete call</button>
+            <div class="text-right">
+              <button phx-click="confirm_delete" class="font-bold text-red-800">Delete call</button>
+            </div>
           <% else %>
             <p>
               Are you sure you want to delete this call?
