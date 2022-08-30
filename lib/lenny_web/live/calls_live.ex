@@ -36,7 +36,7 @@ defmodule LennyWeb.CallsLive do
          socket
          |> assign(:user, user)
          |> assign(:phone_number, phone_number)
-         |> assign_call_history_report()}
+         |> assign_call_history()}
     end
   end
 
@@ -73,9 +73,9 @@ defmodule LennyWeb.CallsLive do
       </h1>
 
       <div class="flex flex-col mt-2 border-b sm:border sm:rounded-lg sm:overflow-hidden border-gray-400 -mx-2">
-        <%= for row <- @call_history_report do %>
+        <%= for row <- @call_history do %>
           <%= live_redirect to: "/calls/#{row.sid}" do %>
-            <%= if row != List.first(@call_history_report) do %>
+            <%= if row != List.first(@call_history) do %>
               <div class="border-t border-gray-400" />
             <% end %>
             <div class="bg-gray-100 py-2 px-6" id={"call-#{row.sid}"}>
@@ -119,11 +119,11 @@ defmodule LennyWeb.CallsLive do
 
   @impl true
   def handle_info({:call, _sid}, socket) do
-    {:noreply, assign_call_history_report(socket)}
+    {:noreply, assign_call_history(socket)}
   end
 
-  defp assign_call_history_report(socket) do
+  defp assign_call_history(socket) do
     report = Calls.call_history_report(socket.assigns.user.id)
-    assign(socket, :call_history_report, report)
+    assign(socket, :call_history, report)
   end
 end
