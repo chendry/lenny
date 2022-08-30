@@ -1,8 +1,6 @@
 defmodule LennyWeb.UserSettingsView do
   use LennyWeb, :view
 
-  import LennyWeb.BreadcrumbsComponent
-
   def settings_section(assigns) do
     ~H"""
     <h3 class="text-lg font-bold"><%= @title %></h3>

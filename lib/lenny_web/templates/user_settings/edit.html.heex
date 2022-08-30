@@ -1,10 +1,8 @@
-<.breadcrumbs>
-  <.breadcrumb_link>
-    <%= live_redirect "Calls", to: "/calls" %>
-  </.breadcrumb_link>
-  <.breadcrumb_separator />
+<div id="breadcrumbs">
+  <%= live_redirect "Calls", to: "/calls" %>
+  <span class="breadcrumb-separator" />
   <span>Settings</span>
-</.breadcrumbs>
+</div>
 
 <div class="container mx-auto px-6 py-4 pb-16">
   <.settings_section title="Change Email">

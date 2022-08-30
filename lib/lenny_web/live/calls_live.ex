@@ -1,8 +1,6 @@
 defmodule LennyWeb.CallsLive do
   use LennyWeb, :live_view
 
-  import LennyWeb.BreadcrumbsComponent
-
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.PhoneNumbers
@@ -43,10 +41,9 @@ defmodule LennyWeb.CallsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.breadcrumbs>
+    <div id="breadcrumbs">
       <span>Calls</span>
-    </.breadcrumbs>
-
+    </div>
     <div class="container mx-auto mt-6 pb-12">
       <div class="px-6 sm:px-0">
         <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">

@@ -1,8 +1,6 @@
 defmodule LennyWeb.CallLive do
   use LennyWeb, :live_view
 
-  import LennyWeb.BreadcrumbsComponent
-
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.Recordings
@@ -46,16 +44,14 @@ defmodule LennyWeb.CallLive do
   def render(assigns) do
     ~H"""
     <%= if @user do %>
-      <.breadcrumbs>
-        <.breadcrumb_link>
-          <%= live_redirect "Calls", to: "/calls" %>
-        </.breadcrumb_link>
-        <.breadcrumb_separator />
+      <div id="breadcrumbs">
+        <%= live_redirect "Calls", to: "/calls" %>
+        <span class="breadcrumb-separator" />
         <span>
           <%= Calls.format_timestamp_date(@call.inserted_at) %>
           <%= Calls.format_timestamp_time(@call.inserted_at) %>
         </span>
-      </.breadcrumbs>
+      </div>
     <% end %>
 
     <div class="container mx-auto pt-4 pb-12 px-6">
