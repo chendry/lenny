@@ -1,5 +1,5 @@
 <div class="container mx-auto px-6 py-4">
-  <h1 class="text-3xl font-bold pb-4">Log in</h1>
+  <h1 class="text-xl font-bold pb-4">Log in</h1>
 
   <.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as={:user}>
     <%= if @error_message do %>

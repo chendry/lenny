@@ -53,7 +53,7 @@ defmodule LennyWeb.PhoneNumberLive do
 
     <div class="container mx-auto p-4 px-6">
       <%= if @live_action == :new do %>
-        <h1 class="text-3xl font-bold mb-4">
+        <h1 class="text-xl font-bold mb-4">
           <%= if @approved_phone_number == nil do %>
             Register a Phone Number
           <% else %>
@@ -80,7 +80,7 @@ defmodule LennyWeb.PhoneNumberLive do
       <% end %>
 
       <%= if @live_action == :verify do %>
-        <h1 class="text-3xl font-bold mb-4">
+        <h1 class="text-xl font-bold mb-4">
           Verify your Phone Number
         </h1>
 
