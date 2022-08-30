@@ -159,11 +159,13 @@ defmodule LennyWeb.CallLive do
       <% end %>
 
       <%= if @recording && @call.ended_at do %>
-        <%= if @recording.status == "completed" do %>
-          <div class="mt-6">
+        <div class="mt-6">
+          <%= if @recording.status == "completed" do %>
             <audio controls src={"#{@recording.url}.wav"} class="w-full" />
-          </div>
-        <% end %>
+          <% else %>
+            <audio controls class="w-full invisible" />
+          <% end %>
+        </div>
       <% end %>
 
       <%= if @call.ended_at && @user do %>
