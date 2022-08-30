@@ -41,7 +41,7 @@ defmodule LennyWeb.CallsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="breadcrumbs" class="font-bold mt-2 px-6 flex flex-row space-x-2">
+    <div id="breadcrumbs" class="bg-gray-100 border-b border-gray-400 font-bold py-1 px-6 flex flex-row space-x-2">
       <span>
         Calls
       </span>
