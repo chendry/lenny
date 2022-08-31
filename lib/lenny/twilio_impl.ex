@@ -19,12 +19,23 @@ defmodule Lenny.TwilioImpl do
       HTTPoison.post(url, URI.encode_query(query), headers())
 
     case {status_code, Jason.decode!(body)} do
-      {201, %{"status" => "pending", "sid" => sid}} -> {:ok, sid}
-      {400, %{"code" => 60200}} -> {:error, "invalid phone number"}
-      {429, %{"code" => 60203}} -> {:error, "max send attempts reached"}
-      {403, %{"code" => 60205}} -> {:error, "phone number does not support SMS"}
-      {status_code, %{"code" => code}} -> {:error, "unknown error: #{status_code}-#{code}"}
-      {status_code, _} -> {:error, "unknown error: #{status_code}"}
+      {201, %{"status" => "pending", "sid" => sid, "lookup" => %{"carrier" => carrier}}} ->
+        {:ok, %{sid: sid, carrier: carrier}}
+
+      {400, %{"code" => 60200}} ->
+        {:error, "invalid phone number"}
+
+      {429, %{"code" => 60203}} ->
+        {:error, "max send attempts reached"}
+
+      {403, %{"code" => 60205}} ->
+        {:error, "phone number does not support SMS"}
+
+      {status_code, %{"code" => code}} ->
+        {:error, "unknown error: #{status_code}-#{code}"}
+
+      {status_code, _} ->
+        {:error, "unknown error: #{status_code}"}
     end
   end
 

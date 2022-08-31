@@ -61,7 +61,7 @@ defmodule Lenny.PhoneNumbers do
     )
     |> Multi.update(
       :set_sid,
-      fn %{insert: phone_number, verify_start: sid} ->
+      fn %{insert: phone_number, verify_start: %{sid: sid}} ->
         change(phone_number, sid: sid)
       end
     )

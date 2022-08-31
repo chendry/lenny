@@ -1,6 +1,6 @@
 defmodule Lenny.Twilio do
   @callback verify_start(phone :: String.t(), channel :: String.t()) ::
-              {:ok, String.t()} | {:error, String.t()}
+              {:ok, %{sid: String.t(), carrier: map()}} | {:error, String.t()}
 
   @callback verify_check(sid :: String.t(), code :: String.t()) ::
               :ok | {:error, String.t()} | {:stop, String.t()}

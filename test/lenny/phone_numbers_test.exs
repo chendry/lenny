@@ -16,7 +16,7 @@ defmodule Lenny.PhoneNumbersTest do
     p4 = phone_number_fixture(user_fixture(), verified_at: nil, deleted_at: nil)
 
     Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn _, _ -> {:ok, "VE-XXXX"} end)
+    |> Mox.expect(:verify_start, fn _, _ -> {:ok, %{sid: "VE-XXXX"}} end)
 
     {:ok, phone_number} =
       PhoneNumbers.register_phone_number_and_start_verification(
