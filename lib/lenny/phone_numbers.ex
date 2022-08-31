@@ -60,14 +60,14 @@ defmodule Lenny.PhoneNumbers do
       end
     )
     |> Multi.update(
-      :set_sid,
-      fn %{insert: phone_number, verify_start: %{sid: sid}} ->
-        change(phone_number, sid: sid)
+      :set_sid_and_carrier,
+      fn %{insert: phone_number, verify_start: %{sid: sid, carrier: carrier}} ->
+        change(phone_number, sid: sid, carrier: carrier)
       end
     )
     |> Repo.transaction()
     |> case do
-      {:ok, %{set_sid: phone_number}} ->
+      {:ok, %{set_sid_and_carrier: phone_number}} ->
         {:ok, phone_number}
 
       {:error, :insert, changeset, _} ->

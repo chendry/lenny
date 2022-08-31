@@ -20,7 +20,9 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     assert html =~ "has invalid format"
 
     Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn "+13126180256", "sms" -> {:ok, %{sid: "VE-XXXX"}} end)
+    |> Mox.expect(:verify_start, fn "+13126180256", "sms" ->
+      {:ok, %{sid: "VE-XXXX", carrier: %{}}}
+    end)
     |> Mox.expect(:verify_check, fn "VE-XXXX", "1234" ->
       {:error, "invalid according to twilio"}
     end)
@@ -64,7 +66,9 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> follow_redirect(conn, "/phone_numbers/new")
 
     Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn "+13125551234", "sms" -> {:ok, %{sid: "VE-XXXX"}} end)
+    |> Mox.expect(:verify_start, fn "+13125551234", "sms" ->
+      {:ok, %{sid: "VE-XXXX", carrier: %{}}}
+    end)
     |> Mox.expect(:verify_check, fn "VE-XXXX", "9999" -> :ok end)
 
     html =
@@ -100,7 +104,9 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     assert html =~ ~r{<h1.*>\s*Change your Phone Number}
 
     Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn "+15551113333", "sms" -> {:ok, %{sid: "VE-XXXX"}} end)
+    |> Mox.expect(:verify_start, fn "+15551113333", "sms" ->
+      {:ok, %{sid: "VE-XXXX", carrier: %{}}}
+    end)
     |> Mox.expect(:verify_cancel, fn "VE-XXXX" -> :ok end)
 
     html =
@@ -120,7 +126,10 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     refute html =~ "+15551113333"
   end
 
-  test "/phone_numbers/new redirects if there is a pending phone number", %{conn: conn, user: user} do
+  test "/phone_numbers/new redirects if there is a pending phone number", %{
+    conn: conn,
+    user: user
+  } do
     phone_number_fixture(user)
     phone_number_fixture(user, verified_at: nil)
 

@@ -7,6 +7,7 @@ defmodule Lenny.Repo.Migrations.CreatePhoneNumbers do
       add :phone, :string, null: false
       add :channel, :string
       add :sid, :string
+      add :carrier, :map
       add :verified_at, :naive_datetime
       add :deleted_at, :naive_datetime
 

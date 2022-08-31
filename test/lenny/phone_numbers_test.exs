@@ -16,7 +16,7 @@ defmodule Lenny.PhoneNumbersTest do
     p4 = phone_number_fixture(user_fixture(), verified_at: nil, deleted_at: nil)
 
     Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn _, _ -> {:ok, %{sid: "VE-XXXX"}} end)
+    |> Mox.expect(:verify_start, fn _, _ -> {:ok, %{sid: "VE-XXXX", carrier: %{}}} end)
 
     {:ok, phone_number} =
       PhoneNumbers.register_phone_number_and_start_verification(
@@ -24,7 +24,6 @@ defmodule Lenny.PhoneNumbersTest do
         %{"phone" => "+15551112222"}
       )
 
-    assert phone_number.sid == "VE-XXXX"
     assert phone_number.verified_at == nil
     assert phone_number.deleted_at == nil
 
@@ -47,5 +46,44 @@ defmodule Lenny.PhoneNumbersTest do
       )
 
     assert errors_on(changeset) == %{phone: ["invalid phone number"]}
+  end
+
+  test "register_phone_number_and_start_verification records sid and carrier" do
+    user = user_fixture()
+
+    Lenny.TwilioMock
+    |> Mox.expect(:verify_start, fn _, _ ->
+      {:ok,
+       %{
+         sid: "VE-XXXX",
+         carrier: %{
+           "error_code" => nil,
+           "mobile_country_code" => "311",
+           "mobile_network_code" => "180",
+           "name" => "AT&T Wireless",
+           "type" => "mobile"
+         }
+       }}
+    end)
+
+    {:ok, phone_number} =
+      PhoneNumbers.register_phone_number_and_start_verification(
+        user,
+        %{"phone" => "+15551112222"}
+      )
+
+    assert phone_number.sid == "VE-XXXX"
+
+    assert phone_number.carrier ==
+             %{
+               "error_code" => nil,
+               "mobile_country_code" => "311",
+               "mobile_network_code" => "180",
+               "name" => "AT&T Wireless",
+               "type" => "mobile"
+             }
+
+    assert phone_number.verified_at == nil
+    assert phone_number.deleted_at == nil
   end
 end
