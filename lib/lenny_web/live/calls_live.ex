@@ -19,7 +19,7 @@ defmodule LennyWeb.CallsLive do
 
       sid = Calls.get_sole_unseen_active_call_for_user(user.id) ->
         {:ok, push_redirect(socket, to: "/calls/#{sid}")}
-        
+
       true ->
         if connected?(socket) do
           Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")

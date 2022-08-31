@@ -39,7 +39,7 @@ defmodule LennyWeb.PhoneNumberLive do
   end
 
   def breadcrumbs(assigns) do
-   ~H"""
+    ~H"""
     <div id="breadcrumbs">
       <%= live_redirect "Calls", to: "/calls" %>
       <span class="breadcrumb-separator" />

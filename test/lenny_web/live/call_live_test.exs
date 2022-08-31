@@ -325,8 +325,13 @@ defmodule LennyWeb.CallLiveTest do
       assert html =~ "Sorry, I can barely hear &#39;ya there."
     end
 
-    test "autopilot causes the first sound to play after the last sound", %{conn: conn, user: user} do
-      call = call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true, iteration: 18)
+    test "autopilot causes the first sound to play after the last sound", %{
+      conn: conn,
+      user: user
+    } do
+      call =
+        call_fixture(sid: "CA8aa913b958d95117e0571810014050ec", autopilot: true, iteration: 18)
+
       users_calls_fixture(user, call)
 
       {:ok, live_view, _html} = live(conn, "/calls/CA8aa913b958d95117e0571810014050ec")
@@ -425,4 +430,3 @@ defmodule LennyWeb.CallLiveTest do
     end
   end
 end
-

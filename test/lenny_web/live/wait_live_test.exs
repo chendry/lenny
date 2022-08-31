@@ -111,8 +111,7 @@ defmodule LennyWeb.CallsLiveTest do
 
     assert Repo.reload!(uc).seen_at != nil
 
-    {:ok, _live_view, html} =
-      live(conn, "/calls")
+    {:ok, _live_view, html} = live(conn, "/calls")
 
     assert html =~ "Your Verified Phone Number"
   end

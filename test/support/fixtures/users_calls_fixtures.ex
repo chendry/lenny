@@ -9,7 +9,7 @@ defmodule Lenny.UsersCallsFixtures do
       attrs
       |> Enum.into(%{
         recorded: false,
-        seen_at: nil,
+        seen_at: nil
       })
 
     %UsersCalls{user_id: user.id, call_id: call.id}

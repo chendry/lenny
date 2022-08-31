@@ -85,7 +85,9 @@ defmodule LennyWeb.TwilioController do
     Logger.info("#{__MODULE__}: call_status: #{inspect(params)}")
 
     if params["CallStatus"] == "completed" do
-      Calls.save_and_broadcast_call(sid, ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+      Calls.save_and_broadcast_call(sid,
+        ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+      )
     end
 
     send_resp(conn, 200, "OK")
