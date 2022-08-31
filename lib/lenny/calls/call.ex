@@ -11,6 +11,7 @@ defmodule Lenny.Calls.Call do
     field :autopilot, :boolean
     field :speech, :string
     field :iteration, :integer
+    field :silence, :boolean
     field :forwarded_from, :string
     field :ended_at, :naive_datetime
     field :params, :map

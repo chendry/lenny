@@ -11,6 +11,7 @@ defmodule Lenny.CallsFixtures do
         to: random_phone_number(),
         autopilot: true,
         iteration: 0,
+        silence: false,
         speech: nil,
         ended_at: nil,
         params: %{}

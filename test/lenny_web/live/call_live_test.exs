@@ -108,6 +108,24 @@ defmodule LennyWeb.CallLiveTest do
         |> render_click()
     end
 
+    test "silence", %{conn: conn, user: user} do
+      phone_number_fixture(user, phone: "+13126180256")
+      call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
+      users_calls_fixture(user, call)
+
+      {:ok, live_view, _html} = live(conn, "/calls/CAXXXX1234")
+
+      Lenny.TwilioMock
+      |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+        assert twiml =~ ~s{<Pause length="120" />}
+      end)
+
+      _html =
+        live_view
+        |> element("#silence")
+        |> render_click()
+    end
+
     test "hang up", %{conn: conn, user: user} do
       phone_number_fixture(user, phone: "+13126180256")
       call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")

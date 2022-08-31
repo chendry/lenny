@@ -9,7 +9,8 @@ defmodule Lenny.Repo.Migrations.CreateCalls do
       add :forwarded_from, :string
       add :autopilot, :boolean, null: false
       add :speech, :text
-      add :iteration, :integer, null: false
+      add :iteration, :integer
+      add :silence, :boolean, null: false
       add :ended_at, :naive_datetime
       add :params, :map, null: false
 

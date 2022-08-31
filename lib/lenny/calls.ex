@@ -25,6 +25,7 @@ defmodule Lenny.Calls do
         forwarded_from: params["ForwardedFrom"],
         ended_at: nil,
         iteration: 0,
+        silence: false,
         speech: nil,
         autopilot: true,
         params: params

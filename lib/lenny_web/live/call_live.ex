@@ -154,6 +154,10 @@ defmodule LennyWeb.CallLive do
         </table>
 
         <div class="mt-8 flex flex-col">
+          <button id="silence" class={Buttons.silence_class(@call)} phx-click="silence">Silence</button>
+        </div>
+
+        <div class="mt-8 flex flex-col">
           <button id="hangup" class={Buttons.hangup_class()} phx-click="hangup">Hang Up</button>
         </div>
       <% end %>
@@ -236,7 +240,8 @@ defmodule LennyWeb.CallLive do
 
     Calls.save_and_broadcast_call(
       socket.assigns.call,
-      iteration: i
+      iteration: i,
+      silence: false
     )
 
     Twilio.modify_call(
@@ -249,11 +254,37 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("dtmf", %{"value" => <<_>> = key}, socket) do
+    Calls.save_and_broadcast_call(
+      socket.assigns.call,
+      iteration: nil,
+      silence: true
+    )
+
     Twilio.modify_call(
       socket.assigns.call.sid,
       """
       <Response>
         <Play digits="#{key}" />
+        <Pause length="120" />
+      </Response>
+      """
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("silence", _params, socket) do
+    Calls.save_and_broadcast_call(
+      socket.assigns.call,
+      iteration: nil,
+      silence: true
+    )
+
+    Twilio.modify_call(
+      socket.assigns.call.sid,
+      """
+      <Response>
         <Pause length="120" />
       </Response>
       """
