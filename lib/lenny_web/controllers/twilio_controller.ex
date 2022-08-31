@@ -33,7 +33,7 @@ defmodule LennyWeb.TwilioController do
         <Start>
           <Stream url="#{stream_url()}" track="both_tracks" />
         </Start>
-        #{TwiML.lenny(0)}
+        #{TwiML.lenny(0, call.autopilot)}
       </Response>
       """
     )
@@ -57,7 +57,7 @@ defmodule LennyWeb.TwilioController do
     {twiml, iteration} =
       if call.autopilot do
         i = rem(i + 1, 19)
-        {TwiML.lenny(i), i}
+        {TwiML.lenny(i, true), i}
       else
         {TwiML.gather(120, i), i}
       end

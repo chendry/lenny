@@ -246,7 +246,11 @@ defmodule LennyWeb.CallLive do
 
     Twilio.modify_call(
       socket.assigns.call.sid,
-      "<Response>#{TwiML.lenny(i)}</Response>"
+      """
+      <Response>
+        #{TwiML.lenny(i, socket.assigns.call.autopilot)}
+      </Response>
+      """
     )
 
     {:noreply, socket}

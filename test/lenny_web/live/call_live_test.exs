@@ -56,7 +56,7 @@ defmodule LennyWeb.CallLiveTest do
         |> render_click()
     end
 
-    test "push the say buttons with autopilot off during a call", %{conn: conn, user: user} do
+    test "push the say buttons with autopilot off and on", %{conn: conn, user: user} do
       phone_number_fixture(user, phone: "+13126180256")
       call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
       users_calls_fixture(user, call)
@@ -66,8 +66,23 @@ defmodule LennyWeb.CallLiveTest do
       Lenny.TwilioMock
       |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
         assert twiml =~ "lenny_07.mp3"
-        refute twiml =~ "autopilot"
+        assert twiml =~ "lenny_16.mp3"
+        assert twiml =~ "lenny_17.mp3"
+        assert twiml =~ "/twilio/gather/7"
       end)
+      |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
+        assert twiml =~ "lenny_07.mp3"
+        refute twiml =~ "lenny_16.mp3"
+        refute twiml =~ "lenny_17.mp3"
+        refute twiml =~ "/twilio/gather/7"
+      end)
+
+      assert render(element(live_view, "#autopilot")) =~ "checked"
+
+      _html =
+        live_view
+        |> element("button#say_07", "")
+        |> render_click()
 
       _html =
         live_view
@@ -108,7 +123,7 @@ defmodule LennyWeb.CallLiveTest do
         |> render_click()
     end
 
-    test "silence", %{conn: conn, user: user} do
+    test "push the silence button", %{conn: conn, user: user} do
       phone_number_fixture(user, phone: "+13126180256")
       call = call_fixture(sid: "CAXXXX1234", from: "+13126180256")
       users_calls_fixture(user, call)
@@ -118,6 +133,7 @@ defmodule LennyWeb.CallLiveTest do
       Lenny.TwilioMock
       |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
         assert twiml =~ ~s{<Pause length="120" />}
+        refute twiml =~ ".mp3"
       end)
 
       _html =
@@ -434,7 +450,7 @@ defmodule LennyWeb.CallLiveTest do
     end
   end
 
-  describe "whne anonymous" do
+  describe "when anonymous" do
     test "breadcrumbs are not visible", %{conn: conn} do
       call_fixture(sid: "CA001")
       {:ok, live_view, _html} = live(conn, "/calls/CA001")
