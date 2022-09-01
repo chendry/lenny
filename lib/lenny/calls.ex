@@ -88,7 +88,7 @@ defmodule Lenny.Calls do
         where: uc.user_id == ^user_id,
         select: %{
           sid: c.sid,
-          from: coalesce(c.forwarded_from, c.from),
+          from: c.from,
           to: c.to,
           started_at: c.inserted_at,
           ended_at: c.ended_at,

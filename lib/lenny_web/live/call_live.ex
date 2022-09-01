@@ -63,7 +63,7 @@ defmodule LennyWeb.CallLive do
         <div class="text-lg sm:text-xl font-bold">
           Call From
           <span id="call-from" class="font-bold text-green-700 tracking-widest">
-            <%= Calls.get_effective_from(@call) %>
+            <%= @call.from %>
           </span>
         </div>
         <%= if @recording && @recording.status == "in-progress" do %>
