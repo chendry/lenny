@@ -11,6 +11,16 @@ defmodule LennyWeb.UserSettingsView do
     """
   end
 
+  def tabs(assigns) do
+    ~H"""
+    <div id="tabs" class="flex flex-row font-bold text-blue-600 space-x-2">
+      <%= link("Settings", to: Routes.user_settings_path(@conn, :edit_settings)) %>
+      <%= link("Email", to: Routes.user_settings_path(@conn, :edit_email)) %>
+      <%= link("Password", to: Routes.user_settings_path(@conn, :edit_password)) %>
+    </div>
+    """
+  end
+
   def settings_section(assigns) do
     ~H"""
     <h3 class="text-lg font-bold"><%= @title %></h3>

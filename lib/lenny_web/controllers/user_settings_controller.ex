@@ -4,13 +4,31 @@ defmodule LennyWeb.UserSettingsController do
   alias Lenny.Accounts
   alias LennyWeb.UserAuth
 
-  plug :assign_email_and_password_changesets
+  def edit_email(conn, _params) do
+    user = conn.assigns.current_user
 
-  def edit(conn, _params) do
-    render(conn, "edit.html")
+    conn
+    |> assign(:email_changeset, Accounts.change_user_email(user))
+    |> render("edit_email.html")
   end
 
-  def update(conn, %{"action" => "update_email"} = params) do
+  def edit_password(conn, _params) do
+    user = conn.assigns.current_user
+
+    conn
+    |> assign(:password_changeset, Accounts.change_user_password(user))
+    |> render("edit_password.html")
+  end
+
+  def edit_settings(conn, _params) do
+    user = conn.assigns.current_user
+
+    conn
+    |> assign(:settings_changeset, Accounts.change_user_settings(user))
+    |> render("edit_settings.html")
+  end
+
+  def update_email(conn, params) do
     %{"current_password" => password, "user" => user_params} = params
     user = conn.assigns.current_user
 
@@ -27,14 +45,14 @@ defmodule LennyWeb.UserSettingsController do
           :info,
           "A link to confirm your email change has been sent to the new address."
         )
-        |> redirect(to: Routes.user_settings_path(conn, :edit))
+        |> redirect(to: Routes.live_path(conn, LennyWeb.CallsLive))
 
       {:error, changeset} ->
-        render(conn, "edit.html", email_changeset: changeset)
+        render(conn, "edit_email.html", email_changeset: changeset)
     end
   end
 
-  def update(conn, %{"action" => "update_password"} = params) do
+  def update_password(conn, params) do
     %{"current_password" => password, "user" => user_params} = params
     user = conn.assigns.current_user
 
@@ -42,25 +60,25 @@ defmodule LennyWeb.UserSettingsController do
       {:ok, user} ->
         conn
         |> put_flash(:info, "Password updated successfully.")
-        |> put_session(:user_return_to, Routes.user_settings_path(conn, :edit))
+        |> put_session(:user_return_to, Routes.live_path(conn, LennyWeb.CallsLive))
         |> UserAuth.log_in_user(user)
 
       {:error, changeset} ->
-        render(conn, "edit.html", password_changeset: changeset)
+        render(conn, "edit_password.html", password_changeset: changeset)
     end
   end
 
-  def update(conn, %{"action" => "update_settings", "user" => user_params}) do
+  def update_settings(conn, %{"user" => user_params}) do
     user = conn.assigns.current_user
 
     case Accounts.update_user_settings(user, user_params) do
       {:ok, _user} ->
         conn
         |> put_flash(:info, "Settings updated successfully.")
-        |> redirect(to: Routes.user_settings_path(conn, :edit))
+        |> redirect(to: Routes.live_path(conn, LennyWeb.CallsLive))
 
       {:error, changeset} ->
-        render(conn, "edit.html", settings_changeset: changeset)
+        render(conn, "edit_settings.html", settings_changeset: changeset)
     end
   end
 
@@ -69,21 +87,12 @@ defmodule LennyWeb.UserSettingsController do
       :ok ->
         conn
         |> put_flash(:info, "Email changed successfully.")
-        |> redirect(to: Routes.user_settings_path(conn, :edit))
+        |> redirect(to: Routes.live_path(conn, LennyWeb.CallsLive))
 
       :error ->
         conn
         |> put_flash(:error, "Email change link is invalid or it has expired.")
-        |> redirect(to: Routes.user_settings_path(conn, :edit))
+        |> redirect(to: Routes.user_settings_path(conn, :edit_email))
     end
-  end
-
-  defp assign_email_and_password_changesets(conn, _opts) do
-    user = conn.assigns.current_user
-
-    conn
-    |> assign(:email_changeset, Accounts.change_user_email(user))
-    |> assign(:password_changeset, Accounts.change_user_password(user))
-    |> assign(:settings_changeset, Accounts.change_user_settings(user))
   end
 end

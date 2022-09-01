@@ -94,9 +94,15 @@ defmodule LennyWeb.Router do
   scope "/", LennyWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    get "/users/settings", UserSettingsController, :edit
-    put "/users/settings", UserSettingsController, :update
-    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+    get "/users/email", UserSettingsController, :edit_email
+    put "/users/email", UserSettingsController, :update_email
+    get "/users/email/confirm/:token", UserSettingsController, :confirm_email
+
+    get "/users/password", UserSettingsController, :edit_password
+    put "/users/password", UserSettingsController, :update_password
+
+    get "/users/settings", UserSettingsController, :edit_settings
+    put "/users/settings", UserSettingsController, :update_settings
   end
 
   scope "/", LennyWeb do
