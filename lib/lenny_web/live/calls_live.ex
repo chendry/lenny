@@ -58,9 +58,6 @@ defmodule LennyWeb.CallsLive do
           <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
             <span id="approved-number"><%= @phone_number.phone %></span>
           </div>
-          <div class="mt-1">
-            <%= live_redirect "Change Number", to: "/phone_numbers/new", class: "text-blue-600 text-sm font-bold" %>
-          </div>
         </div>
 
         <p class="mt-6 text-sm sm:text-base">

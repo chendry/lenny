@@ -1,6 +1,8 @@
 defmodule LennyWeb.PhoneNumberLive do
   use LennyWeb, :live_view
 
+  import LennyWeb.SettingsTabsComponent
+
   alias Lenny.Accounts
   alias Lenny.Twilio
   alias Lenny.PhoneNumbers
@@ -43,7 +45,7 @@ defmodule LennyWeb.PhoneNumberLive do
     <div id="breadcrumbs">
       <%= live_redirect "Calls", to: "/calls" %>
       <span class="breadcrumb-separator" />
-      <span>Phone Number</span>
+      <span>Settings</span>
     </div>
     """
   end
@@ -52,6 +54,8 @@ defmodule LennyWeb.PhoneNumberLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto p-4 px-6">
+      <.settings_tabs conn={@socket} selected={:phone} />
+    
       <%= if @live_action == :new do %>
         <h1 class="text-xl font-bold mb-4">
           <%= if @approved_phone_number == nil do %>
