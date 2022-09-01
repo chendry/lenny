@@ -44,14 +44,14 @@ defmodule LennyWeb.UserSettingsControllerTest do
           "action" => "update_password",
           "current_password" => "invalid",
           "user" => %{
-            "password" => "too short",
+            "password" => "short",
             "password_confirmation" => "does not match"
           }
         })
 
       response = html_response(old_password_conn, 200)
       assert response =~ "Change Email"
-      assert response =~ "should be at least 12 character(s)"
+      assert response =~ "should be at least 6 character(s)"
       assert response =~ "does not match password"
       assert response =~ "is not valid"
 
