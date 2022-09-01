@@ -138,7 +138,7 @@ defmodule LennyWeb.TwilioControllerTest do
 
     refute response =~ "lenny_01.mp3"
     assert response =~ "lenny_02.mp3"
-    assert response =~ "/twilio/gather/2"
+    assert response =~ ~s{/twilio/gather/2"}
   end
 
   test "POST /twilio/gather/1 without autopilot", %{conn: conn} do
@@ -181,7 +181,7 @@ defmodule LennyWeb.TwilioControllerTest do
       |> response(200)
 
     refute response =~ ".mp3"
-    assert response =~ "/twilio/gather/1"
+    assert response =~ ~s{/twilio/gather/1"}
   end
 
   test "POST /twilio/gather/18 with plays lenny_00.mp3", %{conn: conn} do

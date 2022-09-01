@@ -66,14 +66,10 @@ defmodule LennyWeb.CallLiveTest do
       Lenny.TwilioMock
       |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
         assert twiml =~ "lenny_07.mp3"
-        assert twiml =~ "lenny_16.mp3"
-        assert twiml =~ "lenny_17.mp3"
         assert twiml =~ "/twilio/gather/7"
       end)
       |> Mox.expect(:modify_call, fn "CAXXXX1234", twiml ->
         assert twiml =~ "lenny_07.mp3"
-        refute twiml =~ "lenny_16.mp3"
-        refute twiml =~ "lenny_17.mp3"
         refute twiml =~ "/twilio/gather/7"
       end)
 

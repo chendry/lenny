@@ -4,35 +4,19 @@ defmodule LennyWeb.TwiML do
   alias LennyWeb.AudioFileUrls
 
   def lenny(i, autopilot) do
-    """
-    <Play>
-      #{AudioFileUrls.lenny(i)}
-    </Play>
-
-    #{gather_after_audio(autopilot, i)}
-    """
-  end
-
-  defp gather_after_audio(autopilot, i) do
-    if not autopilot do
+    if autopilot do
       """
-      <Pause length="120" />
+      <Play>
+        #{AudioFileUrls.lenny(i)}
+      </Play>
+      #{gather(120, i)}
       """
     else
       """
-      #{gather(7, i)}
-
       <Play>
-        #{AudioFileUrls.hello()}
+        #{AudioFileUrls.lenny(i)}
       </Play>
-
-      #{gather(5, i)}
-
-      <Play>
-        #{AudioFileUrls.hello_are_you_there()}
-      </Play>
-
-      #{gather(120, i)}
+      <Pause length="120" />
       """
     end
   end
