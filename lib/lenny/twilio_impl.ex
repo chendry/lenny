@@ -176,8 +176,8 @@ defmodule Lenny.TwilioImpl do
     ]
   end
 
-  defp account_sid, do: Application.get_env(:lenny, Lenny.Twilio)[:account_sid]
-  defp auth_token, do: Application.get_env(:lenny, Lenny.Twilio)[:auth_token]
+  def account_sid, do: Application.get_env(:lenny, Lenny.Twilio)[:account_sid]
+  def auth_token, do: Application.get_env(:lenny, Lenny.Twilio)[:auth_token]
 
   defp verification_service_sid,
     do: Application.get_env(:lenny, Lenny.Twilio)[:verification_service_sid]
