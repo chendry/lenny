@@ -66,7 +66,7 @@ defmodule LennyWeb.CallLive do
             <%= @call.from %>
           </span>
         </div>
-        <%= if @recording && @recording.status == "in-progress" do %>
+        <%= if @call.ended_at == nil && @recording && @recording.status == "in-progress" do %>
           <span class="text-red-600">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
               <circle cx="10" cy="10" r="10" />
