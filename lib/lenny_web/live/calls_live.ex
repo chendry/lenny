@@ -4,6 +4,7 @@ defmodule LennyWeb.CallsLive do
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.PhoneNumbers
+  alias LennyWeb.ForwardingInstructionsLive
 
   @impl true
   def mount(_params, %{"user_token" => user_token} = _session, socket) do
@@ -65,10 +66,18 @@ defmodule LennyWeb.CallsLive do
             <span class="font-bold whitespace-nowrap">938-GOLENNY</span>
             from your verified phone number.
           </p>
+
+          <div class="mt-6 text-sm sm:text-base">
+            <.live_component
+              module={ForwardingInstructionsLive}
+              id="forwarding-instructions"
+              carrier={@phone_number.carrier["name"]}
+            />
+          </div>
         </div>
 
         <%= if not Enum.empty?(@call_history) do %>
-          <h1 class="mt-6 text-center auto text-lg font-bold">
+          <h1 class="mt-6 px-6 sm:px-0 text-lg font-bold">
             Call History
           </h1>
 

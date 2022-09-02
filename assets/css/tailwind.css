@@ -781,6 +781,10 @@ select {
   content: var(--tw-content);
 }
 
+.visible {
+  visibility: visible;
+}
+
 .invisible {
   visibility: hidden;
 }
@@ -849,6 +853,10 @@ select {
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
 }
 
 .ml-4 {
@@ -1182,6 +1190,14 @@ select {
 
 .pb-12 {
   padding-bottom: 3rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
 }
 
 .pb-4 {
