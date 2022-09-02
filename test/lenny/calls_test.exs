@@ -259,6 +259,20 @@ defmodule Lenny.CallsTest do
     assert call_sids_for_user(u2) == ["CA001"]
   end
 
+  test "when only From is present, associate to users based on From" do
+    u = user_fixture()
+
+    phone_number_fixture(u, phone: "+13125550001")
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA001",
+      "From" => "+13125550001",
+      "To" => "+1888GOLENNY"
+    })
+
+    assert call_sids_for_user(u) == ["CA001"]
+  end
+
   test "recorded flag is not on user_calls based on user's record_call setting at the time" do
     u1a = user_fixture(record_calls: true)
     u1b = user_fixture(record_calls: false)
