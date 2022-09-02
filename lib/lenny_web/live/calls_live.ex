@@ -47,7 +47,7 @@ defmodule LennyWeb.CallsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto mt-6 pb-12">
+    <div class="mt-6 container mx-auto pb-12">
       <%= if @phone_number == nil do %>
         <div class="px-6 sm:px-0">
           <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
@@ -63,13 +63,13 @@ defmodule LennyWeb.CallsLive do
             </div>
           </div>
 
-          <p class="mt-6 text-sm sm:text-base">
+          <p class="mt-4">
             This page automatically refreshes when you call
-            <span class="font-bold whitespace-nowrap">938-GOLENNY</span>
+            <a class="font-bold whitespace-nowrap" href="tel:938GOLENNY">938-GOLENNY</a>
             from your verified phone number.
           </p>
 
-          <div class="mt-6 text-sm sm:text-base">
+          <div class="mt-10">
             <.live_component
               module={ForwardingInstructionsLive}
               id="forwarding-instructions"
@@ -79,7 +79,7 @@ defmodule LennyWeb.CallsLive do
         </div>
 
         <%= if not Enum.empty?(@call_history) do %>
-          <h1 class="mt-6 px-6 sm:px-0 text-lg font-bold">
+          <h1 class="mt-10 px-6 sm:px-0 text-lg font-bold">
             Call History
           </h1>
 

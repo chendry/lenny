@@ -5,7 +5,7 @@ defmodule LennyWeb.ForwardingInstructionsLive do
   def render(assigns) do
     ~H"""
     <div>
-      <h2 class="text-lg font-bold">
+      <h2 class="text-lg font-bold mb-2">
         Call Forwarding Instructions
       </h2>
       <%= cond do %>
@@ -38,29 +38,23 @@ defmodule LennyWeb.ForwardingInstructionsLive do
   def instructions(assigns) do
     ~H"""
     <p>
-      You can automatically forward unanswered calls to Lenny.  Here's how:
+      Using your
+      <span class="font-bold"><%= @carrier %></span> device,
+      dial the numbers below to enable or disable automatic forwarding
+      of unanswered calls to Lenny:
     </p>
-    <table class="mt-2">
-      <tr class="font-bold">
-        <td colspan="3">
-          <span class="mr-1">
-            Carrier
-          </span>
-          <%= @carrier %>
-        </td>
-      </tr>
+
+    <table class="mt-4 font-bold">
       <tr>
-        <td>To enable,</td>
-        <td class="text-right pl-1 pr-2">dial</td>
+        <td class="pr-2">Enable:</td>
         <td class="pr-2">
           <span class="text-green-600 tracking-widest">
             <a href={"tel:#{@enable}"}><%= @enable %></a>
           </span>
         </td>
       </tr>
-      <tr class="pr-2">
-        <td>To disable,</td>
-        <td class="text-right pl-1 pr-2">dial</td>
+      <tr>
+        <td class="pr-2">Disable:</td>
         <td>
           <span class="text-green-600 tracking-widest">
             <a href={"tel:#{@disable}"}><%= @disable %></a>

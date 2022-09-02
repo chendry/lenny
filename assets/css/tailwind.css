@@ -855,8 +855,12 @@ select {
   margin-top: 0.5rem;
 }
 
-.mr-1 {
-  margin-right: 0.25rem;
+.mt-10 {
+  margin-top: 2.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 
 .ml-4 {
@@ -1190,10 +1194,6 @@ select {
 
 .pb-12 {
   padding-bottom: 3rem;
-}
-
-.pl-1 {
-  padding-left: 0.25rem;
 }
 
 .pr-2 {
