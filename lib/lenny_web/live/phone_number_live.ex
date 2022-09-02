@@ -12,32 +12,14 @@ defmodule LennyWeb.PhoneNumberLive do
   @impl true
   def mount(_params, %{"user_token" => user_token}, socket) do
     user = Accounts.get_user_by_session_token(user_token)
-    {:ok, assign(socket, user: user)}
-  end
 
-  @impl true
-  def handle_params(params, _url, socket) do
-    user = socket.assigns.user
-
-    {:noreply,
+    {:ok,
      socket
+     |> assign(:user, user)
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))
-     |> apply_action(socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :new, _params) do
-    if PhoneNumbers.get_pending_phone_number(socket.assigns.user) do
-      push_redirect(socket, to: "/phone_numbers/verify")
-    else
-      socket
-      |> assign(:changeset, PhoneNumber.changeset())
-    end
-  end
-
-  defp apply_action(socket, :verify, _params) do
-    socket
-    |> assign(:changeset, VerificationForm.changeset())
+     |> assign(:register_changeset, PhoneNumber.changeset())
+     |> assign(:verify_changeset, VerificationForm.changeset())}
   end
 
   def breadcrumbs(assigns) do
@@ -56,7 +38,8 @@ defmodule LennyWeb.PhoneNumberLive do
     <div class="container mx-auto p-4 px-6">
       <.settings_tabs conn={@socket} selected={:phone} />
     
-      <%= if @live_action == :new do %>
+      <%= if @pending_phone_number == nil do %>
+
         <h1 class="text-xl font-bold mb-4">
           <%= if @approved_phone_number == nil do %>
             Register a Phone Number
@@ -65,7 +48,7 @@ defmodule LennyWeb.PhoneNumberLive do
           <% end %>
         </h1>
 
-        <.form for={@changeset} let={f} phx-submit="register_phone_number">
+        <.form for={@register_changeset} let={f} phx-submit="register_phone_number">
           <div class="flex flex-col space-y-2">
             <%= label f, :phone do %>
               Phone Number (format: "+15554443333")
@@ -78,9 +61,9 @@ defmodule LennyWeb.PhoneNumberLive do
             <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
           </div>
         </.form>
-      <% end %>
 
-      <%= if @live_action == :verify do %>
+      <% else %>
+
         <h1 class="text-3xl font-bold mb-4">
           Verify your Phone Number
         </h1>
@@ -94,7 +77,7 @@ defmodule LennyWeb.PhoneNumberLive do
           number:
         </p>
 
-        <.form for={@changeset} let={f} phx-submit="verify_phone_number">
+        <.form for={@verify_changeset} let={f} phx-submit="verify_phone_number">
           <div class="flex flex-col space-y-2">
             <%= label f, :code %>
             <%= text_input f, :code %>
@@ -108,7 +91,9 @@ defmodule LennyWeb.PhoneNumberLive do
             </a>
           </div>
         </.form>
+
       <% end %>
+
     </div>
     """
   end
@@ -120,11 +105,11 @@ defmodule LennyWeb.PhoneNumberLive do
       phone_number_params
     )
     |> case do
-      {:ok, _phone_number} ->
-        {:noreply, push_patch(socket, to: "/phone_numbers/verify")}
+      {:ok, phone_number} ->
+        {:noreply, assign(socket, :pending_phone_number, phone_number)}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :register_changeset, changeset)}
     end
   end
 
@@ -143,7 +128,7 @@ defmodule LennyWeb.PhoneNumberLive do
         {:noreply, push_redirect(socket, to: "/calls")}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :verify_changeset, changeset)}
 
       {:stop, message} ->
         PhoneNumbers.soft_delete_phone_number(socket.assigns.pending_phone_number)
@@ -151,7 +136,7 @@ defmodule LennyWeb.PhoneNumberLive do
         {:noreply,
          socket
          |> put_flash(:error, message)
-         |> push_patch(to: "/phone_numbers/new")}
+         |> assign(:pending_phone_number, nil)}
     end
   end
 
