@@ -38,7 +38,7 @@ defmodule Lenny.Calls do
         from c in Call,
           where: c.id == ^call.id,
           join: p in PhoneNumber,
-          on: p.phone == c.from or p.phone == c.forwarded_from,
+          on: p.phone == coalesce(c.forwarded_from, c.from),
           join: u in assoc(p, :user),
           where: is_nil(p.deleted_at) and not is_nil(p.verified_at),
           select: %{

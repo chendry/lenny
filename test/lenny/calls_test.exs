@@ -181,22 +181,12 @@ defmodule Lenny.CallsTest do
       "To" => "+1888GOLENNY"
     })
 
-    call_sids_for_user = fn user ->
-      Repo.all(
-        from uc in UsersCalls,
-          join: c in assoc(uc, :call),
-          where: uc.user_id == ^user.id,
-          order_by: uc.id,
-          select: c.sid
-      )
-    end
-
-    assert call_sids_for_user.(u1) == ["CA001"]
-    assert call_sids_for_user.(u2) == ["CA002"]
-    assert call_sids_for_user.(u3a) == ["CA003"]
-    assert call_sids_for_user.(u3b) == ["CA003"]
-    assert call_sids_for_user.(u4) == ["CA004"]
-    assert call_sids_for_user.(u5) == []
+    assert call_sids_for_user(u1) == ["CA001"]
+    assert call_sids_for_user(u2) == ["CA002"]
+    assert call_sids_for_user(u3a) == ["CA003"]
+    assert call_sids_for_user(u3b) == ["CA003"]
+    assert call_sids_for_user(u4) == ["CA004"]
+    assert call_sids_for_user(u5) == []
 
     PhoneNumber
     |> Repo.update_all(set: [deleted_at: ~N[2022-08-28 12:56:43]])
@@ -243,12 +233,30 @@ defmodule Lenny.CallsTest do
       "To" => "+1888GOLENNY"
     })
 
-    assert call_sids_for_user.(u1) == ["CA001", "CA015"]
-    assert call_sids_for_user.(u2) == ["CA002", "CA014"]
-    assert call_sids_for_user.(u3a) == ["CA003", "CA012"]
-    assert call_sids_for_user.(u3b) == ["CA003", "CA012"]
-    assert call_sids_for_user.(u4) == ["CA004", "CA013"]
-    assert call_sids_for_user.(u5) == ["CA011"]
+    assert call_sids_for_user(u1) == ["CA001", "CA015"]
+    assert call_sids_for_user(u2) == ["CA002", "CA014"]
+    assert call_sids_for_user(u3a) == ["CA003", "CA012"]
+    assert call_sids_for_user(u3b) == ["CA003", "CA012"]
+    assert call_sids_for_user(u4) == ["CA004", "CA013"]
+    assert call_sids_for_user(u5) == ["CA011"]
+  end
+
+  test "when From and ForwardedFrom are present only consider ForwardedFrom when associating users" do
+    u1 = user_fixture()
+    u2 = user_fixture()
+
+    phone_number_fixture(u1, phone: "+13125550001")
+    phone_number_fixture(u2, phone: "+13125550002")
+
+    Calls.create_from_twilio_params!(%{
+      "CallSid" => "CA001",
+      "From" => "+13125550001",
+      "ForwardedFrom" => "+13125550002",
+      "To" => "+1888GOLENNY"
+    })
+
+    assert call_sids_for_user(u1) == []
+    assert call_sids_for_user(u2) == ["CA001"]
   end
 
   test "recorded flag is not on user_calls based on user's record_call setting at the time" do
@@ -388,5 +396,15 @@ defmodule Lenny.CallsTest do
     users_calls_fixture(other_user, call, deleted_at: ~N[2022-08-29 16:57:03])
     user = user_fixture()
     assert catch_error(Calls.get_call_for_user!(user, "CA0001"))
+  end
+
+  defp call_sids_for_user(user) do
+    Repo.all(
+      from uc in UsersCalls,
+        join: c in assoc(uc, :call),
+        where: uc.user_id == ^user.id,
+        order_by: uc.id,
+        select: c.sid
+    )
   end
 end
