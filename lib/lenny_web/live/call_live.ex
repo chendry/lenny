@@ -164,13 +164,19 @@ defmodule LennyWeb.CallLive do
       <%= if @recording && @call.ended_at do %>
         <div class="mt-6">
           <%= if @recording.status == "completed" do %>
-            <audio controls src={Routes.recording_path(@socket, :show, @call.sid)} class="w-full" />
+            <.audio_player socket={@socket} call={@call} />
+            <.download_link socket={@socket} call={@call} />
           <% else %>
             <div class="relative">
-              <audio controls class="w-full invisible" />
+              <div class="invisible">
+                <.audio_player socket={@socket} call={@call} />
+              </div>
               <div class="absolute top-1/2 -translate-y-1/2 font-bold text-gray-600 w-full text-center">
                  Processing recording...
               </div>
+            </div>
+            <div class="invisible">
+              <.download_link socket={@socket} call={@call} />
             </div>
           <% end %>
         </div>
@@ -193,6 +199,20 @@ defmodule LennyWeb.CallLive do
           <% end %>
         </div>
       <% end %>
+    </div>
+    """
+  end
+
+  def audio_player(assigns) do
+    ~H"""
+    <audio controls src={Routes.recording_path(@socket, :show, @call.sid)} class="w-full" />
+    """
+  end
+
+  def download_link(assigns) do
+    ~H"""
+    <div class="mt-2 text-blue-600 font-bold">
+      <%= link "Download", to: Routes.recording_path(@socket, :show, @call.sid) %>
     </div>
     """
   end
