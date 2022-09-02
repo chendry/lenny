@@ -8,7 +8,7 @@ defmodule LennyWeb.UserSettingsController do
     user = conn.assigns.current_user
 
     conn
-    |> assign(:email_changeset, Accounts.change_user_email(user))
+    |> assign(:changeset, Accounts.change_user_email(user))
     |> render("edit_email.html")
   end
 
@@ -16,7 +16,7 @@ defmodule LennyWeb.UserSettingsController do
     user = conn.assigns.current_user
 
     conn
-    |> assign(:password_changeset, Accounts.change_user_password(user))
+    |> assign(:changeset, Accounts.change_user_password(user))
     |> render("edit_password.html")
   end
 
@@ -24,7 +24,7 @@ defmodule LennyWeb.UserSettingsController do
     user = conn.assigns.current_user
 
     conn
-    |> assign(:settings_changeset, Accounts.change_user_settings(user))
+    |> assign(:changeset, Accounts.change_user_settings(user))
     |> render("edit_settings.html")
   end
 
@@ -48,7 +48,7 @@ defmodule LennyWeb.UserSettingsController do
         |> redirect(to: Routes.live_path(conn, LennyWeb.CallsLive))
 
       {:error, changeset} ->
-        render(conn, "edit_email.html", email_changeset: changeset)
+        render(conn, "edit_email.html", changeset: changeset)
     end
   end
 
@@ -64,7 +64,7 @@ defmodule LennyWeb.UserSettingsController do
         |> UserAuth.log_in_user(user)
 
       {:error, changeset} ->
-        render(conn, "edit_password.html", password_changeset: changeset)
+        render(conn, "edit_password.html", changeset: changeset)
     end
   end
 
@@ -78,7 +78,7 @@ defmodule LennyWeb.UserSettingsController do
         |> redirect(to: Routes.live_path(conn, LennyWeb.CallsLive))
 
       {:error, changeset} ->
-        render(conn, "edit_settings.html", settings_changeset: changeset)
+        render(conn, "edit_settings.html", changeset: changeset)
     end
   end
 

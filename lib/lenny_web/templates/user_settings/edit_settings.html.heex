@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <.form let={f} for={@settings_changeset} action={Routes.user_settings_path(@conn, :update_settings)} id="update_password">
+  <.form let={f} for={@changeset} action={Routes.user_settings_path(@conn, :update_settings)} id="update_password">
     <%= hidden_input f, :action, name: "action", value: "update_settings" %>
 
     <div class="mt-4">
