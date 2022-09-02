@@ -8,33 +8,30 @@ defmodule LennyWeb.CallsLive do
   @impl true
   def mount(_params, %{"user_token" => user_token} = _session, socket) do
     user = Accounts.get_user_by_session_token(user_token)
+
     phone_number = PhoneNumbers.get_approved_phone_number(user)
+    pending_phone_number = PhoneNumbers.get_pending_phone_number(user)
 
-    cond do
-      phone_number == nil ->
-        {:ok, push_redirect(socket, to: "/phone_numbers/new")}
-
-      PhoneNumbers.get_pending_phone_number(user) ->
-        {:ok, push_redirect(socket, to: "/phone_numbers/verify")}
-
-      sid = Calls.get_sole_unseen_active_call_for_user(user.id) ->
-        {:ok, push_redirect(socket, to: "/calls/#{sid}")}
-
-      true ->
-        if connected?(socket) do
+    if sid = Calls.get_sole_unseen_active_call_for_user(user.id) do
+      {:ok, push_redirect(socket, to: "/calls/#{sid}")}
+    else
+      if connected?(socket) do
+        if phone_number do
           Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
-
-          Calls.get_active_calls_for_user(user.id)
-          |> Enum.each(fn call ->
-            Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{call.sid}")
-          end)
         end
 
-        {:ok,
-         socket
-         |> assign(:user, user)
-         |> assign(:phone_number, phone_number)
-         |> assign_call_history()}
+        Calls.get_active_calls_for_user(user.id)
+        |> Enum.each(fn call ->
+          Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{call.sid}")
+        end)
+      end
+
+      {:ok,
+        socket
+        |> assign(:user, user)
+        |> assign(:phone_number, phone_number)
+        |> assign(:pending_phone_number, pending_phone_number)
+        |> assign_call_history()}
     end
   end
 
@@ -50,64 +47,68 @@ defmodule LennyWeb.CallsLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto mt-6 pb-12">
-      <div class="px-6 sm:px-0">
-        <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
-          <h1 class="text-xl font-bold">
-            Your Verified Phone Number
-          </h1>
-          <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
-            <span id="approved-number"><%= @phone_number.phone %></span>
+      <%= if @phone_number == nil do %>
+        <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+      <% else %>
+        <div class="px-6 sm:px-0">
+          <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
+            <h1 class="text-xl font-bold">
+              Your Verified Phone Number
+            </h1>
+            <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
+              <span id="approved-number"><%= @phone_number.phone %></span>
+            </div>
           </div>
+
+          <p class="mt-6 text-sm sm:text-base">
+            This page automatically refreshes when you call
+            <span class="font-bold whitespace-nowrap">938-GOLENNY</span>
+            from your verified phone number.
+          </p>
         </div>
 
-        <p class="mt-6 text-sm sm:text-base">
-          This page automatically refreshes when you call
-          <span class="font-bold whitespace-nowrap">938-GOLENNY</span>
-          from your verified phone number.
-        </p>
-      </div>
+        <%= if not Enum.empty?(@call_history) do %>
+          <h1 class="mt-6 text-center auto text-lg font-bold">
+            Call History
+          </h1>
 
-      <%= if not Enum.empty?(@call_history) do %>
-        <h1 class="mt-6 text-center auto text-lg font-bold">
-          Call History
-        </h1>
+          <div class="flex flex-col mt-2 border-y sm:border sm:rounded-lg sm:overflow-hidden border-gray-400">
+            <%= for row <- @call_history do %>
+              <%= live_redirect to: "/calls/#{row.sid}" do %>
+                <%= if row != List.first(@call_history) do %>
+                  <div class="border-t border-gray-400" />
+                <% end %>
+                <div class="bg-gray-100 py-2 px-6" id={"call-#{row.sid}"}>
+                  <div class="flex flex-row justify-between">
+                    <span>
+                      <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
+                      <span class="ml-2"><%= Calls.format_timestamp_time(row.started_at) %></span>
+                    </span>
 
-        <div class="flex flex-col mt-2 border-y sm:border sm:rounded-lg sm:overflow-hidden border-gray-400">
-          <%= for row <- @call_history do %>
-            <%= live_redirect to: "/calls/#{row.sid}" do %>
-              <%= if row != List.first(@call_history) do %>
-                <div class="border-t border-gray-400" />
-              <% end %>
-              <div class="bg-gray-100 py-2 px-6" id={"call-#{row.sid}"}>
-                <div class="flex flex-row justify-between">
-                  <span>
-                    <span class="font-bold"><%= Calls.format_timestamp_date(row.started_at) %></span>
-                    <span class="ml-2"><%= Calls.format_timestamp_time(row.started_at) %></span>
+                    <span class="font-bold">
+                      <%= if row.ended_at == nil do %>
+                        <span class="text-green-700">Connected</span>
+                      <% else %>
+                        <span class="text-gray-600">
+                          <%= Calls.format_duration(row.started_at, row.ended_at) %>
+                        </span>
+                      <% end %>
                   </span>
+                  </div>
 
-                  <span class="font-bold">
-                    <%= if row.ended_at == nil do %>
-                      <span class="text-green-700">Connected</span>
-                    <% else %>
-                      <span class="text-gray-600">
-                        <%= Calls.format_duration(row.started_at, row.ended_at) %>
-                      </span>
+                  <div class="flex flex-row justify-between">
+                    <span class="tracking-widest">
+                      <%= row.from %>
+                    </span>
+                    <%= if row.recorded do %>
+                      <span class="font-bold text-red-600">Recorded</span>
                     <% end %>
-                </span>
+                  </div>
                 </div>
-
-                <div class="flex flex-row justify-between">
-                  <span class="tracking-widest">
-                    <%= row.from %>
-                  </span>
-                  <%= if row.recorded do %>
-                    <span class="font-bold text-red-600">Recorded</span>
-                  <% end %>
-                </div>
-              </div>
+              <% end %>
             <% end %>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
       <% end %>
     </div>
     """

@@ -19,6 +19,7 @@ defmodule LennyWeb.UserSettingsView do
         "edit_settings.html" -> :settings
         "edit_email.html" -> :email
         "edit_password.html" -> :password
+        "edit_phone.html" -> :phone
       end
     
     ~H"""

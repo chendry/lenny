@@ -9,7 +9,7 @@ defmodule LennyWeb.SettingsTabsComponent do
       <.tab active={@selected == :settings} label="Settings" to={Routes.user_settings_path(Endpoint, :edit_settings)} />
       <.tab active={@selected == :email} label="Email" to={Routes.user_settings_path(Endpoint, :edit_email)} />
       <.tab active={@selected == :password} label="Password" to={Routes.user_settings_path(Endpoint, :edit_password)} />
-      <.tab active={@selected == :phone} label="Phone" to={Routes.phone_number_path(Endpoint, :new)} />
+      <.tab active={@selected == :phone} label="Phone" to={Routes.user_settings_path(Endpoint, :edit_phone)} />
     </div>
     """
   end

@@ -1,8 +1,6 @@
 defmodule LennyWeb.PhoneNumberLive do
   use LennyWeb, :live_view
 
-  import LennyWeb.SettingsTabsComponent
-
   alias Lenny.Accounts
   alias Lenny.Twilio
   alias Lenny.PhoneNumbers
@@ -22,79 +20,64 @@ defmodule LennyWeb.PhoneNumberLive do
      |> assign(:verify_changeset, VerificationForm.changeset())}
   end
 
-  def breadcrumbs(assigns) do
-    ~H"""
-    <div id="breadcrumbs">
-      <%= live_redirect "Calls", to: "/calls" %>
-      <span class="breadcrumb-separator" />
-      <span>Settings</span>
-    </div>
-    """
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto p-4 px-6">
-      <.settings_tabs conn={@socket} selected={:phone} />
-    
-      <%= if @pending_phone_number == nil do %>
+    <%= if @pending_phone_number == nil do %>
 
-        <h1 class="text-xl font-bold mb-4">
-          <%= if @approved_phone_number == nil do %>
-            Register a Phone Number
-          <% else %>
-            Change your Phone Number
+      <h2 class="text-xl font-bold mb-4">
+        <%= if @approved_phone_number == nil do %>
+          Register a Phone Number
+        <% else %>
+          Change Your Phone Number
+        <% end %>
+      </h2>
+
+      <.form for={@register_changeset} let={f} phx-submit="register_phone_number">
+        <div class="flex flex-col space-y-2">
+          <%= label f, :phone do %>
+            Phone Number
           <% end %>
-        </h1>
+          <%= telephone_input f, :phone, placeholder: "+15554443333" %>
+          <%= error_tag f, :phone %>
+        </div>
 
-        <.form for={@register_changeset} let={f} phx-submit="register_phone_number">
-          <div class="flex flex-col space-y-2">
-            <%= label f, :phone do %>
-              Phone Number (format: "+15554443333")
-            <% end %>
-            <%= telephone_input f, :phone %>
-            <%= error_tag f, :phone %>
-          </div>
+        <div class="mt-6">
+          <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
+        </div>
+      </.form>
 
-          <div class="mt-6">
-            <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
-          </div>
-        </.form>
+    <% else %>
 
-      <% else %>
+      <h2 class="text-xl font-bold mb-4">
+        Verify your Phone Number
+      </h2>
 
-        <h1 class="text-3xl font-bold mb-4">
-          Verify your Phone Number
-        </h1>
+      <p class="my-2">
+        We sent a code to
+        <span class="font-bold">
+          <span id="pending-number"><%= @pending_phone_number.phone %></span>
+        </span>.
+        Please enter that code to verify your phone
+        number:
+      </p>
 
-        <p class="my-2">
-          We sent a code to
-          <span class="font-bold">
-            <span id="pending-number"><%= @pending_phone_number.phone %></span>
-          </span>.
-          Please enter that code to verify your phone
-          number:
-        </p>
+      <.form for={@verify_changeset} let={f} phx-submit="verify_phone_number">
+        <div class="flex flex-col space-y-2">
+          <%= label f, :code %>
+          <%= text_input f, :code %>
+          <%= error_tag f, :code %>
+        </div>
 
-        <.form for={@verify_changeset} let={f} phx-submit="verify_phone_number">
-          <div class="flex flex-col space-y-2">
-            <%= label f, :code %>
-            <%= text_input f, :code %>
-            <%= error_tag f, :code %>
-          </div>
+        <div class="mt-6">
+          <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
+          <a href="#" phx-click="cancel_verification" class="ml-4 text-blue-600">
+            Cancel
+          </a>
+        </div>
+      </.form>
 
-          <div class="mt-6">
-            <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
-            <a href="#" phx-click="cancel_verification" class="ml-4 text-blue-600">
-              Cancel
-            </a>
-          </div>
-        </.form>
-
-      <% end %>
-
-    </div>
+    <% end %>
     """
   end
 

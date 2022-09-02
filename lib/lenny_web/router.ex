@@ -103,6 +103,8 @@ defmodule LennyWeb.Router do
 
     get "/users/settings", UserSettingsController, :edit_settings
     put "/users/settings", UserSettingsController, :update_settings
+
+    get "/users/phone", UserSettingsController, :edit_phone
   end
 
   scope "/", LennyWeb do
