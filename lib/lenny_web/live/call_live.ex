@@ -91,6 +91,12 @@ defmodule LennyWeb.CallLive do
               <% end %>
             </span>
           </button>
+          <div class={if @audio_ctx_state != "running", do: "invisible"}>
+            <div class="mt-1 text-sm text-gray-800">
+              <span class="font-bold mr-2">Not hearing audio?</span>
+              Try turning off vibrate mode.
+            </div>
+          </div>
         </p>
       <% end %>
 
@@ -101,7 +107,7 @@ defmodule LennyWeb.CallLive do
         </div>
       <% else %>
 
-        <span class="mt-8 flex flex-row justify-between">
+        <span class="mt-4 flex flex-row justify-between">
           <label>
             <input id="autopilot" type="checkbox" checked={@call.autopilot} phx-click="toggle_autopilot">
             <span class="ml-2">
