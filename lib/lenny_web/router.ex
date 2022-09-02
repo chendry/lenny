@@ -33,6 +33,7 @@ defmodule LennyWeb.Router do
     pipe_through [:browser]
 
     live "/calls/:sid", CallLive
+    get "/recordings/:sid", RecordingController, :show
   end
 
   # Other scopes may use custom stacks.

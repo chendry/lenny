@@ -164,7 +164,7 @@ defmodule LennyWeb.CallLive do
       <%= if @recording && @call.ended_at do %>
         <div class="mt-6">
           <%= if @recording.status == "completed" do %>
-            <audio controls src={"#{@recording.url}.wav"} class="w-full" />
+            <audio controls src={Routes.recording_path(@socket, :show, @call.sid)} class="w-full" />
           <% else %>
             <div class="relative">
               <audio controls class="w-full invisible" />
