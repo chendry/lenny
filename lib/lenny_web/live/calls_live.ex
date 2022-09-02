@@ -49,7 +49,9 @@ defmodule LennyWeb.CallsLive do
     ~H"""
     <div class="container mx-auto mt-6 pb-12">
       <%= if @phone_number == nil do %>
-        <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+        <div class="px-6 sm:px-0">
+          <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+        </div>
       <% else %>
         <div class="px-6 sm:px-0">
           <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">

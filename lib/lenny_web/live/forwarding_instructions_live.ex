@@ -40,7 +40,7 @@ defmodule LennyWeb.ForwardingInstructionsLive do
     <p>
       You can automatically forward unanswered calls to Lenny.  Here's how:
     </p>
-    <table class="mt-2 text-sm">
+    <table class="mt-2">
       <tr class="font-bold">
         <td colspan="3">
           <span class="mr-1">
