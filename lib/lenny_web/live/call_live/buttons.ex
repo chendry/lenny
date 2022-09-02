@@ -28,8 +28,6 @@ defmodule LennyWeb.CallLive.Buttons do
   def dtmf_class,
     do: shared() ++ ~w{w-10 m-1 border-gray-600 from-slate-200 to-slate-300}
 
-  def silence_class(%Call{} = call), do: say_class(call.silence)
-
   def hangup_class do
     shared() ++ ~w{border-red-500 from-red-400 to-red-600 text-white font-extrabold}
   end

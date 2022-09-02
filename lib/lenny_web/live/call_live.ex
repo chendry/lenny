@@ -96,17 +96,20 @@ defmodule LennyWeb.CallLive do
 
       <%= if @call.ended_at do %>
         <div class="mt-4">
-        Call ended after
-        <span class="font-bold"><%= Calls.format_duration(@call.inserted_at, @call.ended_at) %></span>.
+          Call ended after
+          <span class="font-bold"><%= Calls.format_duration(@call.inserted_at, @call.ended_at) %></span>.
         </div>
       <% else %>
 
-        <label class="block mt-8">
-          <input id="autopilot" type="checkbox" checked={@call.autopilot} phx-click="toggle_autopilot">
-          <span class="ml-2">
-            Automatically proceed to next sound
-          </span>
-        </label>
+        <span class="mt-8 flex flex-row justify-between">
+          <label>
+            <input id="autopilot" type="checkbox" checked={@call.autopilot} phx-click="toggle_autopilot">
+            <span class="ml-2">
+              Autopilot
+            </span>
+          </label>
+          <button id="silence" class="font-bold text-blue-600" phx-click="silence">Silence Lenny</button>
+        </span>
 
         <div class="mt-8 flex flex-col space-y-4">
           <button {Buttons.say_attrs(@call, 00)}>Hello, this is Lenny.</button>
@@ -152,10 +155,6 @@ defmodule LennyWeb.CallLive do
             <td><button id="dtmf-pound" class={Buttons.dtmf_class()} phx-click="dtmf" value="#">#</button></td>
           </tr>
         </table>
-
-        <div class="mt-8 flex flex-col">
-          <button id="silence" class={Buttons.silence_class(@call)} phx-click="silence">Silence</button>
-        </div>
 
         <div class="mt-8 flex flex-col">
           <button id="hangup" class={Buttons.hangup_class()} phx-click="hangup">Hang Up</button>
