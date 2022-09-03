@@ -26,4 +26,12 @@
   .alert-error {
     @apply bg-red-100 border-red-400 text-red-800
   }
+
+  .btn {
+    @apply rounded-md font-bold px-4 py-1.5
+  }
+
+  .btn-blue {
+    @apply bg-blue-600 text-white
+  }
 }

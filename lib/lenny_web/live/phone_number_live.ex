@@ -43,7 +43,7 @@ defmodule LennyWeb.PhoneNumberLive do
         </div>
 
         <div class="mt-6">
-          <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
+          <%= submit "Submit", class: "btn btn-blue" %>
         </div>
       </.form>
 
@@ -70,7 +70,7 @@ defmodule LennyWeb.PhoneNumberLive do
         </div>
 
         <div class="mt-6">
-          <%= submit "Submit", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
+          <%= submit "Submit", class: "btn btn-blue" %>
           <a href="#" phx-click="cancel_verification" class="ml-4 text-blue-600">
             Cancel
           </a>
