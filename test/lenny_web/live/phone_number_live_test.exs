@@ -1,6 +1,8 @@
 defmodule LennyWeb.PhoneNumberLiveTest do
   use LennyWeb.ConnCase
 
+  alias Lenny.PhoneNumbers
+
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures
 
@@ -83,7 +85,12 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "cancel changing a number", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+15551112222")
 
-    {:ok, live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
+    session = %{
+      "pending_phone_number" => PhoneNumbers.get_pending_phone_number(user),
+      "verified_phone_number" => PhoneNumbers.get_verified_phone_number(user)
+    }
+
+    {:ok, live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive, session: session)
 
     assert html =~ ~r{<h2.*>\s*Change Your Phone Number}
 
@@ -114,7 +121,12 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     phone_number_fixture(user)
     phone_number_fixture(user, verified_at: nil)
 
-    {:ok, _live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
+    session = %{
+      "pending_phone_number" => PhoneNumbers.get_pending_phone_number(user),
+      "verified_phone_number" => PhoneNumbers.get_verified_phone_number(user)
+    }
+
+    {:ok, _live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive, session: session)
 
     assert html =~ ~S{Verify your Phone Number}
   end

@@ -2,6 +2,7 @@ defmodule LennyWeb.UserSettingsController do
   use LennyWeb, :controller
 
   alias Lenny.Accounts
+  alias Lenny.PhoneNumbers
   alias LennyWeb.UserAuth
 
   def edit_email(conn, _params) do
@@ -29,7 +30,12 @@ defmodule LennyWeb.UserSettingsController do
   end
 
   def edit_phone(conn, _params) do
-    render(conn, "edit_phone.html")
+    user = conn.assigns.current_user
+
+    conn
+    |> assign(:verified_phone_number, PhoneNumbers.get_verified_phone_number(user))
+    |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
+    |> render("edit_phone.html")
   end
 
   def update_email(conn, params) do

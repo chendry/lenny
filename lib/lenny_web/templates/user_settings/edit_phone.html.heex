@@ -1,2 +1,11 @@
 <.tabs conn={@conn} />
-<%= live_render @conn, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+
+<%=
+  live_render @conn,
+    LennyWeb.PhoneNumberLive,
+    id: "phone_number_live",
+    session: %{
+      "verified_phone_number" => @verified_phone_number,
+      "pending_phone_number" => @pending_phone_number
+    }
+%>

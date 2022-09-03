@@ -48,7 +48,15 @@ defmodule LennyWeb.CallsLive do
   def render(assigns) do
     ~H"""
     <%= if @verified_phone_number == nil do %>
-      <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+      <%=
+        live_render @socket,
+          LennyWeb.PhoneNumberLive,
+          id: "phone_number_live",
+          session: %{
+            "verified_phone_number" => @verified_phone_number,
+            "pending_phone_number" => @pending_phone_number
+          }
+      %>
     <% else %>
       <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
         <h1 class="text-xl font-bold">

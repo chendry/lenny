@@ -8,14 +8,14 @@ defmodule LennyWeb.PhoneNumberLive do
   alias Lenny.PhoneNumbers.VerificationForm
 
   @impl true
-  def mount(_params, %{"user_token" => user_token}, socket) do
-    user = Accounts.get_user_by_session_token(user_token)
+  def mount(_params, session, socket) do
+    user = Accounts.get_user_by_session_token(session["user_token"])
 
     socket =
       socket
       |> assign(:user, user)
-      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
-      |> assign(:verified_phone_number, PhoneNumbers.get_verified_phone_number(user))
+      |> assign(:pending_phone_number, session["pending_phone_number"])
+      |> assign(:verified_phone_number, session["verified_phone_number"])
       |> assign(:register_changeset, PhoneNumber.changeset())
       |> assign(:verify_changeset, VerificationForm.changeset())
 
