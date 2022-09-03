@@ -1,38 +1,35 @@
-<div class="container mx-auto px-6 py-4 pb-16">
-  <.tabs conn={@conn} />
+<.tabs conn={@conn} />
 
-  <h2 class="text-xl font-lg font-bold mb-4">
-    Settings
-  </h2>
+<h2 class="text-xl font-lg font-bold mb-4">
+  Settings
+</h2>
 
-  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-    <div class="font-bold">
-      IMPORTANT: UNDERSTAND THE LAW BEFORE ENABLING CALL RECORDING.
-    </div>
-    <div class="mt-1">
-      States and jurisdictions have differing laws regarding the
-      recording of phone calls, which parties must consent to the
-      recording of phone calls, etc.  Don't break them.  It is your
-      sole responsibililty to ensure that you are not breaking any
-      laws by recording phone calls.
-    </div>
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+  <div class="font-bold">
+    IMPORTANT: UNDERSTAND THE LAW BEFORE ENABLING CALL RECORDING.
+  </div>
+  <div class="mt-1">
+    States and jurisdictions have differing laws regarding the
+    recording of phone calls, which parties must consent to the
+    recording of phone calls, etc.  Don't break them.  It is your
+    sole responsibililty to ensure that you are not breaking any
+    laws by recording phone calls.
+  </div>
+</div>
+
+<.form let={f} for={@changeset} action={Routes.user_settings_path(@conn, :update_settings)} id="update_password">
+  <%= hidden_input f, :action, name: "action", value: "update_settings" %>
+
+  <div class="mt-4">
+    <label class="flex flex-row items-center">
+      <%= checkbox f, :record_calls %>
+      <span class="ml-2">
+        Record all phone calls
+      </span>
+    </label>
   </div>
 
-  <.form let={f} for={@changeset} action={Routes.user_settings_path(@conn, :update_settings)} id="update_password">
-    <%= hidden_input f, :action, name: "action", value: "update_settings" %>
-
-    <div class="mt-4">
-      <label class="flex flex-row items-center">
-        <%= checkbox f, :record_calls %>
-        <span class="ml-2">
-          Record all phone calls
-        </span>
-      </label>
-    </div>
-
-    <div class="mt-6">
-      <%= submit "Save call recording setting", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
-    </div>
-  </.form>
-
-</div>
+  <div class="mt-6">
+    <%= submit "Save call recording setting", class: "bg-blue-600 rounded-md text-white font-bold px-4 py-1" %>
+  </div>
+</.form>

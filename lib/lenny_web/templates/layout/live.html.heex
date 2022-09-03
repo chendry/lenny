@@ -2,9 +2,8 @@
   <%= @socket.view.breadcrumbs(assigns) %>
 <% end %>
 
-<div class="container mx-auto">
+<div class="container mx-auto mt-6 px-6 sm:px-0">
   <.flash class="alert alert-info" msg={live_flash(@flash, :info)} live={true} />
   <.flash class="alert alert-error"  msg={live_flash(@flash, :error)} live={true} />
+  <%= @inner_content %>
 </div>
-
-<%= @inner_content %>
