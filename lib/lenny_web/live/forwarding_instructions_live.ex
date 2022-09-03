@@ -9,13 +9,13 @@ defmodule LennyWeb.ForwardingInstructionsLive do
         Call Forwarding Instructions
       </h2>
       <%= cond do %>
-        <% @carrier =~ "AT&T" -> %>
+        <% @carrier != nil and @carrier =~ "AT&T" -> %>
           <.instructions carrier="AT&T" enable="*61*9384653669#" disable="#61#" />
 
-        <% @carrier =~ "Verizon" -> %>
+        <% @carrier != nil and @carrier =~ "Verizon" -> %>
           <.instructions carrier="Verizon" enable="*719384653669" disable="*73" />
 
-        <% @carrier =~ "T-Mobile" -> %>
+        <% @carrier != nil and @carrier =~ "T-Mobile" -> %>
           <.instructions carrier="T-Mobile" enable="**004*9384653669*11#" disable="##004#" />
 
         <% true -> %>

@@ -20,6 +20,9 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
     phone_number
     |> cast(attrs, [:phone])
     |> validate_required([:phone])
-    |> validate_format(:phone, ~r/^\+[1-9]\d{1,14}$/)
+    |> validate_format(:phone, ~r/^\d{10}$/)
+    |> prepare_changes(fn changeset ->
+      update_change(changeset, :phone, &("+1" <> &1))
+    end)
   end
 end

@@ -30,7 +30,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     html =
       live_view
-      |> form("form", %{"phone_number[phone]" => "+13126180256"})
+      |> form("form", %{"phone_number[phone]" => "3126180256"})
       |> render_submit()
 
     assert html =~ ~r{<h2.*>\s*Verify your Phone Number}
@@ -65,7 +65,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     html =
       live_view
-      |> form("form", %{"phone_number[phone]" => "+13125551234"})
+      |> form("form", %{"phone_number[phone]" => "3125551234"})
       |> render_submit()
 
     assert html =~ "+13125551234"
@@ -95,7 +95,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     html =
       live_view
-      |> form("form", %{"phone_number[phone]" => "+15551113333"})
+      |> form("form", %{"phone_number[phone]" => "5551113333"})
       |> render_submit()
 
     assert html =~ ~S(<span id="pending-number">+15551113333</span>)

@@ -10,7 +10,7 @@ defmodule Lenny.PhoneNumberTest do
     end
 
     test "valid phone number" do
-      changeset = PhoneNumber.changeset(%PhoneNumber{}, %{phone: "+5555555555"})
+      changeset = PhoneNumber.changeset(%PhoneNumber{}, %{phone: "5551112222"})
       assert changeset.valid?
     end
   end

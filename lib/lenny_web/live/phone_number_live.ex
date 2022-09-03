@@ -40,7 +40,7 @@ defmodule LennyWeb.PhoneNumberLive do
           <%= label f, :phone do %>
             Phone Number
           <% end %>
-          <%= telephone_input f, :phone, placeholder: "+15554443333" %>
+          <%= telephone_input f, :phone, placeholder: "5554443333" %>
           <%= error_tag f, :phone %>
         </div>
 
