@@ -3,8 +3,8 @@
 <% end %>
 
 <div class="container mx-auto">
-  <.flash key={:info} msg={live_flash(@flash, :info)} live={true} />
-  <.flash key={:error} msg={live_flash(@flash, :error)} live={true} />
+  <.flash class="alert alert-info" msg={live_flash(@flash, :info)} live={true} />
+  <.flash class="alert alert-error"  msg={live_flash(@flash, :error)} live={true} />
 </div>
 
 <%= @inner_content %>

@@ -8,7 +8,7 @@ defmodule LennyWeb.LayoutView do
   def flash(assigns) do
     ~H"""
     <%= if @msg do %>
-      <div class={class(@key)} {click_handler_attrs(@live)}>
+      <div class={@class} {click_handler_attrs(@live)}>
         <span class="float-right ml-2 mb-1">
           <.x_mark_svg />
         </span>
@@ -31,9 +31,4 @@ defmodule LennyWeb.LayoutView do
     </svg>
     """
   end
-
-  defp class(:info), do: base_class() ++ ~w{bg-blue-100 border-blue-400 text-blue-800}
-  defp class(:error), do: base_class() ++ ~w{bg-red-200 border-red-600 text-red-600}
-
-  defp base_class, do: ~w{cursor-pointer mt-4 border px-4 py-2 rounded-md}
 end

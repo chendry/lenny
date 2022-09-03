@@ -3,8 +3,8 @@
 <% end %>
 
 <div class="container mx-auto">
-  <.flash msg={get_flash(@conn, :info)} key={:info} live={false} />
-  <.flash msg={get_flash(@conn, :error)} key={:error} live={false} />
+  <.flash class="alert alert-info" msg={get_flash(@conn, :info)} live={false} />
+  <.flash class="alert alert-error" msg={get_flash(@conn, :error)} live={false} />
 </div>
 
 <%= @inner_content %>
