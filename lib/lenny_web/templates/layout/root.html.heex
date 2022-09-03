@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full min-h-screen">
   <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -9,8 +9,13 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body>
-    <%= render "_user_menu.html", assigns %>
-    <%= @inner_content %>
+  <body class="h-full flex flex-col">
+    <div class="flex-grow">
+      <%= render "_user_menu.html", assigns %>
+      <%= @inner_content %>
+    </div>
+    <div class="py-6 text-center text-sm">
+      Copyright <%= DateTime.utc_now().year %> 938-GOLENNY
+    </div>
   </body>
 </html>
