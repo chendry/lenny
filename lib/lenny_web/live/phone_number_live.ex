@@ -11,13 +11,15 @@ defmodule LennyWeb.PhoneNumberLive do
   def mount(_params, %{"user_token" => user_token}, socket) do
     user = Accounts.get_user_by_session_token(user_token)
 
-    {:ok,
-     socket
-     |> assign(:user, user)
-     |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
-     |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))
-     |> assign(:register_changeset, PhoneNumber.changeset())
-     |> assign(:verify_changeset, VerificationForm.changeset())}
+    socket =
+      socket
+      |> assign(:user, user)
+      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
+      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))
+      |> assign(:register_changeset, PhoneNumber.changeset())
+      |> assign(:verify_changeset, VerificationForm.changeset())
+
+    {:ok, socket, layout: {LennyWeb.LayoutView, "blank.html"}}
   end
 
   @impl true
