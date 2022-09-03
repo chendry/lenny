@@ -9,7 +9,7 @@ defmodule Lenny.PhoneNumbers do
   alias Lenny.PhoneNumbers.VerificationForm
   alias Lenny.Twilio
 
-  def get_approved_phone_number(%User{} = user) do
+  def get_verified_phone_number(%User{} = user) do
     PhoneNumber
     |> for_user(user)
     |> where([p], not is_nil(p.verified_at))

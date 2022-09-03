@@ -49,7 +49,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> render_submit()
       |> follow_redirect(conn, "/calls")
 
-    assert html =~ ~S{<span id="approved-number">+13126180256</span>}
+    assert html =~ ~S{<span id="verified-number">+13126180256</span>}
   end
 
   test "change a number", %{conn: conn, user: user} do
@@ -106,7 +106,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> render_click()
       |> follow_redirect(conn, "/calls")
 
-    assert html =~ ~S{<span id="approved-number">+15551112222</span>}
+    assert html =~ ~S{<span id="verified-number">+15551112222</span>}
     refute html =~ "+15551113333"
   end
 

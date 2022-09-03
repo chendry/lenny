@@ -10,15 +10,15 @@ defmodule LennyWeb.CallsLive do
   def mount(_params, %{"user_token" => user_token} = _session, socket) do
     user = Accounts.get_user_by_session_token(user_token)
 
-    phone_number = PhoneNumbers.get_approved_phone_number(user)
+    verified_phone_number = PhoneNumbers.get_verified_phone_number(user)
     pending_phone_number = PhoneNumbers.get_pending_phone_number(user)
 
     if sid = Calls.get_sole_unseen_active_call_for_user(user.id) do
       {:ok, push_redirect(socket, to: "/calls/#{sid}")}
     else
       if connected?(socket) do
-        if phone_number do
-          Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{phone_number.phone}")
+        if verified_phone_number do
+          Phoenix.PubSub.subscribe(Lenny.PubSub, "wait:#{verified_phone_number.phone}")
         end
 
         Calls.get_active_calls_for_user(user.id)
@@ -30,7 +30,7 @@ defmodule LennyWeb.CallsLive do
       {:ok,
         socket
         |> assign(:user, user)
-        |> assign(:phone_number, phone_number)
+        |> assign(:verified_phone_number, verified_phone_number)
         |> assign(:pending_phone_number, pending_phone_number)
         |> assign_call_history()}
     end
@@ -47,7 +47,7 @@ defmodule LennyWeb.CallsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <%= if @phone_number == nil do %>
+    <%= if @verified_phone_number == nil do %>
       <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
     <% else %>
       <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
@@ -55,7 +55,7 @@ defmodule LennyWeb.CallsLive do
           Your Verified Phone Number
         </h1>
         <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
-          <span id="approved-number"><%= @phone_number.phone %></span>
+          <span id="verified-number"><%= @verified_phone_number.phone %></span>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ defmodule LennyWeb.CallsLive do
         <.live_component
           module={ForwardingInstructionsLive}
           id="forwarding-instructions"
-          carrier={@phone_number.carrier["name"]}
+          carrier={@verified_phone_number.carrier["name"]}
         />
       </div>
 

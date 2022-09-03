@@ -15,7 +15,7 @@ defmodule LennyWeb.PhoneNumberLive do
       socket
       |> assign(:user, user)
       |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
-      |> assign(:approved_phone_number, PhoneNumbers.get_approved_phone_number(user))
+      |> assign(:verified_phone_number, PhoneNumbers.get_verified_phone_number(user))
       |> assign(:register_changeset, PhoneNumber.changeset())
       |> assign(:verify_changeset, VerificationForm.changeset())
 
@@ -28,7 +28,7 @@ defmodule LennyWeb.PhoneNumberLive do
     <%= if @pending_phone_number == nil do %>
 
       <h2 class="text-xl font-bold">
-        <%= if @approved_phone_number == nil do %>
+        <%= if @verified_phone_number == nil do %>
           Register a Phone Number
         <% else %>
           Change Your Phone Number
