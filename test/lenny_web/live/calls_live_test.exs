@@ -66,7 +66,7 @@ defmodule LennyWeb.CallsLiveTest do
        %{conn: conn, user: user} do
     phone_number_fixture(user, verified_at: nil)
     {:ok, _live_view, html} = live(conn, "/calls")
-    assert html =~ "Get started by verifying"
+    assert html =~ "We sent a code to"
   end
 
   test "delete a call", %{conn: conn, user: user} do
