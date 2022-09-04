@@ -55,10 +55,6 @@ defmodule LennyWeb.CallsLive do
         </span>
       </h1>
 
-      <%= if @pending_phone_number == nil do %>
-        <p class="mt-4">Get started by verifying your phone number.</p>
-      <% end %>
-
       <div class="mt-4">
         <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
       </div>
