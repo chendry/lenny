@@ -19,7 +19,7 @@ defmodule LennyWeb.UserSettingsView do
       <.tab active={selected_tab(@conn) == :settings} label="Settings" to={Routes.user_settings_path(Endpoint, :edit_settings)} />
       <.tab active={selected_tab(@conn) == :email} label="Email" to={Routes.user_settings_path(Endpoint, :edit_email)} />
       <.tab active={selected_tab(@conn) == :password} label="Password" to={Routes.user_settings_path(Endpoint, :edit_password)} />
-      <.tab active={selected_tab(@conn) == :phone} label="Phone" to={Routes.live_path(Endpoint, LennyWeb.PhoneSettingLive)} />
+      <.tab active={selected_tab(@conn) == :phone} label="Phone" to={Routes.user_settings_path(Endpoint, :edit_phone)} />
     </div>
     """
   end
@@ -29,7 +29,7 @@ defmodule LennyWeb.UserSettingsView do
       "edit_settings.html" -> :settings
       "edit_email.html" -> :email
       "edit_password.html" -> :password
-      _ -> :phone
+      "edit_phone.html" -> :phone
     end
   end
 

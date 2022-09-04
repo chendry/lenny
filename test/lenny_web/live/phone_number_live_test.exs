@@ -1,24 +1,19 @@
 defmodule LennyWeb.PhoneNumberLiveTest do
   use LennyWeb.ConnCase
 
-  alias Lenny.PhoneNumbers
-
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures
 
   setup [:register_and_log_in_user]
 
   test "register a number", %{conn: conn} do
-    {:ok, live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
-
-    assert html =~ ~r{<h2.*>\s*Register a Phone Number}
+    {:ok, live_view, _html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
 
     html =
       live_view
       |> form("form", %{"phone_number[phone]" => "555-555-5555"})
       |> render_submit()
 
-    assert html =~ ~r{<h2.*>\s*Register a Phone Number}
     assert html =~ "has invalid format"
 
     Lenny.TwilioMock
@@ -35,14 +30,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
       |> form("form", %{"phone_number[phone]" => "3126180256"})
       |> render_submit()
 
-    assert html =~ ~r{<h2.*>\s*Verify your Phone Number}
+    assert html =~ ~r{We sent a code}
 
     html =
       live_view
       |> form("form", %{"verification_form[code]" => "1234"})
       |> render_submit()
 
-    assert html =~ ~r{<h2.*>\s*Verify your Phone Number}
     assert html =~ "invalid according to twilio"
 
     {:ok, _live_view, html} =
@@ -85,14 +79,7 @@ defmodule LennyWeb.PhoneNumberLiveTest do
   test "cancel changing a number", %{conn: conn, user: user} do
     phone_number_fixture(user, phone: "+15551112222")
 
-    session = %{
-      "pending_phone_number" => PhoneNumbers.get_pending_phone_number(user),
-      "verified_phone_number" => PhoneNumbers.get_verified_phone_number(user)
-    }
-
-    {:ok, live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive, session: session)
-
-    assert html =~ ~r{<h2.*>\s*Change Your Phone Number}
+    {:ok, live_view, _html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
 
     Lenny.TwilioMock
     |> Mox.expect(:verify_start, fn "+15551113333", "sms" ->
@@ -121,13 +108,8 @@ defmodule LennyWeb.PhoneNumberLiveTest do
     phone_number_fixture(user)
     phone_number_fixture(user, verified_at: nil)
 
-    session = %{
-      "pending_phone_number" => PhoneNumbers.get_pending_phone_number(user),
-      "verified_phone_number" => PhoneNumbers.get_verified_phone_number(user)
-    }
+    {:ok, _live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
 
-    {:ok, _live_view, html} = live_isolated(conn, LennyWeb.PhoneNumberLive, session: session)
-
-    assert html =~ ~S{Verify your Phone Number}
+    assert html =~ ~S{We sent a code}
   end
 end

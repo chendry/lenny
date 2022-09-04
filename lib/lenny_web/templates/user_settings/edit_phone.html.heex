@@ -1,0 +1,11 @@
+<.tabs conn={@conn} />
+
+<h2 class="text-xl font-bold">
+  <%= if @verified_phone_number == nil do %>
+    Register Phone Number
+  <% else %>
+    Change Phone Number
+  <% end %>
+</h2>
+
+<%= live_render @conn, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
