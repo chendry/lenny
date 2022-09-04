@@ -10,6 +10,8 @@ defmodule Lenny.Accounts.User do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
     field :record_calls, :boolean
+    field :send_sms, :boolean
+    field :skip_auth_for_active_calls, :boolean
 
     timestamps()
   end
@@ -97,6 +99,6 @@ defmodule Lenny.Accounts.User do
 
   def settings_changeset(user, attrs) do
     user
-    |> cast(attrs, [:record_calls])
+    |> cast(attrs, [:record_calls, :send_sms, :skip_auth_for_active_calls])
   end
 end

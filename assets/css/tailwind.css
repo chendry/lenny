@@ -1077,10 +1077,6 @@ select {
   text-overflow: ellipsis;
 }
 
-.whitespace-nowrap {
-  white-space: nowrap;
-}
-
 .rounded-md {
   border-radius: 0.375rem;
 }

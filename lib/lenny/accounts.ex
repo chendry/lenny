@@ -21,7 +21,11 @@ defmodule Lenny.Accounts do
   ## User registration
 
   def register_user(attrs) do
-    %User{record_calls: false}
+    %User{
+      record_calls: false,
+      send_sms: true,
+      skip_auth_for_active_calls: true
+    }
     |> User.registration_changeset(attrs)
     |> Repo.insert()
   end
