@@ -4,6 +4,7 @@ defmodule LennyWeb.CallsLive do
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.PhoneNumbers
+  alias LennyWeb.RegisterPhoneNumberLive
   alias LennyWeb.ForwardingInstructionsLive
 
   @impl true
@@ -48,15 +49,18 @@ defmodule LennyWeb.CallsLive do
   def render(assigns) do
     ~H"""
     <%= if @verified_phone_number == nil do %>
-      <%=
-        live_render @socket,
-          LennyWeb.PhoneNumberLive,
-          id: "phone_number_live",
-          session: %{
-            "verified_phone_number" => @verified_phone_number,
-            "pending_phone_number" => @pending_phone_number
-          }
-      %>
+      <h2 class="text-xl font-lg font-bold mb-4">
+        Welcome to 938-GOLENNY.COM!
+      </h2>
+      <p>
+        Get started by registering a phone number.
+      </p>
+
+      <.live_component
+        module={RegisterPhoneNumberLive}
+        id="register-phone-number"
+        user={@user}
+      />
     <% else %>
       <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
         <h1 class="text-xl font-bold">

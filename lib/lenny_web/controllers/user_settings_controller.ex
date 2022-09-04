@@ -29,15 +29,6 @@ defmodule LennyWeb.UserSettingsController do
     |> render("edit_settings.html")
   end
 
-  def edit_phone(conn, _params) do
-    user = conn.assigns.current_user
-
-    conn
-    |> assign(:verified_phone_number, PhoneNumbers.get_verified_phone_number(user))
-    |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
-    |> render("edit_phone.html")
-  end
-
   def update_email(conn, params) do
     %{"current_password" => password, "user" => user_params} = params
     user = conn.assigns.current_user
