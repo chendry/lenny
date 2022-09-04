@@ -34,6 +34,7 @@ defmodule LennyWeb.Router do
 
     live "/calls/:sid", CallLive
     get "/recordings/:sid", RecordingController, :show
+    live "/staged-screenshot", StagedScreenshotLive
   end
 
   # Other scopes may use custom stacks.

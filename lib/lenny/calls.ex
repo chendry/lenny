@@ -120,7 +120,7 @@ defmodule Lenny.Calls do
   def format_timestamp_time(%NaiveDateTime{} = timestamp) do
     timestamp
     |> chicago_time()
-    |> Calendar.strftime("%I:%M%P")
+    |> Calendar.strftime("%I:%M %p")
   end
 
   defp chicago_time(%NaiveDateTime{} = timestamp) do
