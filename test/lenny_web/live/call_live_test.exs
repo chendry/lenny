@@ -455,10 +455,13 @@ defmodule LennyWeb.CallLiveTest do
       refute live_view |> element("#breadcrumbs") |> has_element?()
     end
 
-    test "the delete button is not visible", %{conn: conn} do
+    test "can't access a finished call", %{conn: conn} do
       call_fixture(sid: "CA001", ended_at: ~N[2022-08-29 20:11:17])
-      {:ok, live_view, _html} = live(conn, "/calls/CA001")
-      refute live_view |> element("button", "Delete") |> has_element?()
+
+      {:error, {:live_redirect, %{flash: %{"alert" => alert}}}} =
+        live(conn, "/calls/CA001")
+
+      assert alert =~ "You must be logged in"
     end
 
     test "can't access call when any associated user has skip_auth_for_active_calls disabled", %{

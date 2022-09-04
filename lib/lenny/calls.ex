@@ -215,14 +215,17 @@ defmodule Lenny.Calls do
       UsersCalls
       |> where([uc], uc.call_id == ^call.id)
       |> join(:inner, [uc], u in assoc(uc, :user))
-      |> select([uc, u], u)
 
     case user_or_nil do
       nil ->
-        not Repo.exists?(
-          from [uc, u] in users_for_call,
-            where: u.skip_auth_for_active_calls == false
-        )
+        if call.ended_at != nil do
+          false
+        else
+          not Repo.exists?(
+            from [uc, u] in users_for_call,
+              where: u.skip_auth_for_active_calls == false
+          )
+        end
 
       %User{id: user_id} ->
         Repo.exists?(

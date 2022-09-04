@@ -442,14 +442,36 @@ defmodule Lenny.CallsTest do
     assert Calls.user_can_access_call?(nil, call) == true
   end
 
-  test "calls do not require authentication when all associated users have skip_auth_for_active_calls enabled" do
-    call = call_fixture(sid: "CA001", from: "+15554443333", forwarded_from: "+15554441111")
+  test "active calls do not require authentication when all associated users have skip_auth_for_active_calls enabled" do
+    call =
+      call_fixture(
+        sid: "CA001",
+        from: "+15554443333",
+        ended_at: nil
+      )
+
     u1 = user_fixture(skip_auth_for_active_calls: true)
     u2 = user_fixture(skip_auth_for_active_calls: true)
     users_calls_fixture(u1, call)
     users_calls_fixture(u2, call)
 
     assert Calls.user_can_access_call?(nil, call) == true
+  end
+
+  test "finished calls associated to users always require authentication" do
+    call =
+      call_fixture(
+        sid: "CA001",
+        from: "+15554443333",
+        ended_at: ~N[2022-09-04 12:48:50]
+      )
+
+    u1 = user_fixture(skip_auth_for_active_calls: true)
+    u2 = user_fixture(skip_auth_for_active_calls: true)
+    users_calls_fixture(u1, call)
+    users_calls_fixture(u2, call)
+
+    assert Calls.user_can_access_call?(nil, call) == false
   end
 
   test "calls require authentication when any associated user has skip_auth_for_active_calls disabled" do
