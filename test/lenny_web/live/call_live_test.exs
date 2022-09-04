@@ -435,7 +435,10 @@ defmodule LennyWeb.CallLiveTest do
       other_user = user_fixture()
       users_calls_fixture(other_user, call)
 
-      assert catch_error(live(conn, "/calls/CA0001"))
+      {:error, {:live_redirect, %{flash: %{"alert" => alert}}}} =
+        live(conn, "/calls/CA0001")
+
+      assert alert =~ "You must be logged in"
     end
 
     test "breadcrumbs are visible", %{conn: conn, user: user} do
@@ -457,6 +460,19 @@ defmodule LennyWeb.CallLiveTest do
       call_fixture(sid: "CA001", ended_at: ~N[2022-08-29 20:11:17])
       {:ok, live_view, _html} = live(conn, "/calls/CA001")
       refute live_view |> element("button", "Delete") |> has_element?()
+    end
+
+    test "can't access call when any associated user has skip_auth_for_active_calls disabled", %{conn: conn} do
+      call = call_fixture(sid: "CA001")
+      u1 = user_fixture(skip_auth_for_active_calls: false)
+      u2 = user_fixture(skip_auth_for_active_calls: true)
+      users_calls_fixture(u1, call)
+      users_calls_fixture(u2, call)
+
+      {:error, {:live_redirect, %{flash: %{"alert" => alert}}}} =
+        live(conn, "/calls/CA001")
+
+      assert alert =~ "You must be logged in"
     end
   end
 end

@@ -16,28 +16,36 @@ defmodule LennyWeb.CallLive do
         _ -> nil
       end
 
-    call = Calls.get_call_for_user!(user, sid)
-    recording = user && Recordings.get_recording_for_user(user.id, sid)
+    call = Calls.get_by_sid!(sid)
 
-    if user do
-      Calls.mark_as_seen(
-        user.id,
-        call.id
-      )
+    if not Calls.user_can_access_call?(user, call) do
+      {:ok,
+       socket
+       |> put_flash(:alert, "You must be logged in to access this call")
+       |> push_redirect(to: Routes.user_session_path(socket, :new))}
+    else
+      recording = user && Recordings.get_recording_for_user(user.id, sid)
+
+      if user do
+        Calls.mark_as_seen(
+          user.id,
+          call.id
+        )
+      end
+
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
+        Phoenix.PubSub.subscribe(Lenny.PubSub, "media:#{sid}")
+      end
+
+      {:ok,
+      socket
+      |> assign(:user, user)
+      |> assign(:call, Calls.get_by_sid!(sid))
+      |> assign(:recording, recording)
+      |> assign(:audio_ctx_state, nil)
+      |> assign(:confirm_delete, false)}
     end
-
-    if connected?(socket) do
-      Phoenix.PubSub.subscribe(Lenny.PubSub, "call:#{sid}")
-      Phoenix.PubSub.subscribe(Lenny.PubSub, "media:#{sid}")
-    end
-
-    {:ok,
-     socket
-     |> assign(:user, user)
-     |> assign(:call, Calls.get_by_sid!(sid))
-     |> assign(:recording, recording)
-     |> assign(:audio_ctx_state, nil)
-     |> assign(:confirm_delete, false)}
   end
 
   def breadcrumbs(assigns) do
