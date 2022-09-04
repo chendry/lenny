@@ -18,7 +18,7 @@ defmodule Lenny.Accounts.User do
 
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :record_calls])
+    |> cast(attrs, [:email, :password, :record_calls, :send_sms, :skip_auth_for_active_calls])
     |> validate_email()
     |> validate_password(opts)
   end

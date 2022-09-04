@@ -412,6 +412,31 @@ defmodule Lenny.CallsTest do
     assert catch_error(Calls.get_call_for_user!(user, "CA0001"))
   end
 
+  test "sms messages are sent for calls not associated with any user" do
+    call = call_fixture(sid: "CA001", from: "+15554443333")
+    assert Calls.should_send_sms?(call)
+  end
+
+  test "sms messages are not sent for calls when all associated users have send_sms enabled" do
+    call = call_fixture(sid: "CA001", from: "+15554443333", forwarded_from: "+15554441111")
+    u1 = user_fixture(send_sms: false)
+    u2 = user_fixture(send_sms: false)
+    users_calls_fixture(u1, call)
+    users_calls_fixture(u2, call)
+    
+    refute Calls.should_send_sms?(call)
+  end
+
+  test "sms messages are sent for calls when any associated user has send_sms enabled" do
+    call = call_fixture(sid: "CA001", from: "+15554443333", forwarded_from: "+15554441111")
+    u1 = user_fixture(send_sms: false)
+    u2 = user_fixture(send_sms: true)
+    users_calls_fixture(u1, call)
+    users_calls_fixture(u2, call)
+    
+    assert Calls.should_send_sms?(call)
+  end
+
   defp call_sids_for_user(user) do
     Repo.all(
       from uc in UsersCalls,

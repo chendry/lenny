@@ -19,7 +19,9 @@ defmodule LennyWeb.TwilioController do
 
     from = Calls.get_effective_from(call)
 
-    Twilio.send_sms(from, sms_body(sid))
+    if Calls.should_send_sms?(call) do
+      Twilio.send_sms(from, sms_body(sid))
+    end
 
     Phoenix.PubSub.broadcast(Lenny.PubSub, "wait:#{from}", {:call_started, sid})
 

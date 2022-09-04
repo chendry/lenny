@@ -54,6 +54,30 @@ defmodule LennyWeb.TwilioControllerTest do
     assert Repo.get_by(Call, sid: "CAcd3d0f9f054366f89712ef4278630247") != nil
   end
 
+  test "POST /twilio/incoming sends SMS when user has send_sms enabled", %{conn: conn} do
+    Mox.expect(Lenny.TwilioMock, :send_sms, fn _, _ -> :ok end)
+
+    user = user_fixture(send_sms: true)
+    phone_number_fixture(user, phone: "+13125554444")
+
+    post(conn, "/twilio/incoming", %{
+      "CallSid" => "CA001",
+      "From" => "+13125554444",
+      "To" => "+19384653669"
+    })
+  end
+
+  test "POST /twilio/incoming does not send SMS when user has send_sms disabled", %{conn: conn} do
+    user = user_fixture(send_sms: false)
+    phone_number_fixture(user, phone: "+13125554444")
+
+    post(conn, "/twilio/incoming", %{
+      "CallSid" => "CA001",
+      "From" => "+13125554444",
+      "To" => "+19384653669"
+    })
+  end
+
   test "POST /twilio/status/call to end call", %{conn: conn} do
     call = call_fixture(sid: "CA1ec1bf246aa203e56716b602d6f6c8c9")
 
@@ -297,7 +321,7 @@ defmodule LennyWeb.TwilioControllerTest do
     assert recording.status == "completed"
   end
 
-  test "sms links are sent to for non-forwarded incoming calls", %{conn: conn} do
+  test "sms links are sent to 'From' for non-forwarded incoming calls", %{conn: conn} do
     Lenny.TwilioMock
     |> Mox.expect(:send_sms, fn "+13125551234", body ->
       assert body =~ "/calls/CA001"
@@ -316,7 +340,7 @@ defmodule LennyWeb.TwilioControllerTest do
     |> response(200)
   end
 
-  test "sms links are sent to for forwarded incoming calls", %{conn: conn} do
+  test "sms links are sent to 'ForwardedFrom' for forwarded incoming calls", %{conn: conn} do
     Lenny.TwilioMock
     |> Mox.expect(:send_sms, fn "+13125551234", body ->
       assert body =~ "/calls/CA001"

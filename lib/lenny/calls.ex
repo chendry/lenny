@@ -194,4 +194,19 @@ defmodule Lenny.Calls do
         )
     end
   end
+
+  def should_send_sms?(call) do
+    users_for_call =
+      UsersCalls
+      |> where([uc], uc.call_id == ^call.id)
+      |> join(:inner, [uc], u in assoc(uc, :user))
+
+    if not Repo.exists?(users_for_call) do
+      true
+    else
+      users_for_call
+      |> where([uc, u], u.send_sms == true)
+      |> Repo.exists?()
+    end
+  end
 end
