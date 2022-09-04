@@ -27,10 +27,9 @@ defmodule LennyWeb.ForwardingInstructionsLive do
           </p>
 
           <p class="mt-4">
-            Please send us an
-            email at
+            Please
             <a class="text-blue-600" href="mailto:support@938golenny.com">
-              support@938golenny.com
+            contact us
             </a>
             and we'll get instructions added!
           </p>
@@ -44,8 +43,8 @@ defmodule LennyWeb.ForwardingInstructionsLive do
     <p>
       Using your
       <span class="font-bold"><%= @carrier %></span> device,
-      dial the numbers below to enable or disable automatic forwarding
-      of unanswered calls to
+      dial (or tap) the numbers below to enable or disable automatic
+      forwarding of unanswered calls to
       <span class="font-bold tracking-wider">938-GOLENNY</span>:
     </p>
 
@@ -67,6 +66,15 @@ defmodule LennyWeb.ForwardingInstructionsLive do
         </td>
       </tr>
     </table>
+
+    <p class="mt-2">
+      Not working?
+      Please
+      <a class="text-blue-600" href="mailto:support@938golenny.com">
+        contact us
+      </a>
+      so we can help!
+    </p>
     """
   end
 
