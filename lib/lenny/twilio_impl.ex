@@ -167,6 +167,23 @@ defmodule Lenny.TwilioImpl do
     :ok
   end
 
+  def lookup(phone) do
+    query = [
+      Type: "carrier",
+    ]
+    |> URI.encode_query()
+
+    url = "https://lookups.twilio.com/v1/PhoneNumbers/#{phone}?#{query}"
+
+    {:ok, %{status_code: 200, body: body}} =
+      HTTPoison.get(
+        url,
+        headers()
+      )
+
+    Jason.decode!(body)
+  end
+
   defp headers do
     credentials = Base.encode64("#{account_sid()}:#{auth_token()}")
 
