@@ -221,13 +221,13 @@ defmodule Lenny.Calls do
       nil ->
         not Repo.exists?(
           from [uc, u] in users_for_call,
-          where: u.skip_auth_for_active_calls == false
+            where: u.skip_auth_for_active_calls == false
         )
 
       %User{id: user_id} ->
         Repo.exists?(
           from [uc, u] in users_for_call,
-          where: u.id == ^user_id
+            where: u.id == ^user_id
         )
     end
   end

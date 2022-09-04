@@ -28,11 +28,11 @@ defmodule LennyWeb.CallsLive do
       end
 
       {:ok,
-        socket
-        |> assign(:user, user)
-        |> assign(:verified_phone_number, verified_phone_number)
-        |> assign(:pending_phone_number, pending_phone_number)
-        |> assign_call_history()}
+       socket
+       |> assign(:user, user)
+       |> assign(:verified_phone_number, verified_phone_number)
+       |> assign(:pending_phone_number, pending_phone_number)
+       |> assign_call_history()}
     end
   end
 

@@ -423,7 +423,7 @@ defmodule Lenny.CallsTest do
     u2 = user_fixture(send_sms: false)
     users_calls_fixture(u1, call)
     users_calls_fixture(u2, call)
-    
+
     refute Calls.should_send_sms?(call)
   end
 
@@ -433,7 +433,7 @@ defmodule Lenny.CallsTest do
     u2 = user_fixture(send_sms: true)
     users_calls_fixture(u1, call)
     users_calls_fixture(u2, call)
-    
+
     assert Calls.should_send_sms?(call)
   end
 
@@ -448,7 +448,7 @@ defmodule Lenny.CallsTest do
     u2 = user_fixture(skip_auth_for_active_calls: true)
     users_calls_fixture(u1, call)
     users_calls_fixture(u2, call)
-    
+
     assert Calls.user_can_access_call?(nil, call) == true
   end
 
@@ -458,7 +458,7 @@ defmodule Lenny.CallsTest do
     u2 = user_fixture(skip_auth_for_active_calls: true)
     users_calls_fixture(u1, call)
     users_calls_fixture(u2, call)
-    
+
     assert Calls.user_can_access_call?(nil, call) == false
   end
 

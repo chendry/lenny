@@ -21,7 +21,6 @@ defmodule LennyWeb.RegisterPhoneNumberLive do
      |> assign(assigns)
      |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(assigns.user))}
   end
-  
 
   @impl true
   def render(assigns) do
