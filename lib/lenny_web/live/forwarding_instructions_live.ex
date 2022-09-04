@@ -23,7 +23,11 @@ defmodule LennyWeb.ForwardingInstructionsLive do
             We detected that your mobile carrier is
             <span class="font-bold"><%= @carrier %></span> but we
             don't have instructions on how to automatically forward
-            unanswered calls for this carrier.  Please send us an
+            unanswered calls for this carrier.
+          </p>
+
+          <p class="mt-4">
+            Please send us an
             email at
             <a class="text-blue-600" href="mailto:support@938golenny.com">
               support@938golenny.com
@@ -41,7 +45,8 @@ defmodule LennyWeb.ForwardingInstructionsLive do
       Using your
       <span class="font-bold"><%= @carrier %></span> device,
       dial the numbers below to enable or disable automatic forwarding
-      of unanswered calls to Lenny:
+      of unanswered calls to
+      <span class="font-bold tracking-wider">938-GOLENNY</span>:
     </p>
 
     <table class="mt-4 font-bold">
