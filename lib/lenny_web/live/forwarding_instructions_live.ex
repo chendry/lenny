@@ -45,7 +45,7 @@ defmodule LennyWeb.ForwardingInstructionsLive do
       <span class="font-bold"><%= @carrier %></span> device,
       dial (or tap) the numbers below to enable or disable automatic
       forwarding of unanswered calls to
-      <span class="font-bold tracking-wider">938-GOLENNY</span>:
+      <span class="font-bold tracking-wider whitespace-nowrap">938-GOLENNY</span>:
     </p>
 
     <table class="mt-4 font-bold">
