@@ -48,9 +48,20 @@ defmodule LennyWeb.CallsLive do
   def render(assigns) do
     ~H"""
     <%= if @verified_phone_number == nil do %>
-      <h1 class="font-bold text-xl">Welcome to 938-GOLENNY.com!</h1>
-      <p class="mt-4">Get started by verifying your phone number.</p>
-      <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+      <h1 class="font-extrabold text-xl">
+        Welcome to
+        <span class="tracking-wider">
+          <span class="text-green-600">938-GOLENNY</span>.<span class="mx-0.5">com</span>!
+        </span>
+      </h1>
+
+      <%= if @pending_phone_number == nil do %>
+        <p class="mt-4">Get started by verifying your phone number.</p>
+      <% end %>
+
+      <div class="mt-4">
+        <%= live_render @socket, LennyWeb.PhoneNumberLive, id: "phone_number_live" %>
+      </div>
     <% else %>
       <div class="bg-slate-100 border border-slate-600 rounded-lg shadow-md p-4 text-center">
         <h1 class="text-xl font-bold">
