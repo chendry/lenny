@@ -1,6 +1,19 @@
 /* This file is for your main application CSS */
 @import "./tailwind.css";
 
+#screenshot {
+  perspective-origin: 0;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  border-radius: 80px;
+  filter: drop-shadow(25px 25px 20px rgb(0 0 0 / 0.2));
+}
+
+#screenshot img {
+  transform: rotateY(-35deg) rotateX(15deg);
+}
+
+
 /* LiveView specific classes for your customization */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {

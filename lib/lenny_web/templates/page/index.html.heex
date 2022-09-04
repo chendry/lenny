@@ -1,5 +1,31 @@
-<h1 class="text-2xl">Lenny</h1>
-
-<div class="mt-4">
-  <img src={Routes.static_path(@conn, "/images/screenshot.png")} />
+<div class="mt-4 flex flex-col sm:flex-row">
+  <div class="flex-grow sm:mt-12">
+    <h1 class="text-blue-600 text-3xl font-extrabold">
+      Hello, this is Lenny!
+    </h1>
+    <p class="text-3xl pt-8">
+      Automatically forward unanswered calls to Lenny.
+    </p>
+    <p class="text-lg pt-4">
+      We'll text you a link so you can listen in and control the call.
+    </p>
+    <p class="text-3xl pt-8">
+      Give it a try!
+    </p>
+    <p class="text-lg pt-4">
+      Call Lenny now at
+      <a class="font-extrabold text-green-800 tracking-wider whitespace-nowrap" href="tel:938GOLENNY">(938) GO-LENNY</a>
+    </p>
+    <p class="text-xl pt-8">
+      <%= link(to: Routes.user_registration_path(@conn, :new), class: "text-blue-600") do %>
+        Register
+      <% end %>
+      for additional features such as call recording.
+    </p>
+  </div>
+  <div class="mt-10 sm:mt-0">
+    <div id="screenshot" class="px-5">
+      <img src={Routes.static_path(@conn, "/images/screenshot.png")} />
+    </div>
+  </div>
 </div>
