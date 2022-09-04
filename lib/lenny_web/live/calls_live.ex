@@ -69,9 +69,8 @@ defmodule LennyWeb.CallsLive do
       </div>
 
       <p class="mt-4">
-        This page automatically refreshes when you call
-        <a class="font-bold whitespace-nowrap" href="tel:938GOLENNY">938-GOLENNY</a>
-        from your verified phone number.
+        This page automatically refreshes when we get a call (or a
+        forwarded call) from your number.
       </p>
 
       <div class="mt-10">
