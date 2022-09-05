@@ -85,7 +85,7 @@ defmodule LennyWeb.CallsLive do
           forwarded call) from your number.
         </p>
 
-        <div class="mt-10">
+        <div class="mt-6">
           <.live_component
             module={ForwardingInstructionsLive}
             id="forwarding-instructions"
@@ -94,7 +94,7 @@ defmodule LennyWeb.CallsLive do
         </div>
 
         <%= if not Enum.empty?(@call_history) do %>
-          <h1 class="mt-10 text-lg font-bold">
+          <h1 class="mt-6 text-lg font-bold">
             Call History
           </h1>
 

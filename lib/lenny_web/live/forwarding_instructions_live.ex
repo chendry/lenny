@@ -2,37 +2,47 @@ defmodule LennyWeb.ForwardingInstructionsLive do
   use LennyWeb, :live_component
 
   @impl true
+  def mount(socket) do
+    {:ok, assign(socket, :visible, false)}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
-      <h2 class="text-lg font-bold mb-2">
+      <button class="font-bold text-lg text-blue-600" phx-target={@myself} phx-click="toggle">
         Call Forwarding Instructions
-      </h2>
-      <%= cond do %>
-        <% @carrier != nil and @carrier =~ "AT&T Wireless" -> %>
-          <.instructions carrier="AT&T" enable="*61*9384653669#" disable="#61#" />
+      </button>
 
-        <% @carrier != nil and @carrier =~ "Verizon Wireless" -> %>
-          <.instructions carrier="Verizon" enable="*719384653669" disable="*73" />
+      <%= if @visible do %>
+        <div class="mt-2">
+          <%= cond do %>
+            <% @carrier != nil and @carrier =~ "AT&T Wireless" -> %>
+              <.instructions carrier="AT&T" enable="*61*9384653669#" disable="#61#" />
 
-        <% @carrier != nil and @carrier =~ "T-Mobile USA, Inc." -> %>
-          <.instructions carrier="T-Mobile" enable="**61*19384653669#" disable="##61#" />
+            <% @carrier != nil and @carrier =~ "Verizon Wireless" -> %>
+              <.instructions carrier="Verizon" enable="*719384653669" disable="*73" />
 
-        <% true -> %>
-          <p>
-            We detected that your mobile carrier is
-            <span class="font-bold"><%= @carrier %></span> but we
-            don't have instructions on how to automatically forward
-            unanswered calls for this carrier.
-          </p>
+            <% @carrier != nil and @carrier =~ "T-Mobile USA, Inc." -> %>
+              <.instructions carrier="T-Mobile" enable="**61*19384653669#" disable="##61#" />
 
-          <p class="mt-4">
-            Please
-            <a class="text-blue-600" href="mailto:support@938golenny.com">
-            contact us
-            </a>
-            and we'll get instructions added!
-          </p>
+            <% true -> %>
+              <p>
+                We detected that your mobile carrier is
+                <span class="font-bold"><%= @carrier %></span> but we
+                don't have instructions on how to automatically forward
+                unanswered calls for this carrier.
+              </p>
+
+              <p class="mt-4">
+                Please
+                <a class="text-blue-600" href="mailto:support@938golenny.com">
+                contact us
+                </a>
+                and we'll get instructions added!
+              </p>
+          <% end %>
+        </div>
       <% end %>
     </div>
     """
@@ -79,7 +89,7 @@ defmodule LennyWeb.ForwardingInstructionsLive do
   end
 
   @impl true
-  def handle_event("toggle_visibility", _params, socket) do
+  def handle_event("toggle", _params, socket) do
     {:noreply, assign(socket, :visible, not socket.assigns.visible)}
   end
 end
