@@ -6,6 +6,7 @@ defmodule LennyWeb.CallLive do
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.Recordings
+  alias Lenny.Recordings.Recording
   alias Lenny.Twilio
   alias LennyWeb.TwiML
   alias LennyWeb.CallLive.Buttons
@@ -182,19 +183,19 @@ defmodule LennyWeb.CallLive do
       <%= if @recording && @call.ended_at do %>
         <div class="mt-6">
           <%= if @recording.status == "completed" do %>
-            <.audio_player socket={@socket} call={@call} />
-            <.download_link socket={@socket} call={@call} />
+            <.audio_player recording={@recording} />
+            <.download_link recording={@recording} />
           <% else %>
             <div class="relative">
               <div class="invisible">
-                <.audio_player socket={@socket} call={@call} />
+                <.audio_player recording={@recording} />
               </div>
               <div class="absolute top-1/2 -translate-y-1/2 font-bold text-gray-600 w-full text-center">
                   Processing recording...
               </div>
             </div>
             <div class="invisible">
-              <.download_link socket={@socket} call={@call} />
+              <.download_link recording={@recording} />
             </div>
           <% end %>
         </div>
@@ -222,16 +223,22 @@ defmodule LennyWeb.CallLive do
 
   def audio_player(assigns) do
     ~H"""
-    <audio controls src={Routes.recording_path(@socket, :show, @call.sid)} class="w-full" />
+    <audio controls src={recording_path(@recording)} class="w-full" />
     """
   end
 
   def download_link(assigns) do
     ~H"""
     <div class="mt-2 text-blue-600 font-bold">
-      <%= link "Download", to: Routes.recording_path(@socket, :show, @call.sid) %>
+      <%= link "Download", to: recording_path(@recording) %>
     </div>
     """
+  end
+
+  defp recording_path(%Recording{} = recording) do
+    if recording.status == "completed",
+      do: Routes.recording_path(LennyWeb.Endpoint, :show, recording.sid),
+      else: "#"
   end
 
   @impl true
