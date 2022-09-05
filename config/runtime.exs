@@ -81,6 +81,17 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+  config :lenny, Lenny.Mailer,
+    adapter: Swoosh.Adapters.SMTP,
+    relay: "email-smtp.us-east-1.amazonaws.com",
+    username: System.get_env("SMTP_USERNAME"),
+    password: System.get_env("SMTP_PASSWORD"),
+    ssl: false,
+    tls: :always,
+    auth: :always,
+    port: 587,
+    retries: 2,
+    no_mx_lookups: false
 end
 
 config :lenny, Lenny.Twilio,

@@ -8,7 +8,7 @@ defmodule Lenny.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Lenny", "contact@example.com"})
+      |> from({"938GOLENNY.com", "support@938golenny.com"})
       |> subject(subject)
       |> text_body(body)
 
