@@ -14,8 +14,8 @@ defmodule Lenny.CallsTest do
   test "create a call using twilio params for a forwarded call" do
     params = %{
       "CallSid" => "CAafa5",
-      "ForwardedFrom" => "+13126180256",
-      "From" => "+17736555778",
+      "From" => "+13125550002",
+      "ForwardedFrom" => "+13125550001",
       "To" => "+19384653669"
     }
 
@@ -24,8 +24,8 @@ defmodule Lenny.CallsTest do
     assert call.id != nil
     assert call.sid == "CAafa5"
     assert call.to == "+19384653669"
-    assert call.from == "+17736555778"
-    assert call.forwarded_from == "+13126180256"
+    assert call.from == "+13125550002"
+    assert call.forwarded_from == "+13125550001"
     assert call.ended_at == nil
     assert call.params == params
   end
@@ -33,7 +33,7 @@ defmodule Lenny.CallsTest do
   test "create a call using twilio params for a direct call" do
     params = %{
       "CallSid" => "CA1e23",
-      "From" => "+13126180256",
+      "From" => "+13125550001",
       "To" => "+19384653669"
     }
 
@@ -42,7 +42,7 @@ defmodule Lenny.CallsTest do
     assert call.id != nil
     assert call.sid == "CA1e23"
     assert call.to == "+19384653669"
-    assert call.from == "+13126180256"
+    assert call.from == "+13125550001"
     assert call.forwarded_from == nil
     assert call.ended_at == nil
     assert call.params == params
