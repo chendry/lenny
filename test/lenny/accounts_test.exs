@@ -195,7 +195,7 @@ defmodule Lenny.AccountsTest do
 
   describe "update_user_email/2" do
     setup do
-      user = user_fixture()
+      user = unconfirmed_user_fixture()
       email = unique_user_email()
 
       token =
@@ -364,7 +364,7 @@ defmodule Lenny.AccountsTest do
 
   describe "deliver_user_confirmation_instructions/2" do
     setup do
-      %{user: user_fixture()}
+      %{user: unconfirmed_user_fixture()}
     end
 
     test "sends token through notification", %{user: user} do
@@ -383,7 +383,7 @@ defmodule Lenny.AccountsTest do
 
   describe "confirm_user/1" do
     setup do
-      user = user_fixture()
+      user = unconfirmed_user_fixture()
 
       token =
         extract_user_token(fn url ->

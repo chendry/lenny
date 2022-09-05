@@ -1,4 +1,10 @@
 defmodule Lenny.AccountsFixtures do
+  import Ecto.Query
+  import Ecto.Changeset
+
+  alias Lenny.Accounts.User
+  alias Lenny.Repo
+
   @moduledoc """
   This module defines test helpers for creating
   entities via the `Lenny.Accounts` context.
@@ -15,6 +21,15 @@ defmodule Lenny.AccountsFixtures do
     })
   end
 
+  def unconfirmed_user_fixture(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> valid_user_attributes()
+      |> Lenny.Accounts.register_user()
+
+    user
+  end
+
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
       attrs
@@ -22,6 +37,8 @@ defmodule Lenny.AccountsFixtures do
       |> Lenny.Accounts.register_user()
 
     user
+    |> change(confirmed_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+    |> Repo.update!()
   end
 
   def extract_user_token(fun) do
