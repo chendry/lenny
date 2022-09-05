@@ -1,6 +1,8 @@
 defmodule LennyWeb.PhoneNumberLive do
   use LennyWeb, :live_view
 
+  require Logger
+
   alias Lenny.Accounts
   alias Lenny.Twilio
   alias Lenny.PhoneNumbers
@@ -8,7 +10,10 @@ defmodule LennyWeb.PhoneNumberLive do
   alias Lenny.PhoneNumbers.VerificationForm
 
   @impl true
-  def mount(_params, %{"user_token" => user_token}, socket) do
+  def mount(_params, %{"user_token" => user_token} = session, socket) do
+    Logger.metadata(remote_ip: session["remote_ip"])
+    Logger.info("#{__MODULE__}: mount")
+
     user = Accounts.get_user_by_session_token(user_token)
 
     socket =
@@ -77,6 +82,8 @@ defmodule LennyWeb.PhoneNumberLive do
 
   @impl true
   def handle_event("register_phone_number", %{"phone_number" => phone_number_params}, socket) do
+    Logger.info("#{__MODULE__}: register_phone_number: #{inspect phone_number_params}")
+
     PhoneNumbers.register_phone_number_and_start_verification(
       socket.assigns.user,
       phone_number_params
@@ -96,6 +103,8 @@ defmodule LennyWeb.PhoneNumberLive do
         %{"verification_form" => verification_form_params},
         socket
       ) do
+    Logger.info("#{__MODULE__}: verify_phone_number: #{inspect verification_form_params}")
+
     PhoneNumbers.verify_phone_number(
       socket.assigns.pending_phone_number,
       verification_form_params
@@ -119,6 +128,8 @@ defmodule LennyWeb.PhoneNumberLive do
 
   @impl true
   def handle_event("cancel_verification", _params, socket) do
+    Logger.info("#{__MODULE__}: cancel_verification")
+
     phone_number = socket.assigns.pending_phone_number
 
     if phone_number do

@@ -1,13 +1,18 @@
 defmodule LennyWeb.CallsLive do
   use LennyWeb, :live_view
 
+  require Logger
+
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.PhoneNumbers
   alias LennyWeb.ForwardingInstructionsLive
 
   @impl true
-  def mount(_params, %{"user_token" => user_token} = _session, socket) do
+  def mount(_params, %{"user_token" => user_token} = session, socket) do
+    Logger.metadata(remote_ip: session["remote_ip"])
+    Logger.info("#{__MODULE__}: mount")
+
     user = Accounts.get_user_by_session_token(user_token)
 
     verified_phone_number = PhoneNumbers.get_verified_phone_number(user)

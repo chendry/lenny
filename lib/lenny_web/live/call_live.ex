@@ -12,6 +12,9 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def mount(%{"sid" => sid}, session, socket) do
+    Logger.metadata(remote_ip: session["remote_ip"])
+    Logger.info("#{__MODULE__}: mount: #{inspect sid}")
+
     user =
       case session do
         %{"user_token" => t} -> Accounts.get_user_by_session_token(t)

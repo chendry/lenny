@@ -11,6 +11,11 @@ defmodule LennyWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :store_remote_ip_in_session
+  end
+
+  def store_remote_ip_in_session(conn, _opts) do
+    put_session(conn, :remote_ip, List.to_string(:inet_parse.ntoa(conn.remote_ip)))
   end
 
   pipeline :api do

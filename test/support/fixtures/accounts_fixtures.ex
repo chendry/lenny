@@ -1,8 +1,6 @@
 defmodule Lenny.AccountsFixtures do
-  import Ecto.Query
   import Ecto.Changeset
 
-  alias Lenny.Accounts.User
   alias Lenny.Repo
 
   @moduledoc """
