@@ -59,7 +59,7 @@ defmodule LennyWeb.StagedScreenshotLive do
         </div>
         <%= if @call.ended_at == nil && @recording && @recording.status == "in-progress" do %>
           <span class="text-red-600 flex flex-row items-center space-x-2">
-            <span class="font-bold">Rec</span>
+            <span class="font-bold hidden xs:flex">Rec</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
               <circle cx="10" cy="10" r="10" />
             </svg>
