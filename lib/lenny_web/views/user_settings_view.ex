@@ -15,7 +15,7 @@ defmodule LennyWeb.UserSettingsView do
 
   def tabs(assigns) do
     ~H"""
-    <div id="tabs" class="flex flex-row justify-between sm:justify-start sm:space-x-4 mb-4 font-bold text-blue-600 space-x-2">
+    <div id="tabs" class="flex flex-row justify-between sm:justify-start sm:space-x-4 mb-6 font-bold text-blue-600 space-x-2">
       <.tab active={selected_tab(@conn) == :settings} label="Settings" to={Routes.user_settings_path(Endpoint, :edit_settings)} />
       <.tab active={selected_tab(@conn) == :email} label="Email" to={Routes.user_settings_path(Endpoint, :edit_email)} />
       <.tab active={selected_tab(@conn) == :password} label="Password" to={Routes.user_settings_path(Endpoint, :edit_password)} />
