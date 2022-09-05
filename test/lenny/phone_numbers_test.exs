@@ -15,8 +15,7 @@ defmodule Lenny.PhoneNumbersTest do
     p3 = phone_number_fixture(user, verified_at: nil, deleted_at: nil)
     p4 = phone_number_fixture(user_fixture(), verified_at: nil, deleted_at: nil)
 
-    Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn _, _ -> {:ok, %{sid: "VE-XXXX", carrier: %{}}} end)
+    Mox.expect(Lenny.TwilioMock, :verify_start, fn _, _ -> {:ok, %{sid: "VEa29d", carrier: %{}}} end)
 
     {:ok, phone_number} =
       PhoneNumbers.register_phone_number_and_start_verification(
@@ -36,13 +35,12 @@ defmodule Lenny.PhoneNumbersTest do
   test "register_phone_number_and_start_verification for invalid phone number" do
     user = user_fixture()
 
-    Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn _, _ -> {:error, "invalid phone number"} end)
+    Mox.expect(Lenny.TwilioMock, :verify_start, fn _, _ -> {:error, "invalid phone number"} end)
 
     {:error, changeset} =
       PhoneNumbers.register_phone_number_and_start_verification(
         user,
-        %{"phone" => "+15555555555"}
+        %{"phone" => "WOOF"}
       )
 
     assert errors_on(changeset) == %{phone: ["has invalid format"]}
@@ -52,10 +50,10 @@ defmodule Lenny.PhoneNumbersTest do
     user = user_fixture()
 
     Lenny.TwilioMock
-    |> Mox.expect(:verify_start, fn _, _ ->
+    |> Mox.expect(:verify_start, fn "+13125550004", _ ->
       {:ok,
        %{
-         sid: "VE-XXXX",
+         sid: "VEb8d6",
          carrier: %{
            "error_code" => nil,
            "mobile_country_code" => "311",
@@ -69,10 +67,10 @@ defmodule Lenny.PhoneNumbersTest do
     {:ok, phone_number} =
       PhoneNumbers.register_phone_number_and_start_verification(
         user,
-        %{"phone" => "5551112222"}
+        %{"phone" => "3125550004"}
       )
 
-    assert phone_number.sid == "VE-XXXX"
+    assert phone_number.sid == "VEb8d6"
 
     assert phone_number.carrier ==
              %{
@@ -82,8 +80,5 @@ defmodule Lenny.PhoneNumbersTest do
                "name" => "AT&T Wireless",
                "type" => "mobile"
              }
-
-    assert phone_number.verified_at == nil
-    assert phone_number.deleted_at == nil
   end
 end
