@@ -1,10 +1,10 @@
 <div class="mt-4 flex flex-col sm:flex-row">
-  <div class="flex-grow sm:mt-12">
+  <div class="flex-grow sm:mt-12 text-gray-800">
     <h1 class="text-blue-600 text-3xl font-extrabold">
       Hello, this is Lenny!
     </h1>
     <p class="text-3xl pt-8">
-      Automatically forward unanswered calls to Lenny.
+      Automatically forward your unanswered calls to Lenny.
     </p>
     <p class="text-lg pt-4">
       We'll text you a link so you can listen in and control the call.
@@ -14,10 +14,10 @@
     </p>
     <p class="text-lg pt-4">
       Call Lenny now at
-      <a class="font-extrabold text-green-800 tracking-wider whitespace-nowrap" href="tel:938GOLENNY">(938) GO-LENNY</a>
+      <a class="font-extrabold text-green-600 tracking-wider whitespace-nowrap" href="tel:938GOLENNY">(938) GO-LENNY</a>
     </p>
     <p class="text-xl pt-8">
-      <%= link(to: Routes.user_registration_path(@conn, :new), class: "text-blue-600") do %>
+      <%= link(to: Routes.user_registration_path(@conn, :new), class: "text-blue-600 font-extrabold") do %>
         Register
       <% end %>
       for additional features such as call recording.
