@@ -1433,12 +1433,6 @@ select {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-@media (min-width: 375px) {
-  .xs\:flex {
-    display: flex;
-  }
-}
-
 @media (min-width: 640px) {
   .sm\:mx-0 {
     margin-left: 0px;

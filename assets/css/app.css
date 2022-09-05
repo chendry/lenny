@@ -1,6 +1,10 @@
 /* This file is for your main application CSS */
 @import "./tailwind.css";
 
+@media (min-width: 375px) {
+  .xs\:flex {display: flex;}
+}
+
 #screenshot {
   perspective-origin: 0;
   perspective: 1500px;
