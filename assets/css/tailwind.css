@@ -1075,6 +1075,10 @@ select {
   margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
+.overflow-scroll {
+  overflow: scroll;
+}
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;

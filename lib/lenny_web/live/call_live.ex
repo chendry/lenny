@@ -84,7 +84,7 @@ defmodule LennyWeb.CallLive do
       </h1>
 
       <%= if @call.ended_at == nil do %>
-        <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 text-ellipsis">
+        <div id="speech" class="flex flex-col justify-center items-center mt-4 h-16 font-bold text-green-700 bg-slate-100 border border-slate-800 rounded-md py-1 px-4 overflow-scroll">
           <span><%= @call.speech %></span>
         </div>
 
