@@ -53,7 +53,8 @@ defmodule Lenny.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 1.8"},
       {:mox, "~> 1.0"},
-      {:tzdata, "~> 1.1"}
+      {:tzdata, "~> 1.1"},
+      {:remote_ip, "~> 1.0"}
     ]
   end
 

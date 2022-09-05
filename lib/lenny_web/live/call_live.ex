@@ -1,6 +1,8 @@
 defmodule LennyWeb.CallLive do
   use LennyWeb, :live_view
 
+  require Logger
+
   alias Lenny.Accounts
   alias Lenny.Calls
   alias Lenny.Recordings
@@ -252,11 +254,14 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("audio_ctx_state", %{"state" => state}, socket) do
+    Logger.info("#{__MODULE__}: audio_ctx_state: #{inspect state}")
     {:noreply, assign(socket, :audio_ctx_state, state)}
   end
 
   @impl true
   def handle_event("toggle_autopilot", _params, socket) do
+    Logger.info("#{__MODULE__}: toggle_autopilot")
+
     Calls.save_and_broadcast_call(
       socket.assigns.call,
       autopilot: not socket.assigns.call.autopilot
@@ -267,6 +272,8 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("say", %{"value" => i}, socket) do
+    Logger.info("#{__MODULE__}: say: #{inspect i}")
+
     i = String.to_integer(i)
 
     Calls.save_and_broadcast_call(
@@ -289,6 +296,8 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("dtmf", %{"value" => <<_>> = key}, socket) do
+    Logger.info("#{__MODULE__}: dtmf: #{inspect key}")
+
     Calls.save_and_broadcast_call(
       socket.assigns.call,
       iteration: nil,
@@ -310,6 +319,8 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("silence", _params, socket) do
+    Logger.info("#{__MODULE__}: silence")
+
     Calls.save_and_broadcast_call(
       socket.assigns.call,
       iteration: nil,
@@ -330,6 +341,8 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("hangup", _params, socket) do
+    Logger.info("#{__MODULE__}: hangup")
+
     Calls.save_and_broadcast_call(
       socket.assigns.call.sid,
       ended_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
@@ -349,16 +362,20 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_event("confirm_delete", _params, socket) do
+    Logger.info("#{__MODULE__}: confirm_delete")
     {:noreply, assign(socket, :confirm_delete, true)}
   end
 
   @impl true
   def handle_event("delete", %{"value" => "0"} = _params, socket) do
+    Logger.info("#{__MODULE__}: confirm_delete 0")
     {:noreply, assign(socket, :confirm_delete, false)}
   end
 
   @impl true
   def handle_event("delete", %{"value" => "1"} = _params, socket) do
+    Logger.info("#{__MODULE__}: confirm_delete 1")
+
     Calls.delete_call(
       socket.assigns.user.id,
       socket.assigns.call.id
