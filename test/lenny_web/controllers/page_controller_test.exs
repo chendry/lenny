@@ -1,5 +1,5 @@
 defmodule LennyWeb.PageControllerTest do
-  use LennyWeb.ConnCase
+  use LennyWeb.ConnCase, async: true
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")

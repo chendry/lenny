@@ -1,5 +1,5 @@
 defmodule Lenny.AccountsTest do
-  use Lenny.DataCase
+  use Lenny.DataCase, async: true
 
   alias Lenny.Accounts
 

@@ -1,5 +1,5 @@
 defmodule LennyWeb.CallLiveTest do
-  use LennyWeb.ConnCase
+  use LennyWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Lenny.AccountsFixtures

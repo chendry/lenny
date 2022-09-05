@@ -1,5 +1,5 @@
 defmodule LennyWeb.TwilioControllerTest do
-  use LennyWeb.ConnCase
+  use LennyWeb.ConnCase, async: true
 
   alias Lenny.Repo
   alias Lenny.Calls.Call

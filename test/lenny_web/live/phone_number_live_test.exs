@@ -1,5 +1,5 @@
 defmodule LennyWeb.PhoneNumberLiveTest do
-  use LennyWeb.ConnCase
+  use LennyWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Lenny.PhoneNumbersFixtures

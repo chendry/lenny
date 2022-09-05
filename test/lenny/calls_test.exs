@@ -1,5 +1,5 @@
 defmodule Lenny.CallsTest do
-  use Lenny.DataCase
+  use Lenny.DataCase, async: true
 
   alias Lenny.Calls
   alias Lenny.Calls.Call

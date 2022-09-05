@@ -1,5 +1,5 @@
 defmodule Lenny.RecordingsTest do
-  use Lenny.DataCase
+  use Lenny.DataCase, async: true
 
   import Lenny.AccountsFixtures
   import Lenny.RecordingsFixtures
