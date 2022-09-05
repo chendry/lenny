@@ -99,6 +99,11 @@ defmodule LennyWeb do
       import LennyWeb.ErrorHelpers
       import LennyWeb.Gettext
       alias LennyWeb.Router.Helpers, as: Routes
+
+      def format_phone_number("+1" <> <<a, b, c, d, e, f, g, h, i, j>>),
+        do: raw("(" <> <<a, b, c>> <> ")" <> "&nbsp;" <> <<d, e, f>> <> "-" <> <<g, h, i, j>>)
+
+      def format_phone_number(str), do: str
     end
   end
 

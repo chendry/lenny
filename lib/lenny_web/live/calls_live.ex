@@ -62,7 +62,7 @@ defmodule LennyWeb.CallsLive do
       <%= if @verified_phone_number == nil do %>
         <h1 class="font-extrabold text-xl">
           Welcome to
-          <span class="tracking-wider">
+          <span class="tracking-wide">
             <span class="text-green-600">938-GOLENNY</span>.<span class="mx-0.5">com</span>!
           </span>
         </h1>
@@ -75,8 +75,10 @@ defmodule LennyWeb.CallsLive do
           <h1 class="text-xl font-bold">
             Your Verified Phone Number
           </h1>
-          <div class="text-green-600 text-xl font-bold tracking-[0.25rem]">
-            <span id="verified-number"><%= @verified_phone_number.phone %></span>
+          <div class="text-green-600 text-xl font-bold tracking-widest">
+            <span id="verified-number" data-number={@verified_phone_number.phone}>
+              <%= format_phone_number(@verified_phone_number.phone) %>
+            </span>
           </div>
         </div>
 
@@ -123,8 +125,8 @@ defmodule LennyWeb.CallsLive do
                   </div>
 
                   <div class="flex flex-row justify-between">
-                    <span class="tracking-widest">
-                      <%= row.from %>
+                    <span class="tracking-wide">
+                      <%= format_phone_number(row.from) %>
                     </span>
                     <%= if row.recorded do %>
                       <span class="font-bold text-red-600">Recorded</span>

@@ -55,7 +55,9 @@ defmodule LennyWeb.PhoneNumberLive do
       <p class="mt-4">
         We sent a code to
         <span class="font-bold">
-          <span id="pending-number"><%= @pending_phone_number.phone %></span>
+          <span id="pending-number" data-number={@pending_phone_number.phone}>
+            <%= format_phone_number(@pending_phone_number.phone) %>
+          </span>
         </span>.
         Please enter that code to verify your phone
         number:

@@ -75,8 +75,8 @@ defmodule LennyWeb.CallLive do
       <h1 class="flex flex-row items-center justify-between" data-sid={@call.sid}>
         <div class="text-lg sm:text-xl font-bold">
           Call From
-          <span id="call-from" class="font-bold text-green-700 tracking-widest">
-            <%= @call.from %>
+          <span id="call-from" class="ml-1 font-bold text-green-700 tracking-widest">
+            <%= format_phone_number(@call.from) %>
           </span>
         </div>
         <%= if @call.ended_at == nil && @recording && @recording.status == "in-progress" do %>
