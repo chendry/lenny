@@ -168,10 +168,11 @@ defmodule Lenny.TwilioImpl do
   end
 
   def lookup(phone) do
-    query = [
-      Type: "carrier",
-    ]
-    |> URI.encode_query()
+    query =
+      [
+        Type: "carrier"
+      ]
+      |> URI.encode_query()
 
     url = "https://lookups.twilio.com/v1/PhoneNumbers/#{phone}?#{query}"
 
@@ -182,6 +183,80 @@ defmodule Lenny.TwilioImpl do
       )
 
     Jason.decode!(body)
+  end
+
+  def list_calls do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Calls.json"
+
+    {:ok, %{status_code: 200, body: body}} =
+      HTTPoison.get(
+        url,
+        headers()
+      )
+
+    Jason.decode!(body)
+  end
+
+  def delete_call(sid) do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Calls/#{sid}.json"
+
+    {:ok, %{status_code: 204}} =
+      HTTPoison.delete(
+        url,
+        headers()
+      )
+  end
+
+  def delete_all_calls! do
+    case list_calls() do
+      %{"calls" => []} ->
+        nil
+
+      %{"calls" => calls} ->
+        Enum.each(calls, fn %{"sid" => sid, "date_created" => date_created} ->
+          IO.puts(date_created)
+          delete_call(sid)
+        end)
+
+        delete_all_calls!()
+    end
+  end
+
+  def list_recordings do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Recordings.json"
+
+    {:ok, %{status_code: 200, body: body}} =
+      HTTPoison.get(
+        url,
+        headers()
+      )
+
+    Jason.decode!(body)
+  end
+
+  def delete_recording(sid) do
+    url = "https://api.twilio.com/2010-04-01/Accounts/#{account_sid()}/Recordings/#{sid}.json"
+
+    {:ok, %{status_code: 204}} =
+      HTTPoison.delete(
+        url,
+        headers()
+      )
+  end
+
+  def delete_all_recordings! do
+    case list_recordings() do
+      %{"recordings" => []} ->
+        nil
+
+      %{"recordings" => recordings} ->
+        Enum.each(recordings, fn %{"sid" => sid, "date_created" => date_created} ->
+          IO.puts(date_created)
+          delete_recording(sid)
+        end)
+
+        delete_all_recordings!()
+    end
   end
 
   defp headers do
