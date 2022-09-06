@@ -6,7 +6,7 @@ defmodule LennyWeb.UserConfirmationControllerTest do
   import Lenny.AccountsFixtures
 
   setup do
-    %{user: unconfirmed_user_fixture()}
+    %{user: user_fixture()}
   end
 
   describe "GET /users/confirm" do

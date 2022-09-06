@@ -52,7 +52,6 @@ defmodule LennyWeb.UserSettingsControllerTest do
     test "updates the user password and resets tokens", %{conn: conn, user: user} do
       new_password_conn =
         put(conn, Routes.user_settings_path(conn, :update_password), %{
-          "action" => "update_password",
           "current_password" => valid_user_password(),
           "user" => %{
             "password" => "new valid password",
@@ -69,7 +68,6 @@ defmodule LennyWeb.UserSettingsControllerTest do
     test "does not update password on invalid data", %{conn: conn} do
       old_password_conn =
         put(conn, Routes.user_settings_path(conn, :update_password), %{
-          "action" => "update_password",
           "current_password" => "invalid",
           "user" => %{
             "password" => "short",
@@ -90,22 +88,24 @@ defmodule LennyWeb.UserSettingsControllerTest do
   describe "PUT /users/email (change email form)" do
     @tag :capture_log
     test "updates the user email", %{conn: conn, user: user} do
+      old_email = user.email
+      new_email = unique_user_email()
+
       conn =
         put(conn, Routes.user_settings_path(conn, :update_email), %{
-          "action" => "update_email",
           "current_password" => valid_user_password(),
-          "user" => %{"email" => unique_user_email()}
+          "user" => %{"email" => new_email}
         })
 
       assert redirected_to(conn) == Routes.live_path(conn, LennyWeb.CallsLive)
-      assert get_flash(conn, :info) =~ "A link to confirm your email"
-      assert Accounts.get_user_by_email(user.email)
+      assert get_flash(conn, :info) =~ "Email address updated successfully"
+      refute Accounts.get_user_by_email(old_email)
+      assert Accounts.get_user_by_email(new_email)
     end
 
     test "does not update email on invalid data", %{conn: conn} do
       conn =
         put(conn, Routes.user_settings_path(conn, :update_email), %{
-          "action" => "update_email",
           "current_password" => "invalid",
           "user" => %{"email" => "with spaces"}
         })
@@ -114,44 +114,6 @@ defmodule LennyWeb.UserSettingsControllerTest do
       assert response =~ "Change Email"
       assert response =~ "must have the @ sign and no spaces"
       assert response =~ "is not valid"
-    end
-  end
-
-  describe "GET /users/settings/confirm_email/:token" do
-    setup %{user: user} do
-      email = unique_user_email()
-
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_update_email_instructions(%{user | email: email}, user.email, url)
-        end)
-
-      %{token: token, email: email}
-    end
-
-    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, token))
-      assert redirected_to(conn) == Routes.live_path(conn, LennyWeb.CallsLive)
-      assert get_flash(conn, :info) =~ "Email changed successfully"
-      refute Accounts.get_user_by_email(user.email)
-      assert Accounts.get_user_by_email(email)
-
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, token))
-      assert redirected_to(conn) == Routes.user_settings_path(conn, :edit_email)
-      assert get_flash(conn, :error) =~ "Email change link is invalid or it has expired"
-    end
-
-    test "does not update email with invalid token", %{conn: conn, user: user} do
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, "oops"))
-      assert redirected_to(conn) == Routes.user_settings_path(conn, :edit_email)
-      assert get_flash(conn, :error) =~ "Email change link is invalid or it has expired"
-      assert Accounts.get_user_by_email(user.email)
-    end
-
-    test "redirects if user is not logged in", %{token: token} do
-      conn = build_conn()
-      conn = get(conn, Routes.user_settings_path(conn, :confirm_email, token))
-      assert redirected_to(conn) == Routes.user_session_path(conn, :new)
     end
   end
 end
