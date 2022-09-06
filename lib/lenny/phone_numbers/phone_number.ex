@@ -20,9 +20,16 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
     phone_number
     |> cast(attrs, [:phone])
     |> validate_required([:phone])
-    |> validate_format(:phone, ~r/^\d{10}$/)
+    |> validate_format(:phone, ~r/^(\d{10}|\+[1-9]\d{6,14})$/)
     |> prepare_changes(fn changeset ->
-      update_change(changeset, :phone, &("+1" <> &1))
+      changeset
+      |> update_change(:phone, fn phone ->
+        if String.starts_with?(phone, "+") do
+          phone
+        else
+          "+1#{phone}"
+        end
+      end)
     end)
   end
 end
