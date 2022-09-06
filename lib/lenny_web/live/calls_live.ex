@@ -76,8 +76,14 @@ defmodule LennyWeb.CallsLive do
       </div>
 
       <p class="mt-4">
-        This page automatically refreshes when we get a call (or a
-        forwarded call) from your number.
+        This page automatically refreshes when
+        <a
+          class="font-bold text-green-600 tracking-wide whitespace-nowrap"
+          href="tel:(938) GO-LENNY"
+        >
+          (938) GO-LENNY
+        </a>
+        receives a call from (or forwarded from) your verified phone number.
       </p>
 
       <div class="mt-6">
