@@ -347,5 +347,12 @@ defmodule LennyWeb.CallLiveTest do
 
       assert alert =~ "You must be logged in"
     end
+
+    test "doesn't crash when a recording ends", %{conn: conn} do
+      call_fixture(sid: "CAc6d9")
+      {:ok, live_view, _html} = live(conn, "/calls/CAc6d9")
+      send live_view.pid, :recording
+      assert render(live_view) =~ ~s(data-sid="CAc6d9")
+    end
   end
 end

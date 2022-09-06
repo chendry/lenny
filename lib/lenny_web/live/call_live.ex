@@ -253,13 +253,17 @@ defmodule LennyWeb.CallLive do
 
   @impl true
   def handle_info(:recording, socket) do
-    recording =
-      Recordings.get_recording_for_user(
-        socket.assigns.user.id,
-        socket.assigns.call.sid
-      )
+    if socket.assigns.user do
+      recording =
+        Recordings.get_recording_for_user(
+          socket.assigns.user.id,
+          socket.assigns.call.sid
+        )
 
-    {:noreply, assign(socket, :recording, recording)}
+      {:noreply, assign(socket, :recording, recording)}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
