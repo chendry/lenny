@@ -76,10 +76,10 @@ defmodule LennyWeb.CallsLive do
       </div>
 
       <p class="mt-4">
-        This page automatically refreshes when
+        This page automatically refreshes whenever
         <a
           class="font-bold text-green-600 tracking-wide whitespace-nowrap"
-          href="tel:(938) GO-LENNY"
+          href="tel:+1938GOLENNY"
         >
           (938) GO-LENNY
         </a>

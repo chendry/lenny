@@ -52,10 +52,12 @@ defmodule LennyWeb.ForwardingInstructionsLive do
     ~H"""
     <p>
       Using your
-      <span class="font-bold"><%= @carrier %></span> device,
-      dial (or tap) the numbers below to enable or disable automatic
-      forwarding of unanswered calls to
-      <span class="font-bold tracking-wider whitespace-nowrap">938-GOLENNY</span>:
+      <span class="font-bold"><%= @carrier %></span> device, dial or
+      tap the numbers below to enable or disable automatic forwarding
+      of unanswered calls to
+      <span class="font-bold tracking-wide whitespace-nowrap" >
+        (938) GO-LENNY
+      </span>:
     </p>
 
     <table class="mt-4 font-bold">
