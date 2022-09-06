@@ -74,11 +74,6 @@ defmodule Lenny.Accounts.User do
     |> validate_password(opts)
   end
 
-  def confirm_changeset(user) do
-    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    change(user, confirmed_at: now)
-  end
-
   def valid_password?(%Lenny.Accounts.User{hashed_password: hashed_password}, password)
       when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
