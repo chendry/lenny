@@ -56,7 +56,7 @@ defmodule Lenny.PhoneNumbers do
     |> Multi.run(
       :verify_start,
       fn _repo, %{insert: phone_number} ->
-        Twilio.verify_start(phone_number.phone, "sms")
+        Twilio.verify_start(phone_number.phone, phone_number.channel)
       end
     )
     |> Multi.update(

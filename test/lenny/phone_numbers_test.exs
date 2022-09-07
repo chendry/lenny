@@ -20,7 +20,7 @@ defmodule Lenny.PhoneNumbersTest do
     {:ok, phone_number} =
       PhoneNumbers.register_phone_number_and_start_verification(
         user,
-        %{"phone" => "5551112222"}
+        %{"channel" => "sms", "phone" => "5551112222"}
       )
 
     assert phone_number.verified_at == nil
@@ -40,7 +40,7 @@ defmodule Lenny.PhoneNumbersTest do
     {:error, changeset} =
       PhoneNumbers.register_phone_number_and_start_verification(
         user,
-        %{"phone" => "WOOF"}
+        %{"channel" => "sms", "phone" => "WOOF"}
       )
 
     assert errors_on(changeset) == %{phone: ["has invalid format"]}
@@ -67,7 +67,7 @@ defmodule Lenny.PhoneNumbersTest do
     {:ok, phone_number} =
       PhoneNumbers.register_phone_number_and_start_verification(
         user,
-        %{"phone" => "3125550004"}
+        %{"channel" => "sms", "phone" => "3125550004"}
       )
 
     assert phone_number.sid == "VEb8d6"

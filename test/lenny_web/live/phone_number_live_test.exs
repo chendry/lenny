@@ -6,47 +6,61 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
   setup [:register_and_log_in_user]
 
-  test "register a number", %{conn: conn} do
-    {:ok, live_view, _html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
+  test "register a number using sms and voice", %{conn: conn} do
+    Enum.each(~w(sms call), fn channel ->
+      {:ok, live_view, _html} = live_isolated(conn, LennyWeb.PhoneNumberLive)
 
-    html =
-      live_view
-      |> form("form", %{"phone_number[phone]" => "555-555-5555"})
-      |> render_submit()
+      html =
+        live_view
+        |> form(
+          "form",
+          %{
+            "phone_number[phone]" => "555-555-5555",
+            "phone_number[channel]" => channel
+          }
+        )
+        |> render_submit()
 
-    assert html =~ "has invalid format"
+      assert html =~ "has invalid format"
 
-    Mox.expect(Lenny.TwilioMock, :verify_start, fn "+13125550001", "sms" ->
-      {:ok, %{sid: "VEea7f", carrier: %{}}}
+      Mox.expect(Lenny.TwilioMock, :verify_start, fn "+13125550001", ^channel ->
+        {:ok, %{sid: "VEea7f", carrier: %{}}}
+      end)
+
+      html =
+        live_view
+        |> form(
+          "form",
+          %{
+            "phone_number[phone]" => "3125550001",
+            "phone_number[channel]" => channel
+          }
+        )
+        |> render_submit()
+
+      assert html =~ ~r{We sent a code}
+
+      Mox.expect(Lenny.TwilioMock, :verify_check, fn "VEea7f", "1234" ->
+        {:error, "invalid according to twilio"}
+      end)
+
+      html =
+        live_view
+        |> form("form", %{"verification_form[code]" => "1234"})
+        |> render_submit()
+
+      assert html =~ "invalid according to twilio"
+
+      Mox.expect(Lenny.TwilioMock, :verify_check, fn "VEea7f", "5678" -> :ok end)
+
+      {:ok, _live_view, html} =
+        live_view
+        |> form("form", %{"verification_form[code]" => "5678"})
+        |> render_submit()
+        |> follow_redirect(conn, "/calls")
+
+      assert html =~ ~S{<span id="verified-number" data-number="+13125550001"}
     end)
-
-    html =
-      live_view
-      |> form("form", %{"phone_number[phone]" => "3125550001"})
-      |> render_submit()
-
-    assert html =~ ~r{We sent a code}
-
-    Mox.expect(Lenny.TwilioMock, :verify_check, fn "VEea7f", "1234" ->
-      {:error, "invalid according to twilio"}
-    end)
-
-    html =
-      live_view
-      |> form("form", %{"verification_form[code]" => "1234"})
-      |> render_submit()
-
-    assert html =~ "invalid according to twilio"
-
-    Mox.expect(Lenny.TwilioMock, :verify_check, fn "VEea7f", "5678" -> :ok end)
-
-    {:ok, _live_view, html} =
-      live_view
-      |> form("form", %{"verification_form[code]" => "5678"})
-      |> render_submit()
-      |> follow_redirect(conn, "/calls")
-
-    assert html =~ ~S{<span id="verified-number" data-number="+13125550001"}
   end
 
   test "change a number", %{conn: conn, user: user} do
@@ -60,7 +74,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     html =
       live_view
-      |> form("form", %{"phone_number[phone]" => "3125550002"})
+      |> form(
+        "form",
+        %{
+          "phone_number[phone]" => "3125550002",
+          "phone_number[channel]" => "sms"
+        }
+      )
       |> render_submit()
 
     assert html =~ ~S(<span id="pending-number" data-number="+13125550002")
@@ -87,7 +107,13 @@ defmodule LennyWeb.PhoneNumberLiveTest do
 
     html =
       live_view
-      |> form("form", %{"phone_number[phone]" => "3125550002"})
+      |> form(
+        "form",
+        %{
+          "phone_number[phone]" => "3125550002",
+          "phone_number[channel]" => "sms"
+        }
+      )
       |> render_submit()
 
     assert html =~ ~S(<span id="pending-number" data-number="+13125550002")

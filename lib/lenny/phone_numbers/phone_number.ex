@@ -18,9 +18,10 @@ defmodule Lenny.PhoneNumbers.PhoneNumber do
   @doc false
   def changeset(%__MODULE__{} = phone_number \\ %__MODULE__{}, attrs \\ %{}) do
     phone_number
-    |> cast(attrs, [:phone])
-    |> validate_required([:phone])
+    |> cast(attrs, [:phone, :channel])
+    |> validate_required([:phone, :channel])
     |> validate_format(:phone, ~r/^(\d{10}|\+[1-9]\d{6,14})$/)
+    |> validate_inclusion(:channel, ~w(sms call))
     |> prepare_changes(fn changeset ->
       changeset
       |> update_change(:phone, fn phone ->

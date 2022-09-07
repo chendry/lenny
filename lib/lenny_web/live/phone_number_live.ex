@@ -21,7 +21,7 @@ defmodule LennyWeb.PhoneNumberLive do
       |> assign(:user, user)
       |> assign(:pending_phone_number, PhoneNumbers.get_pending_phone_number(user))
       |> assign(:verified_phone_number, PhoneNumbers.get_verified_phone_number(user))
-      |> assign(:register_changeset, PhoneNumber.changeset())
+      |> assign(:register_changeset, PhoneNumber.changeset(%PhoneNumber{channel: "sms"}))
       |> assign(:verify_changeset, VerificationForm.changeset())
 
     {:ok, socket, layout: {LennyWeb.LayoutView, "blank.html"}}
@@ -43,6 +43,17 @@ defmodule LennyWeb.PhoneNumberLive do
           <% end %>
           <%= telephone_input f, :phone, placeholder: "5554443333" %>
           <%= error_tag f, :phone %>
+        </div>
+
+        <div class="mt-4 flex flex-row space-x-8">
+          <label class="flex flex-row items-center">
+            <%= radio_button f, :channel, "sms" %>
+            <span class="ml-2">SMS</span>
+          </label>
+          <label class="flex flex-row items-center">
+            <%= radio_button f, :channel, "call" %>
+            <span class="ml-2">Call</span>
+          </label>
         </div>
 
         <div class="mt-6">
