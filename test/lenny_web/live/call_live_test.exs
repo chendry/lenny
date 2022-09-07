@@ -103,6 +103,42 @@ defmodule LennyWeb.CallLiveTest do
       |> render_click()
     end
 
+    test "push the hello buttons with autopilot on", %{conn: conn, user: user} do
+      call = call_fixture(sid: "CAf068", iteration: 3, autopilot: true)
+      users_calls_fixture(user, call)
+
+      {:ok, live_view, _html} = live(conn, "/calls/CAf068")
+
+      Enum.each(~w(hello hello_are_you_there), fn button ->
+        Mox.expect(Lenny.TwilioMock, :modify_call, fn "CAf068", twiml ->
+          assert twiml =~ "#{button}.mp3"
+          assert twiml =~ "/twilio/gather/3"
+        end)
+
+        live_view
+        |> element("##{button}")
+        |> render_click()
+      end)
+    end
+
+    test "push the hello buttons with autopilot off", %{conn: conn, user: user} do
+      call = call_fixture(sid: "CAf068", iteration: 3, autopilot: false)
+      users_calls_fixture(user, call)
+
+      {:ok, live_view, _html} = live(conn, "/calls/CAf068")
+
+      Enum.each(~w(hello hello_are_you_there), fn button ->
+        Mox.expect(Lenny.TwilioMock, :modify_call, fn "CAf068", twiml ->
+          assert twiml =~ "#{button}.mp3"
+          refute twiml =~ "/twilio/gather/3"
+        end)
+
+        live_view
+        |> element("##{button}")
+        |> render_click()
+      end)
+    end
+
     test "push the DTMF buttons", %{conn: conn, user: user} do
       phone_number_fixture(user)
       call = call_fixture(sid: "CA7923")
@@ -256,7 +292,7 @@ defmodule LennyWeb.CallLiveTest do
       conn: conn,
       user: user
     } do
-      call = call_fixture(sid: "CA4c2f", autopilot: true, iteration: 18)
+      call = call_fixture(sid: "CA4c2f", autopilot: true, iteration: 16)
       users_calls_fixture(user, call)
 
       {:ok, live_view, _html} = live(conn, "/calls/CA4c2f")
@@ -269,7 +305,7 @@ defmodule LennyWeb.CallLiveTest do
       assert html =~ "Sorry, bit of a problem..."
 
       Phoenix.ConnTest.build_conn()
-      |> post("/twilio/gather/18", %{
+      |> post("/twilio/gather/16", %{
         "CallSid" => "CA4c2f",
         "SpeechResult" => "What?"
       })

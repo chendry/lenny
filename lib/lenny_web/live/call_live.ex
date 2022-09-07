@@ -130,7 +130,7 @@ defmodule LennyWeb.CallLive do
           <button id="silence" class="font-bold text-blue-600" phx-click="silence">Silence Lenny</button>
         </span>
 
-        <div class="mt-8 flex flex-col space-y-4">
+        <div class="mt-4 flex flex-col space-y-4">
           <button {Buttons.say_attrs(@call, 00)}>Hello, this is Lenny.</button>
           <button {Buttons.say_attrs(@call, 01)}>Sorry, I can barely hear 'ya there.</button>
           <button {Buttons.say_attrs(@call, 02)}>Yes, yes yes.</button>
@@ -147,10 +147,13 @@ defmodule LennyWeb.CallLive do
           <button {Buttons.say_attrs(@call, 13)}>Since you've put it that way...</button>
           <button {Buttons.say_attrs(@call, 14)}>With the world finances the way they are...</button>
           <button {Buttons.say_attrs(@call, 15)}>That does sound good, you've been very patient...</button>
-          <button {Buttons.say_attrs(@call, 16)}>Hello?</button>
-          <button {Buttons.say_attrs(@call, 17)}>Hello, are you there?</button>
-          <button {Buttons.say_attrs(@call, 18)}>Sorry, bit of a problem...</button>
+          <button {Buttons.say_attrs(@call, 16)}>Sorry, bit of a problem...</button>
         </div>
+
+        <span class="mt-8 flex flex-col font-bold text-blue-600 space-y-4">
+          <button id="hello" phx-click="hello">Hello?</button>
+          <button id="hello_are_you_there" phx-click="hello_are_you_there">Hello, are you there?</button>
+        </span>
 
         <table class="mt-8 mx-auto">
           <tr>
@@ -301,6 +304,42 @@ defmodule LennyWeb.CallLive do
       """
       <Response>
         #{TwiML.lenny(i, socket.assigns.call.autopilot)}
+      </Response>
+      """
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hello", _params, socket) do
+    Logger.info("#{__MODULE__}: hello")
+
+    call = socket.assigns.call
+
+    Twilio.modify_call(
+      socket.assigns.call.sid,
+      """
+      <Response>
+        #{TwiML.hello(call.iteration, call.autopilot)}
+      </Response>
+      """
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hello_are_you_there", _params, socket) do
+    Logger.info("#{__MODULE__}: hello_are_you_there")
+
+    call = socket.assigns.call
+
+    Twilio.modify_call(
+      socket.assigns.call.sid,
+      """
+      <Response>
+        #{TwiML.hello_are_you_there(call.iteration, call.autopilot)}
       </Response>
       """
     )

@@ -91,12 +91,12 @@ defmodule LennyWeb.TwilioControllerTest do
     assert response =~ ~s{/twilio/gather/1"}
   end
 
-  test "POST /twilio/gather/18 with plays lenny_00.mp3", %{conn: conn} do
+  test "POST /twilio/gather/16 with plays lenny_00.mp3", %{conn: conn} do
     call_fixture(sid: "CA3d39", autopilot: true)
 
     response =
       conn
-      |> post("/twilio/gather/18", %{"CallSid" => "CA3d39"})
+      |> post("/twilio/gather/16", %{"CallSid" => "CA3d39"})
       |> response(200)
 
     assert response =~ "lenny_00.mp3"

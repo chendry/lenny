@@ -58,7 +58,7 @@ defmodule LennyWeb.TwilioController do
 
     {twiml, iteration} =
       if call.autopilot do
-        i = rem(i + 1, 19)
+        i = rem(i + 1, 17)
         {TwiML.lenny(i, true), i}
       else
         {TwiML.gather(120, i), i}

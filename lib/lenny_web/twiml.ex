@@ -33,4 +33,30 @@ defmodule LennyWeb.TwiML do
     />
     """
   end
+
+  def hello(iteration, autopilot) do
+      """
+      <Play>
+        #{AudioFileUrls.hello()}
+      </Play>
+      #{gather_or_pause(autopilot, iteration)}
+      """
+  end
+
+  def hello_are_you_there(iteration, autopilot) do
+      """
+      <Play>
+        #{AudioFileUrls.hello_are_you_there()}
+      </Play>
+      #{gather_or_pause(autopilot, iteration)}
+      """
+  end
+
+  defp gather_or_pause(autopilot, iteration) do
+    if autopilot do
+      gather(120, iteration)
+    else
+      ~s(<Pause length="120" />)
+    end
+  end
 end
