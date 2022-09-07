@@ -304,7 +304,7 @@ defmodule LennyWeb.CallLiveTest do
       assert html =~ "Sorry, I can barely hear &#39;ya there."
     end
 
-    test "scammer responding to gather on the last sound loops lenny back to the first sound", %{
+    test "scammer responding to gather on the last sound loops lenny back to somebody did call...", %{
       conn: conn,
       user: user
     } do
@@ -331,7 +331,7 @@ defmodule LennyWeb.CallLiveTest do
         |> element(".active-say-button")
         |> render()
 
-      assert html =~ "Hello, this is Lenny."
+      assert html =~ "Someone did call last week about the same thing"
     end
 
     test "viewing a call marks it as seen for that user", %{user: u1, conn: conn} do

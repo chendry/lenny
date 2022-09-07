@@ -91,7 +91,7 @@ defmodule LennyWeb.TwilioControllerTest do
     assert response =~ ~s{/twilio/gather/1"}
   end
 
-  test "POST /twilio/gather/16 with plays lenny_00.mp3", %{conn: conn} do
+  test "POST /twilio/gather/16 with autopilot on loops back to lenny_04.mp3", %{conn: conn} do
     call_fixture(sid: "CA3d39", autopilot: true)
 
     response =
@@ -99,8 +99,8 @@ defmodule LennyWeb.TwilioControllerTest do
       |> post("/twilio/gather/16", %{"CallSid" => "CA3d39"})
       |> response(200)
 
-    assert response =~ "lenny_00.mp3"
-    assert response =~ "/twilio/gather/0"
+    assert response =~ "lenny_04.mp3"
+    assert response =~ "/twilio/gather/4"
   end
 
   test "POST /twilio/incoming records call when user has recording enabled", %{conn: conn} do

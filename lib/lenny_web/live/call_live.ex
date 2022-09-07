@@ -135,7 +135,7 @@ defmodule LennyWeb.CallLive do
           <button {Buttons.say_attrs(@call, 01)}>Sorry, I can barely hear 'ya there.</button>
           <button {Buttons.say_attrs(@call, 02)}>Yes, yes yes.</button>
           <button {Buttons.say_attrs(@call, 03)}>Oh good! Yes yes yes yes.</button>
-          <button {Buttons.say_attrs(@call, 04)}>Someone did call last week about the same.  Was that you?</button>
+          <button {Buttons.say_attrs(@call, 04)}>Someone did call last week about the same thing.  Was that you?</button>
           <button {Buttons.say_attrs(@call, 05)}>Sorry, what was your name again?</button>
           <button {Buttons.say_attrs(@call, 06)}>Well, it's funny that you call because...</button>
           <button {Buttons.say_attrs(@call, 07)}>I couldn't quite catch 'ya there, what was that again?</button>
