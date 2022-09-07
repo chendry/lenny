@@ -3,7 +3,7 @@ defmodule LennyWeb.PhoneSettingLive do
 
   alias Lenny.Accounts
   alias Lenny.PhoneNumbers
-  alias LennyWeb.RegisterPhoneNumberLive
+  alias LennyWeb.PhoneNumberLive
 
   @impl true
   def mount(_params, %{"user_token" => user_token} = _session, socket) do
@@ -39,8 +39,8 @@ defmodule LennyWeb.PhoneSettingLive do
       </h2>
 
       <.live_component
-        module={RegisterPhoneNumberLive}
-        id="register-phone-number"
+        module={PhoneNumberLive}
+        id="phone-number-live"
         user={@user}
       />
     """
