@@ -62,7 +62,7 @@ defmodule LennyWeb.TwilioControllerTest do
         "CallStatus" => "completed"
       })
 
-    assert conn.status == 200
+    assert conn.status == 204
     assert Repo.reload!(call).ended_at != nil
   end
 
@@ -137,11 +137,14 @@ defmodule LennyWeb.TwilioControllerTest do
         params: %{}
       )
 
-    post(conn, "/twilio/status/recording", %{
-      "CallSid" => "CA4fa9",
-      "RecordingStatus" => "completed",
-      "RecordingUrl" => "https://example.com/CA4fa9.wav"
-    })
+    conn =
+      post(conn, "/twilio/status/recording", %{
+        "CallSid" => "CA4fa9",
+        "RecordingStatus" => "completed",
+        "RecordingUrl" => "https://example.com/CA4fa9.wav"
+      })
+
+    assert conn.status == 204
 
     recording = Repo.reload!(recording)
 
