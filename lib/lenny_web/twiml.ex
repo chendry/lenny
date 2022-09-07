@@ -3,22 +3,31 @@ defmodule LennyWeb.TwiML do
   alias LennyWeb.Endpoint
   alias LennyWeb.AudioFileUrls
 
-  def lenny(i, autopilot) do
-    if autopilot do
-      """
-      <Play>
-        #{AudioFileUrls.lenny(i)}
-      </Play>
-      #{gather(120, i)}
-      """
-    else
-      """
-      <Play>
-        #{AudioFileUrls.lenny(i)}
-      </Play>
-      <Pause length="120" />
-      """
-    end
+  def lenny(iteration, autopilot) do
+    """
+    <Play>
+      #{AudioFileUrls.lenny(iteration)}
+    </Play>
+    #{gather_or_pause(autopilot, iteration)}
+    """
+  end
+
+  def hello(iteration, autopilot) do
+    """
+    <Play>
+      #{AudioFileUrls.hello()}
+    </Play>
+    #{gather_or_pause(autopilot, iteration)}
+    """
+  end
+
+  def hello_are_you_there(iteration, autopilot) do
+    """
+    <Play>
+      #{AudioFileUrls.hello_are_you_there()}
+    </Play>
+    #{gather_or_pause(autopilot, iteration)}
+    """
   end
 
   def gather(timeout, i) do
@@ -32,24 +41,6 @@ defmodule LennyWeb.TwiML do
       action="#{Routes.twilio_url(Endpoint, :gather, i)}"
     />
     """
-  end
-
-  def hello(iteration, autopilot) do
-      """
-      <Play>
-        #{AudioFileUrls.hello()}
-      </Play>
-      #{gather_or_pause(autopilot, iteration)}
-      """
-  end
-
-  def hello_are_you_there(iteration, autopilot) do
-      """
-      <Play>
-        #{AudioFileUrls.hello_are_you_there()}
-      </Play>
-      #{gather_or_pause(autopilot, iteration)}
-      """
   end
 
   defp gather_or_pause(autopilot, iteration) do
