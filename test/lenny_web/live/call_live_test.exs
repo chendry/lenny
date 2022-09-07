@@ -49,7 +49,7 @@ defmodule LennyWeb.CallLiveTest do
 
       _html =
         live_view
-        |> element("button#say_03", "")
+        |> element("button#say_03")
         |> render_click()
     end
 
@@ -81,7 +81,7 @@ defmodule LennyWeb.CallLiveTest do
 
       _html =
         live_view
-        |> element("button#say_07", "")
+        |> element("button#say_07")
         |> render_click()
     end
 
@@ -99,7 +99,23 @@ defmodule LennyWeb.CallLiveTest do
       end)
 
       live_view
-      |> element("button#say_07", "")
+      |> element("button#say_07")
+      |> render_click()
+    end
+
+    test "push the last say button", %{conn: conn, user: user} do
+      call = call_fixture(sid: "CAc482", autopilot: true)
+      users_calls_fixture(user, call)
+
+      {:ok, live_view, _html} = live(conn, "/calls/CAc482")
+
+      Mox.expect(Lenny.TwilioMock, :modify_call, fn "CAc482", twiml ->
+        assert twiml =~ "lenny_16.mp3"
+        refute twiml =~ "/twilio/gather/7"
+      end)
+
+      live_view
+      |> element("button#say_16")
       |> render_click()
     end
 
