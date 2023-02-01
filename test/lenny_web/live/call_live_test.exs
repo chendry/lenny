@@ -42,6 +42,8 @@ defmodule LennyWeb.CallLiveTest do
         |> element("button#say_01")
         |> render_click()
 
+      Mox.verify!()
+
       Mox.expect(Lenny.TwilioMock, :modify_call, fn "CAa820", twiml ->
         assert twiml =~ "lenny_03.mp3"
         assert twiml =~ "/twilio/gather/3"
@@ -51,6 +53,8 @@ defmodule LennyWeb.CallLiveTest do
         live_view
         |> element("button#say_03")
         |> render_click()
+
+      Mox.verify!()
     end
 
     test "clicking the autopilot checkbox toggles autopilot on the record", %{conn: conn, user: user} do
@@ -83,6 +87,8 @@ defmodule LennyWeb.CallLiveTest do
         live_view
         |> element("button#say_07")
         |> render_click()
+
+      Mox.verify!()
     end
 
     test "push the say buttons with autopilot off", %{conn: conn, user: user} do
@@ -101,6 +107,8 @@ defmodule LennyWeb.CallLiveTest do
       live_view
       |> element("button#say_07")
       |> render_click()
+
+      Mox.verify!()
     end
 
     test "push the last say button", %{conn: conn, user: user} do
@@ -116,6 +124,8 @@ defmodule LennyWeb.CallLiveTest do
       live_view
       |> element("button#say_15")
       |> render_click()
+
+      Mox.verify!()
     end
 
     test "push the hello buttons with autopilot on", %{conn: conn, user: user} do
@@ -134,6 +144,8 @@ defmodule LennyWeb.CallLiveTest do
         |> element("##{button}")
         |> render_click()
       end)
+
+      Mox.verify!()
     end
 
     test "push the hello buttons with autopilot off", %{conn: conn, user: user} do
@@ -151,6 +163,8 @@ defmodule LennyWeb.CallLiveTest do
         live_view
         |> element("##{button}")
         |> render_click()
+
+        Mox.verify!()
       end)
     end
 
@@ -170,6 +184,8 @@ defmodule LennyWeb.CallLiveTest do
         |> element("#dtmf-1")
         |> render_click()
 
+      Mox.verify!()
+
       Mox.expect(Lenny.TwilioMock, :modify_call, fn "CA7923", twiml ->
         assert twiml =~ ~r{<Response>\s*<Play digits="#"}
       end)
@@ -178,6 +194,8 @@ defmodule LennyWeb.CallLiveTest do
         live_view
         |> element("#dtmf-pound")
         |> render_click()
+
+      Mox.verify!()
     end
 
     test "push the silence button", %{conn: conn, user: user} do
@@ -194,6 +212,8 @@ defmodule LennyWeb.CallLiveTest do
       live_view
       |> element("#silence")
       |> render_click()
+
+      Mox.verify!()
     end
 
     test "hang up", %{conn: conn, user: user} do
@@ -212,6 +232,8 @@ defmodule LennyWeb.CallLiveTest do
         live_view
         |> element("#hangup")
         |> render_click()
+
+      Mox.verify!()
 
       assert Repo.reload!(call).ended_at != nil
     end
@@ -261,7 +283,7 @@ defmodule LennyWeb.CallLiveTest do
 
       assert html =~ "Hello, this is Lenny"
 
-      Mox.expect(Lenny.TwilioMock, :modify_call, fn _, _ -> nil end)
+      Mox.stub(Lenny.TwilioMock, :modify_call, fn _, _ -> nil end)
 
       live_view
       |> element("button#say_03")
