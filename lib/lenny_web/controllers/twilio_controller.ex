@@ -58,7 +58,7 @@ defmodule LennyWeb.TwilioController do
 
     {twiml, iteration} =
       if call.autopilot do
-        i = if i >= 16,
+        i = if i >= 15,
           do: 4,
           else: i + 1
 

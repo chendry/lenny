@@ -147,7 +147,6 @@ defmodule LennyWeb.CallLive do
           <button {Buttons.say_attrs(@call, 13)}>Since you've put it that way...</button>
           <button {Buttons.say_attrs(@call, 14)}>With the world finances the way they are...</button>
           <button {Buttons.say_attrs(@call, 15)}>That does sound good, you've been very patient...</button>
-          <button {Buttons.say_attrs(@call, 16)}>Sorry, bit of a problem...</button>
         </div>
 
         <span class="mt-8 flex flex-col font-bold text-blue-600 space-y-4">

@@ -110,12 +110,11 @@ defmodule LennyWeb.CallLiveTest do
       {:ok, live_view, _html} = live(conn, "/calls/CAc482")
 
       Mox.expect(Lenny.TwilioMock, :modify_call, fn "CAc482", twiml ->
-        assert twiml =~ "lenny_16.mp3"
-        refute twiml =~ "/twilio/gather/7"
+        assert twiml =~ "lenny_15.mp3"
       end)
 
       live_view
-      |> element("button#say_16")
+      |> element("button#say_15")
       |> render_click()
     end
 
@@ -308,7 +307,7 @@ defmodule LennyWeb.CallLiveTest do
       conn: conn,
       user: user
     } do
-      call = call_fixture(sid: "CA4c2f", autopilot: true, iteration: 16)
+      call = call_fixture(sid: "CA4c2f", autopilot: true, iteration: 15)
       users_calls_fixture(user, call)
 
       {:ok, live_view, _html} = live(conn, "/calls/CA4c2f")
@@ -318,10 +317,10 @@ defmodule LennyWeb.CallLiveTest do
         |> element(".active-say-button")
         |> render()
 
-      assert html =~ "Sorry, bit of a problem..."
+      assert html =~ "That does sound good"
 
       Phoenix.ConnTest.build_conn()
-      |> post("/twilio/gather/16", %{
+      |> post("/twilio/gather/15", %{
         "CallSid" => "CA4c2f",
         "SpeechResult" => "What?"
       })
